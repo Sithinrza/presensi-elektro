@@ -17,17 +17,15 @@ use App\Http\Controllers\Admin\HariLiburController;
 
 // Import Controller Siswa
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
-use App\Http\Controllers\Siswa\DailyReportController;
+use App\Http\Controllers\Siswa\LogController;
 
 // Import Controller Pembimbing
 use App\Http\Controllers\Pembimbing\DashboardController as PembimbingDashboard;
 use App\Http\Controllers\Pembimbing\ReportMonitoringController;
+;
+// Import Controller Tendik
+use App\Http\Controllers\Tendik\DashboardController as TendikDashboard;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes (Bisa langsung diakses untuk testing UI)
-|--------------------------------------------------------------------------
-*/
 
 // Utama
 Route::get('/', [LandingController::class, 'index'])->name('landing');
@@ -49,7 +47,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 // --- AREA SISWA MAGANG ---
 Route::prefix('siswa')->name('siswa.')->group(function () {
     Route::get('/dashboard', [SiswaDashboard::class, 'index'])->name('dashboard');
-    Route::resource('daily-report', DailyReportController::class);
+    Route::resource('log', LogController::class);
 });
 
 // --- AREA PEMBIMBING ---
@@ -57,4 +55,10 @@ Route::prefix('pembimbing')->name('pembimbing.')->group(function () {
     Route::get('/dashboard', [PembimbingDashboard::class, 'index'])->name('dashboard');
     Route::get('/monitoring', [ReportMonitoringController::class, 'index'])->name('monitoring.index');
     Route::get('/monitoring/show', [ReportMonitoringController::class, 'show'])->name('monitoring.show');
+});
+
+// --- AREA TENDIK
+Route::prefix('tendik')->name('tendik.')->group(function () {
+    Route::get('/dashboard', [TendikDashboard::class, 'index'])->name('dashboard');
+
 });

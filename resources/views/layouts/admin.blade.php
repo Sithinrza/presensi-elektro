@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Dashboard - E-Presensi Elektro</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <script>
+            tailwind.config = {
+            theme: {
+                extend: {
+                colors: {
+                    maroon: {
+                    50: '#fdf6f7', 100: '#f9e8eb', 200: '#f2cfd6', 300: '#e5a8b7',
+                    400: '#d27b91', 500: '#bc5a75', 600: '#9f3f5d', 700: '#7f2b46',
+                    800: '#652037', 900: '#4d182b', 950: '#2b0b16'
+                    },
+                    gold: {
+                    light: '#f7f1e7', DEFAULT: '#d8b98b', dark: '#b89a6d'
+                    }
+                },
+                fontFamily: {
+                    sans: ['Plus Jakarta Sans', 'sans-serif'],
+                },
+                boxShadow: {
+                    'premium': '0 20px 50px rgba(77, 24, 43, 0.08)',
+                }
+                }
+            }
+            }
+        </script>
+
+        <style>
+            body {
+            background-color: #fcfaf8;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(188, 90, 117, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(216, 185, 139, 0.1) 0px, transparent 50%);
+            overflow-x: hidden;
+            }
+
+            #sidebar {
+            width: 260px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            #main-container {
+            margin-left: 260px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 1100px;
+            }
+
+            .collapsed #sidebar { width: 85px; }
+            .collapsed #main-container { margin-left: 85px; }
+            .collapsed .sidebar-text, .collapsed .sidebar-header-text, .collapsed .sidebar-section-label { display: none; }
+            .collapsed .nav-item { justify-content: center; padding-left: 0; padding-right: 0; }
+
+            .glass-effect {
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(77, 24, 43, 0.05);
+            }
+
+            @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+            .sidebar-item-active { @apply bg-white text-maroon-950 shadow-lg; }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+        </style>
+    </head>
+    <body class="font-sans text-slate-900">
+        <!-- 1. Memanggil Sidebar -->
+        @include('layouts.admin.sidebar')
+
+        <!-- MAIN CONTENT AREA -->
+        <div id="main-container" class="main-content">
+
+            <!-- 2. Memanggil navbar -->
+            @include('layouts.admin.navbar')
+
+            <!-- 3. Area untuk Konten Dashboard yang berubah-ubah -->
+            @yield('content')
+
+        </div>
+
+        <script>
+            function toggleSidebar() {
+                document.body.classList.toggle('collapsed');
+            }
+        </script>
+
+    </body>
+    </html>
