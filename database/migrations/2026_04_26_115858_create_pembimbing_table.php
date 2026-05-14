@@ -12,18 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pembimbing', function (Blueprint $table) {
-            $table->increments('id_pembimbing');
-            $table->unsignedInteger('id_user');
-            $table->unsignedInteger('id_agama');
-            $table->string('no_induk', 50)->nullable();
-            $table->string('nama_lengkap', 100);
-            $table->string('jabatan', 100);
-            $table->string('no_telp', 20)->nullable();
-            $table->string('status', 20)->default('aktif');
-            $table->timestamps();
+            $table->id('id_pembimbing');
 
-            $table->foreign('id_user')->references('id_user')->on('users')->onDelete('cascade');
-            $table->foreign('id_agama')->references('id_agama')->on('agama');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
+
+            $table->string('nama_lengkap', 100);
+            $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
+
+
+            $table->foreignId('id_agama')->nullable()->constrained('agama', 'id_agama');
+
+            $table->string('no_induk', 50)->nullable();
+            $table->string('jabatan', 100)->nullable(); // Tadinya wajib, sekarang nullable
+            $table->string('no_telp', 20)->nullable();
+
+            $table->timestamps();
         });
     }
 
