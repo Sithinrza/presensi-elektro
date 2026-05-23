@@ -27,10 +27,13 @@ class RiwayatController extends Controller
                     ->orderBy('tanggal', 'desc')
                     ->get();
 
-        // Hitung Statistik Sederhana
-        $hadir = $riwayat->where('id_status_presensi', 1)->count(); // ID 1 = Hadir
-        $telat = 0; // Logika telat bisa dikembangkan berdasarkan jam_masuk
-        $alfa  = $riwayat->whereIn('id_status_presensi', [2, 3])->count(); // ID 2 & 3 = Izin/Sakit
+        // ==========================================
+        // Hitung Statistik Menggunakan ID Database Real
+        // 1 = Hadir, 2 = Terlambat, 3 = Alfa
+        // ==========================================
+        $hadir = $riwayat->where('id_status_presensi', 1)->count();
+        $telat = $riwayat->where('id_status_presensi', 2)->count();
+        $alfa  = $riwayat->where('id_status_presensi', 3)->count();
 
         // Tentukan Layout & Dashboard URL secara otomatis
         if ($role == 'tendik') {

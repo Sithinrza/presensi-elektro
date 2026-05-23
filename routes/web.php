@@ -26,6 +26,7 @@ use App\Http\Controllers\Siswa\RiwayatController as SiswaRiwayat;
 
 // Import Controller Pembimbing
 use App\Http\Controllers\Pembimbing\DashboardController as PembimbingDashboard;
+use App\Http\Controllers\Pembimbing\PresensiSiswaController;
 use App\Http\Controllers\Pembimbing\ReportMonitoringController;
 use App\Http\Controllers\RiwayatController;
 // Import Controller Tendik
@@ -85,16 +86,27 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [SiswaDashboard::class, 'index'])->name('dashboard');
         Route::post('/lengkapi-profil', [SiswaDashboard::class, 'simpanProfilLengkap'])->name('lengkapi.profil');
         Route::get('/log', [SiswaLog::class, 'index'])->name('log');
+        Route::post('/log', [SiswaLog::class, 'store'])->name('log.store');
 
     });
 
     // ------------------------------------------
     // AREA PEMBIMBING
     // ------------------------------------------
+    // ------------------------------------------
+    // AREA PEMBIMBING
+    // ------------------------------------------
     Route::prefix('pembimbing')->name('pembimbing.')->group(function () {
         Route::get('/dashboard', [PembimbingDashboard::class, 'index'])->name('dashboard');
+
+        // Monitoring Logbook
         Route::get('/monitoring', [ReportMonitoringController::class, 'index'])->name('monitoring.index');
-        Route::get('/monitoring/show', [ReportMonitoringController::class, 'show'])->name('monitoring.show');
+        Route::get('/monitoring/siswa/{id}', [ReportMonitoringController::class, 'show'])->name('monitoring.show');
+        Route::post('/monitoring/validasi/{id}', [ReportMonitoringController::class, 'validasi'])->name('monitoring.validasi');
+
+        // Presensi Siswa (Dibuat eksplisit agar rutenya terdaftar dengan pasti)
+        Route::get('/presensi-siswa', [PresensiSiswaController::class, 'index'])->name('presensi-siswa.index');
+        Route::get('/presensi-siswa/{id}', [PresensiSiswaController::class, 'show'])->name('presensi-siswa.show');
     });
 
     // ------------------------------------------

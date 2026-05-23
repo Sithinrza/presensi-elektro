@@ -14,25 +14,23 @@ class PresensiController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $role = $user->roles->first()->name;
+        $role = strtolower($user->roles->first()->name);
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
 
-        // Cari data presensi hari ini
-        $presensiHariIni = Presensi::where('id_user', $user->id_user)
+        $presensiHariIni = Presensi::with('statusPresensi')
+                                   ->where('id_user', $user->id_user)
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
 
-        // Status 1: Apakah presensi sudah selesai sepenuhnya?
         $presensiSelesai = $presensiHariIni && $presensiHariIni->jam_pulang != null;
-
-        // Status 2: Apakah sudah absen masuk tapi belum waktunya pulang?
         $belumWaktunyaPulang = false;
-        $jadwalPulang = '16:00'; // Default Senin-Kamis
+        $jadwalPulang = '16:00';
 
+        // JIKA SUDAH ABSEN MASUK, TAPI BELUM PULANG
         if ($presensiHariIni && !$presensiSelesai) {
-            $hariIni = $waktuSekarang->dayOfWeekIso; // 1 = Senin, 5 = Jumat
+            $hariIni = $waktuSekarang->dayOfWeekIso;
 
             if ($hariIni == 5) {
                 $batasPulang = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar');
@@ -41,7 +39,6 @@ class PresensiController extends Controller
                 $batasPulang = Carbon::createFromTime(16, 0, 0, 'Asia/Makassar');
             }
 
-            // Jika jam sekarang masih kurang dari jadwal pulang
             if ($waktuSekarang->lessThan($batasPulang)) {
                 $belumWaktunyaPulang = true;
             }
@@ -52,7 +49,7 @@ class PresensiController extends Controller
             $layout = 'layouts.tendik';
             $backUrl = route('tendik.dashboard');
             $url_dashboard = route('tendik.dashboard');
-        } elseif ($role == 'siswa') {
+        } elseif ($role == 'siswa' || $role == 'siswa magang') {
             $layout = 'layouts.siswa';
             $backUrl = route('siswa.dashboard');
             $url_dashboard = route('siswa.dashboard');
@@ -60,7 +57,6 @@ class PresensiController extends Controller
             abort(403, 'Akses tidak diizinkan.');
         }
 
-        // Kirim semua status ke View
         return view('presensi.index', compact('layout', 'backUrl', 'role', 'url_dashboard', 'presensiHariIni', 'presensiSelesai', 'belumWaktunyaPulang', 'jadwalPulang'));
     }
 
@@ -73,13 +69,12 @@ class PresensiController extends Controller
         ]);
 
         $user = Auth::user();
-        $role = $user->roles->first()->name;
+        $role = strtolower($user->roles->first()->name);
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
         $jamSekarang = $waktuSekarang->format('H:i:s');
 
-        // Dekode Foto Base64
         $img = $request->image_base64;
         $image_parts = explode(";base64,", $img);
         $image_base64 = base64_decode($image_parts[1]);
@@ -88,17 +83,29 @@ class PresensiController extends Controller
         $folderPath = "public/uploads/presensi/";
         Storage::put($folderPath . $fileName, $image_base64);
 
-        $statusDb = StatusPresensi::where('name', 'Hadir')->first();
-        if (!$statusDb) {
-            return response()->json(['status' => 'error', 'message' => 'Status "Hadir" tidak ditemukan!']);
-        }
-
         $presensiHariIni = Presensi::where('id_user', $user->id_user)
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
 
         if (!$presensiHariIni) {
-            // SIMPAN ABSEN MASUK
+            $batasHadir = Carbon::createFromTime(8, 0, 0, 'Asia/Makassar');
+            $batasTelat = Carbon::createFromTime(8, 30, 0, 'Asia/Makassar');
+
+            $statusName = 'Hadir';
+
+            // LOGIKA PENCATATAN STATUS TETAP BERJALAN
+            if ($waktuSekarang->greaterThan($batasTelat)) {
+                $statusName = 'Alfa';
+            } elseif ($waktuSekarang->greaterThan($batasHadir)) {
+                $statusName = 'Terlambat';
+            }
+
+            $statusDb = StatusPresensi::where('name', $statusName)->first();
+
+            if (!$statusDb) {
+                return response()->json(['status' => 'error', 'message' => 'Status presensi ' . $statusName . ' tidak ditemukan di database!']);
+            }
+
             Presensi::create([
                 'id_user'            => $user->id_user,
                 'id_status_presensi' => $statusDb->id_status_presensi,
@@ -108,20 +115,16 @@ class PresensiController extends Controller
                 'latitude_masuk'     => $request->latitude,
                 'longitude_masuk'    => $request->longitude,
             ]);
-            $pesan = 'Presensi Masuk Berhasil dicatat!';
+
+            $pesan = ($statusName == 'Alfa') ? 'Anda absen terlalu siang, status tercatat sebagai Alfa.' : 'Presensi Masuk Berhasil dicatat!';
 
         } else {
-            // SIMPAN ABSEN PULANG
             if ($presensiHariIni->jam_pulang != null) {
                 return response()->json(['status' => 'error', 'message' => 'Anda sudah melakukan presensi pulang hari ini!']);
             }
 
             $hariIni = $waktuSekarang->dayOfWeekIso;
-            if ($hariIni == 5) {
-                $batasPulang = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar');
-            } else {
-                $batasPulang = Carbon::createFromTime(16, 0, 0, 'Asia/Makassar');
-            }
+            $batasPulang = ($hariIni == 5) ? Carbon::createFromTime(16, 30, 0, 'Asia/Makassar') : Carbon::createFromTime(16, 0, 0, 'Asia/Makassar');
 
             if ($waktuSekarang->lessThan($batasPulang)) {
                 return response()->json(['status' => 'error', 'message' => 'Belum waktunya pulang!']);

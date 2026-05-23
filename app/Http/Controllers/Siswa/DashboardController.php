@@ -17,18 +17,25 @@ class DashboardController extends Controller
 
         // 1. Cek Kelengkapan SEMUA Data Biodata
         $isProfilLengkap = true;
-        if (
-            is_null($siswa->nis) ||
-            is_null($siswa->id_agama) ||
-            is_null($siswa->sekolah_asal) ||
-            is_null($siswa->jurusan) ||
-            is_null($siswa->jk) ||
-            is_null($siswa->tempat_lahir) ||
-            is_null($siswa->tanggal_lahir) ||
-            is_null($siswa->no_hp) ||
-            is_null($siswa->alamat)
-        ) {
+
+        // TAMBAHAN PELINDUNG: Cek dulu apakah datanya ada di database
+        if (!$siswa) {
             $isProfilLengkap = false;
+        } else {
+            // Jika datanya ADA, baru cek kelengkapan kolomnya satu per satu
+            if (
+                is_null($siswa->nis) ||
+                is_null($siswa->id_agama) ||
+                is_null($siswa->sekolah_asal) ||
+                is_null($siswa->jurusan) ||
+                is_null($siswa->jk) ||
+                is_null($siswa->tempat_lahir) ||
+                is_null($siswa->tanggal_lahir) ||
+                is_null($siswa->no_hp) ||
+                is_null($siswa->alamat)
+            ) {
+                $isProfilLengkap = false;
+            }
         }
 
         $agama = Agama::all();

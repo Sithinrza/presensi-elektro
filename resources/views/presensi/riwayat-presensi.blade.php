@@ -2,7 +2,6 @@
 
 @section('content')
 <main class="max-w-7xl mx-auto p-5 lg:p-10 space-y-8">
-    <!-- FILTER SECTION -->
     <section class="bg-white rounded-[2.5rem] p-6 lg:p-8 border border-maroon-100 shadow-sm">
         <form action="{{ route('presensi.riwayat-presensi') }}" method="GET" class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
@@ -32,28 +31,23 @@
         </form>
     </section>
 
-    <!-- SUMMARY CARDS -->
     <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <!-- Card Hadir -->
         <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
             <span class="text-3xl font-black text-emerald-600 leading-none">{{ $hadir }}</span>
             <span class="text-[10px] text-emerald-700/60 font-bold mt-2 uppercase tracking-widest">Total Hadir</span>
         </div>
 
-        <!-- Card Terlambat -->
         <div class="bg-amber-50 border border-amber-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
             <span class="text-3xl font-black text-amber-600 leading-none">{{ $telat }}</span>
             <span class="text-[10px] text-amber-700/60 font-bold mt-2 uppercase tracking-widest">Terlambat</span>
         </div>
 
-        <!-- Card Alfa -->
         <div class="bg-maroon-50 border border-maroon-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
             <span class="text-3xl font-black text-maroon-900 leading-none">{{ $alfa }}</span>
             <span class="text-[10px] text-maroon-700/60 font-bold mt-2 uppercase tracking-widest">Alfa</span>
         </div>
     </section>
 
-    <!-- TABLE SECTION -->
     <section class="bg-white rounded-[2.5rem] border border-maroon-100 shadow-xl overflow-hidden">
         <div class="overflow-x-auto custom-scroll">
             <table class="w-full text-left border-collapse min-w-[700px]">
@@ -83,14 +77,24 @@
                             {{ $r->jam_pulang ?? '--:--' }}
                         </td>
                         <td class="px-8 py-5">
-                            <span class="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-black uppercase">
-                                {{ $r->statusPresensi->name }}
-                            </span>
+                            @if($r->statusPresensi->name == 'Hadir')
+                                <span class="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-black uppercase">
+                                    {{ $r->statusPresensi->name }}
+                                </span>
+                            @elseif($r->statusPresensi->name == 'Terlambat')
+                                <span class="px-3 py-1.5 bg-amber-100 text-amber-700 rounded-xl text-[10px] font-black uppercase">
+                                    {{ $r->statusPresensi->name }}
+                                </span>
+                            @else
+                                <span class="px-3 py-1.5 bg-rose-100 text-rose-700 rounded-xl text-[10px] font-black uppercase">
+                                    {{ $r->statusPresensi->name }}
+                                </span>
+                            @endif
                         </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="px-8 py-10 text-center text-slate-400 font-bold">Belum ada data presensi.</td>
+                        <td colspan="4" class="px-8 py-10 text-center text-slate-400 font-bold uppercase text-xs tracking-widest">Belum ada data presensi bulan ini.</td>
                     </tr>
                     @endforelse
                 </tbody>

@@ -21,9 +21,6 @@
 <div class="p-4 lg:p-8 w-full flex justify-center items-start min-h-screen">
 
     @if($presensiSelesai)
-        <!-- ========================================== -->
-        <!-- TAMPILAN 1: PRESENSI SUDAH SELESAI FULL    -->
-        <!-- ========================================== -->
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
                 <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
@@ -44,18 +41,21 @@
                     <span class="text-slate-500 text-sm">Jam Masuk</span>
                     <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_masuk }} WITA</span>
                 </div>
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center mb-3">
                     <span class="text-slate-500 text-sm">Jam Pulang</span>
                     <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_pulang }} WITA</span>
+                </div>
+                <div class="flex justify-between items-center pt-3 border-t">
+                    <span class="text-slate-500 text-sm font-bold">Status Kehadiran</span>
+                    <span class="font-black {{ $presensiHariIni->statusPresensi->name == 'Hadir' ? 'text-emerald-600' : ($presensiHariIni->statusPresensi->name == 'Terlambat' ? 'text-amber-500' : 'text-rose-600') }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
+                        {{ $presensiHariIni->statusPresensi->name ?? 'Tidak Diketahui' }}
+                    </span>
                 </div>
             </div>
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
 
     @elseif($belumWaktunyaPulang)
-        <!-- ========================================== -->
-        <!-- TAMPILAN 2: BELUM WAKTUNYA PULANG (SIANG)  -->
-        <!-- ========================================== -->
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
                 <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
@@ -70,24 +70,28 @@
                 <h3 class="text-xl font-bold text-blue-800 mb-2">Belum Waktunya Pulang</h3>
                 <p class="text-blue-700 text-sm">Anda sudah melakukan presensi masuk. Silakan kembali lagi pada pukul <b class="px-2 py-1 bg-white rounded shadow-sm text-blue-900">{{ $jadwalPulang }} WITA</b> untuk melakukan presensi pulang.</p>
             </div>
-            <div class="bg-slate-50 rounded-xl p-5 text-left border border-slate-200 mb-5 flex justify-between items-center">
-                <span class="text-slate-500 text-sm">Jam Masuk Anda:</span>
-                <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_masuk }} WITA</span>
+            <div class="bg-slate-50 rounded-xl p-5 text-left border border-slate-200 mb-5 space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-500 text-sm">Jam Masuk Anda:</span>
+                    <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_masuk }} WITA</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-slate-500 text-sm">Status Masuk:</span>
+                    <span class="font-black {{ $presensiHariIni->statusPresensi->name == 'Hadir' ? 'text-emerald-600' : ($presensiHariIni->statusPresensi->name == 'Terlambat' ? 'text-amber-500' : 'text-rose-600') }} bg-white px-3 py-1 rounded border shadow-sm uppercase tracking-wider text-xs">
+                        {{ $presensiHariIni->statusPresensi->name ?? 'Tidak Diketahui' }}
+                    </span>
+                </div>
             </div>
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
 
     @else
-        <!-- ========================================== -->
-        <!-- TAMPILAN 3: KAMERA & PETA (MASUK / PULANG) -->
-        <!-- ========================================== -->
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
                 <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                 </a>
                 <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">
-                    <!-- Cek apakah ini absen masuk atau pulang untuk ganti judulnya -->
                     {{ $presensiHariIni ? 'Presensi Pulang' : 'Presensi Masuk' }}
                 </h2>
             </div>
@@ -108,14 +112,11 @@
 </div>
 
 @if(!$presensiSelesai && !$belumWaktunyaPulang)
-<!-- ========================================== -->
-<!-- SCRIPT HANYA BERJALAN JIKA KAMERA DIBUKA   -->
-<!-- ========================================== -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const KORDINAT_TARGET = [-3.2765155, 114.5968432];
+    const KORDINAT_TARGET = [-3.2760497, 114.5935089];
     const RADIUS_AMAN = 1000;
 
     let userLat = 0; let userLng = 0;

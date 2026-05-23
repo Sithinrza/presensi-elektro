@@ -33,21 +33,20 @@ class AuthController extends Controller
             // (Mengambil role pertama karena umumnya 1 akun = 1 role)
             $roleName = $user->roles->first()->name ?? '';
 
-            // PERCABANGAN REDIRECT BERDASARKAN ROLE
-            // Kita ubah ke huruf kecil semua (strtolower) agar tidak sensitif huruf besar/kecil
             switch (strtolower($roleName)) {
                 case 'admin':
-                    return redirect()->intended('/admin/dashboard');
+                    // HAPUS kata "intended", ganti dengan "route"
+                    return redirect()->route('admin.dashboard');
 
                 case 'pembimbing':
-                    return redirect()->intended('/pembimbing/dashboard');
+                    return redirect()->route('pembimbing.dashboard');
 
                 case 'tendik':
-                    return redirect()->intended('/tendik/dashboard');
+                    return redirect()->route('tendik.dashboard');
 
-                case 'siswa magang': // Sesuaikan dengan tulisan di RoleSeeder-mu (misal 'siswa' atau 'siswa magang')
+                case 'siswa magang':
                 case 'siswa':
-                    return redirect()->intended('/siswa/dashboard');
+                    return redirect()->route('siswa.dashboard');
 
                 default:
                     // Jika role-nya aneh atau tidak ada, logout paksa demi keamanan

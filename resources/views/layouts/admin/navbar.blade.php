@@ -8,11 +8,15 @@
 
     <div class="flex items-center gap-6">
         <div class="text-right">
-            <p class="text-xs font-black text-maroon-950 leading-none tracking-tight">Super Admin</p>
-            <p class="text-[9px] font-bold text-maroon-500 uppercase mt-1 tracking-tighter italic">Koordinator Elektro</p>
+            <p class="text-xs font-black text-maroon-950 leading-none tracking-tight">
+                {{ Auth::user()->email }}
+            </p>
+            <p class="text-[9px] font-bold text-maroon-500 uppercase mt-1 tracking-tighter italic">
+                {{ Auth::user()->roles->first() ? ucfirst(Auth::user()->roles->first()->name) : 'User' }}
+            </p>
         </div>
         <div class="w-10 h-10 rounded-xl border-2 border-gold p-0.5 shadow-sm overflow-hidden flex items-center justify-center bg-white">
-            <img src="https://i.pravatar.cc/100?img=13" alt="Admin" class="w-full h-full rounded-[10px] object-cover">
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->email) }}&background=800000&color=fff&bold=true" alt="User Avatar" class="w-full h-full rounded-[10px] object-cover">
         </div>
     </div>
   </div>
