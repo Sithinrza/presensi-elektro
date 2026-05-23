@@ -11,27 +11,31 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tendik', function (Blueprint $table) {
-            $table->increments('id_tendik');
-            $table->unsignedInteger('id_user');
-            $table->unsignedInteger('id_unit_kerja');
-            $table->unsignedInteger('id_agama');
-            $table->unsignedInteger('id_pend_terakhir');
-            $table->string('nip', 50)->nullable();
-            $table->string('nama_lengkap', 100);
-            $table->enum('jk', ['L', 'P']);
-            $table->string('tempat_lahir', 50)->nullable();
-            $table->date('tanggal_lahir')->nullable();
-            $table->string('no_telp', 20)->nullable();
-            $table->text('alamat')->nullable();
-            $table->string('foto_profil', 150)->nullable();
-            $table->string('status', 20)->default('aktif');
-            $table->timestamps();
+       Schema::create('tendik', function (Blueprint $table) {
+            $table->id('id_tendik');
 
-            $table->foreign('id_user')->references('id_user')->on('users')->onDelete('cascade');
-            $table->foreign('id_unit_kerja')->references('id_unit_kerja')->on('unit_kerja');
-            $table->foreign('id_agama')->references('id_agama')->on('agama');
-            $table->foreign('id_pend_terakhir')->references('id_pend_terakhir')->on('pend_terakhir');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
+
+            $table->string('nama_lengkap', 50);
+            $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
+
+            $table->string('nip')->nullable()->unique();
+
+            $table->foreignId('id_unit_kerja')->nullable()->constrained('unit_kerja', 'id_unit_kerja');
+            $table->foreignId('id_agama')->nullable()->constrained('agama', 'id_agama');
+            $table->foreignId('id_pend_terakhir')->nullable()->constrained('pendidikan_terakhir', 'id_pend_terakhir');
+            $table->foreignId('id_pangkat_golongan')->nullable()->constrained('pangkat_golongan', 'id_pangkat_golongan');
+            $table->foreignId('id_jabatan')->nullable()->constrained('jabatan', 'id_jabatan');
+
+        
+            $table->enum('jk', ['L', 'P'])->nullable();
+            $table->string('tempat_lahir', 40)->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('no_hp')->nullable();
+            $table->text('alamat')->nullable();
+            $table->string('foto_profil')->nullable();
+
+            $table->timestamps();
         });
     }
 

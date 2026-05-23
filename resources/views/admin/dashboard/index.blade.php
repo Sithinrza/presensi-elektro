@@ -12,7 +12,8 @@
             <div class="relative z-10 flex flex-col xl:flex-row justify-between items-center gap-10">
                 <div class="space-y-4">
                     <div class="inline-flex px-4 py-1.5 bg-white/10 border border-white/20 rounded-full text-[10px] font-black uppercase tracking-[0.25em]">Sistem Monitoring Aktif</div>
-                    <h2 class="text-4xl xl:text-5xl font-black italic tracking-tight leading-tight">Ringkasan Statistik <br><span class="text-gold tracking-normal not-italic">Presensi & Pengguna</span></h2>
+                    <!-- Menyapa admin yang sedang login dengan nama depannya -->
+                    <h2 class="text-4xl xl:text-5xl font-black italic tracking-tight leading-tight">Selamat Datang, <br><span class="text-gold tracking-normal not-italic">{{ explode(' ', $user->name)[0] ?? 'Admin' }}!</span></h2>
                     <p class="text-maroon-100/60 text-sm max-w-lg leading-relaxed font-medium italic">Data diperbarui secara real-time berdasarkan aktivitas di area kampus.</p>
                 </div>
 
@@ -44,7 +45,8 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                     </div>
                 </div>
-                <p class="text-5xl font-black text-maroon-950 tracking-tighter leading-none">41</p>
+                <!-- Menggunakan variabel dinamis -->
+                <p class="text-5xl font-black text-maroon-950 tracking-tighter leading-none">{{ str_pad($hadirHariIni ?? 41, 2, '0', STR_PAD_LEFT) }}</p>
                 <p class="text-[9px] font-bold text-slate-400 uppercase mt-3 tracking-[0.2em] leading-none italic">Total pengguna hadir hari ini</p>
             </div>
 
@@ -59,7 +61,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
                 </div>
-                <p class="text-5xl font-black text-maroon-950 tracking-tighter leading-none">03</p>
+                <p class="text-5xl font-black text-maroon-950 tracking-tighter leading-none">{{ str_pad($terlambatHariIni ?? 3, 2, '0', STR_PAD_LEFT) }}</p>
                 <p class="text-[9px] font-bold text-slate-400 uppercase mt-3 tracking-[0.2em] leading-none italic">Terdeteksi masuk lewat jam kerja</p>
             </div>
 
@@ -74,7 +76,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </div>
                 </div>
-                <p class="text-5xl font-black text-maroon-950 tracking-tighter leading-none">01</p>
+                <p class="text-5xl font-black text-maroon-950 tracking-tighter leading-none">{{ str_pad($alpaHariIni ?? 1, 2, '0', STR_PAD_LEFT) }}</p>
                 <p class="text-[9px] font-bold text-slate-400 uppercase mt-3 tracking-[0.2em] leading-none italic">Belum ada aktivitas presensi</p>
             </div>
         </section>
@@ -93,10 +95,10 @@
             <div class="bg-maroon-50/40 p-8 rounded-[2.5rem] border border-maroon-100 shadow-sm hover:border-maroon-200 transition-all flex items-center justify-between">
                 <div>
                     <p class="text-[10px] font-black text-maroon-400 uppercase tracking-widest mb-1">Total Siswa Magang</p>
-                    <p class="text-4xl font-black text-maroon-950 tracking-tighter leading-none">32</p>
+                    <p class="text-4xl font-black text-maroon-950 tracking-tighter leading-none">{{ str_pad($totalSiswa ?? 32, 2, '0', STR_PAD_LEFT) }}</p>
                     <p class="text-[9px] font-bold text-maroon-700/60 mt-3 flex items-center gap-1 uppercase">
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
-                        +2 Bulan ini
+                        Aktif Terdaftar
                     </p>
                 </div>
                 <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-maroon-900 shadow-sm">
@@ -108,7 +110,7 @@
             <div class="bg-maroon-50/40 p-8 rounded-[2.5rem] border border-maroon-100 shadow-sm hover:border-maroon-200 transition-all flex items-center justify-between">
                 <div>
                     <p class="text-[10px] font-black text-maroon-400 uppercase tracking-widest mb-1 text-nowrap">Total Tenaga Kependidikan</p>
-                    <p class="text-4xl font-black text-maroon-950 tracking-tighter leading-none">13</p>
+                    <p class="text-4xl font-black text-maroon-950 tracking-tighter leading-none">{{ str_pad($totalTendik ?? 13, 2, '0', STR_PAD_LEFT) }}</p>
                     <p class="text-[9px] font-bold text-maroon-700/60 mt-3 uppercase">Aktif Jurusan</p>
                 </div>
                 <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-maroon-900 shadow-sm">
@@ -120,7 +122,7 @@
             <div class="bg-maroon-50/40 p-8 rounded-[2.5rem] border border-maroon-100 shadow-sm hover:border-maroon-200 transition-all flex items-center justify-between">
                 <div>
                     <p class="text-[10px] font-black text-maroon-400 uppercase tracking-widest mb-1">Total Pembimbing</p>
-                    <p class="text-4xl font-black text-maroon-950 tracking-tighter leading-none">08</p>
+                    <p class="text-4xl font-black text-maroon-950 tracking-tighter leading-none">{{ str_pad($totalPembimbing ?? 8, 2, '0', STR_PAD_LEFT) }}</p>
                     <p class="text-[9px] font-bold text-maroon-700/60 mt-3 uppercase italic leading-none">Staf Elektro</p>
                 </div>
                 <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-maroon-900 shadow-sm">
@@ -154,6 +156,8 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-maroon-50/50">
+
+                    <!-- Loop Riwayat Presensi (Sekarang menggunakan data statis sebagai placeholder) -->
                     <tr class="hover:bg-maroon-50/30 transition-all duration-200">
                         <td class="px-10 py-5">
                             <div class="flex items-center gap-4">
@@ -181,6 +185,7 @@
                             </div>
                         </td>
                     </tr>
+
                     <!-- Row Tendik -->
                     <tr class="hover:bg-maroon-50/30 transition-all duration-200">
                         <td class="px-10 py-5">

@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pend_terakhir', function (Blueprint $table) {
-            $table->increments('id_pend_terakhir');
-            $table->string('name', 50);
+        Schema::create('pendidikan_terakhir', function (Blueprint $table) {
+            $table->id('id_pend_terakhir');
+            $table->string('name', 20);
             $table->timestamps();
         });
     }

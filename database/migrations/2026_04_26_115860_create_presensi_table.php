@@ -12,22 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('presensi', function (Blueprint $table) {
-            $table->increments('id_presensi');
-            $table->unsignedInteger('id_user');
-            $table->unsignedInteger('id_status_presensi');
+            $table->id('id_presensi');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
+            $table->foreignId('id_status_presensi')->constrained('status_presensi', 'id_status_presensi');
             $table->date('tanggal');
             $table->time('jam_masuk')->nullable();
-            $table->string('foto_masuk', 150)->nullable(); // Hasil Liveness Detection
+            $table->string('foto_masuk')->nullable();
             $table->decimal('latitude_masuk', 10, 8)->nullable();
             $table->decimal('longitude_masuk', 11, 8)->nullable();
             $table->time('jam_pulang')->nullable();
-            $table->string('foto_pulang', 150)->nullable();
+            $table->string('foto_pulang')->nullable();
             $table->decimal('latitude_pulang', 10, 8)->nullable();
             $table->decimal('longitude_pulang', 11, 8)->nullable();
             $table->timestamps();
-
-            $table->foreign('id_user')->references('id_user')->on('users')->onDelete('cascade');
-            $table->foreign('id_status_presensi')->references('id_status_presensi')->on('status_presensi');
         });
     }
 

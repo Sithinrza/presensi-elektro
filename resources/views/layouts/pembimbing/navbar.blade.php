@@ -1,4 +1,6 @@
-<!-- TOP HEADER -->
+@php
+    $profil = \App\Models\Pembimbing::where('id_user', Auth::id())->first();
+@endphp
 <header class="sticky top-0 z-40 glass-effect border-b border-maroon-100/30 px-5 lg:px-10 py-4">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -6,7 +8,9 @@
                 <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png" alt="Logo" class="w-10 h-10 object-contain">
             </div>
             <div>
-                <h1 class="text-sm md:text-lg font-extrabold text-maroon-950 leading-none tracking-tight">Halo, Pak Pembimbing</h1>
+                <h1 class="text-sm md:text-lg font-extrabold text-maroon-950 leading-none tracking-tight">
+                    Halo, {{ $profil->nama_lengkap ?? Auth::user()->email }}
+                </h1>
                 <p class="hidden md:block text-[10px] font-bold text-gold-dark uppercase tracking-widest mt-1 italic">Koordinator Magang • Teknik Elektro</p>
             </div>
         </div>
@@ -16,7 +20,7 @@
                 <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
             </button>
             <div class="w-10 h-10 rounded-full border-2 border-gold p-0.5 shadow-sm">
-                <img src="https://i.pravatar.cc/100?img=68" alt="Profile" class="w-full h-full rounded-full object-cover">
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($profil->nama_lengkap ?? Auth::user()->email) }}&background=800000&color=fff&bold=true" alt="Profile" class="w-full h-full rounded-full object-cover">
             </div>
         </div>
     </div>

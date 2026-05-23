@@ -42,7 +42,6 @@
       background-image:
         radial-gradient(at 0% 0%, rgba(188, 90, 117, 0.08) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(216, 185, 139, 0.1) 0px, transparent 50%);
-      /* overflow: hidden dihapus agar bisa di-scroll */
     }
 
     .glass-effect {
@@ -75,7 +74,6 @@
       transform: translateY(-1px);
     }
 
-    /* Menambahkan scrollbar yang cantik */
     ::-webkit-scrollbar {
       width: 6px;
     }
@@ -150,16 +148,27 @@
                 <p class="text-slate-400 font-medium">Silakan masuk untuk mengakses sistem presensi digital.</p>
             </div>
 
-            <form class="space-y-6">
+            <!-- FORM LARAVEL START -->
+            <form action="{{ route('login.post') }}" method="POST" class="space-y-6">
+                @csrf
+
+                <!-- Alert Error Login -->
+                @if($errors->any())
+                    <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl relative text-sm font-medium mb-4 flex items-center gap-3 shadow-sm" role="alert">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+                        <span>{{ $errors->first() }}</span>
+                    </div>
+                @endif
+
                 <!-- Username/Email -->
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em] ml-1">Email / NIP / NIS</label>
+                    <label class="block text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em] ml-1">Email</label>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         </div>
-                        <input type="text"
-                               placeholder="Masukkan ID Anda"
+                        <input type="email" name="email" value="{{ old('email') }}" required
+                               placeholder="Masukkan Email Anda"
                                class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-maroon-950 outline-none focus:border-maroon-500 input-focus shadow-sm">
                     </div>
                 </div>
@@ -174,8 +183,7 @@
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                         </div>
-                        <input id="password-input"
-                               type="password"
+                        <input id="password-input" type="password" name="password" required
                                placeholder="••••••••"
                                class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-12 text-sm font-bold text-maroon-950 outline-none focus:border-maroon-500 input-focus shadow-sm">
                         <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-5 flex items-center text-slate-300 hover:text-maroon-500 transition-colors">
@@ -187,7 +195,7 @@
                 <!-- Remember Me -->
                 <label class="flex items-center gap-3 cursor-pointer group w-fit">
                     <div class="relative w-5 h-5">
-                        <input type="checkbox" class="peer hidden">
+                        <input type="checkbox" name="remember" class="peer hidden">
                         <div class="w-full h-full border-2 border-slate-200 rounded-lg peer-checked:bg-maroon-600 peer-checked:border-maroon-600 transition-all"></div>
                         <svg class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path d="M20 6L9 17L4 12" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                     </div>
@@ -202,6 +210,7 @@
                     </button>
                 </div>
             </form>
+            <!-- FORM LARAVEL END -->
 
             <div class="mt-12 pt-8 border-t border-slate-100 text-center">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ada Masalah Akses?</p>

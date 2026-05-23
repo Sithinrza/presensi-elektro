@@ -3,20 +3,23 @@
     <div class="max-w-md mx-auto">
         <div class="bg-maroon-950/95 backdrop-blur-2xl rounded-[2.5rem] p-2.5 flex justify-between items-center shadow-2xl shadow-maroon-950/40 border border-white/10">
             <!-- Dashboard -->
-            <a href="{{ url('/tendik/dashboard') }}"
-               class="w-14 h-14 flex items-center justify-center rounded-full transition-all duration-300 {{ request()->is('tendik/dashboard') ? 'bg-white text-maroon-950 shadow-xl' : 'text-white/50' }}">
+            <a href="{{ route('tendik.dashboard') }}"
+               class="w-14 h-14 flex items-center justify-center rounded-full transition-all duration-300 {{ request()->routeIs('tendik.dashboard') ? 'bg-white text-maroon-950 shadow-xl' : 'text-white/50' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </a>
-            <!-- Presensi -->
-            <a href="{{ url('/tendik/presensi') }}"
-               class="w-14 h-14 flex items-center justify-center rounded-full transition-all duration-300 {{ request()->is('tendik/presensi') ? 'bg-white text-maroon-950 shadow-xl' : 'text-white/50' }}">
+
+            <!-- Presensi (Diubah mengarah ke route global presensi.index) -->
+            <a href="{{ route('presensi.index') }}"
+               class="w-14 h-14 flex items-center justify-center rounded-full transition-all duration-300 {{ request()->routeIs('presensi.index') ? 'bg-white text-maroon-950 shadow-xl' : 'text-white/50' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
             </a>
+
             <!-- Riwayat -->
-            <a href="{{ url('/tendik/riwayat') }}"
+            <a href="{{ route('presensi.riwayat-presensi') }}"
                class="w-14 h-14 flex items-center justify-center rounded-full transition-all duration-300 {{ request()->is('tendik/riwayat') ? 'bg-white text-maroon-950 shadow-xl' : 'text-white/50' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             </a>
+
             <!-- Profil -->
             <a href="{{ url('/tendik/profil') }}"
                class="w-14 h-14 flex items-center justify-center rounded-full transition-all duration-300 {{ request()->is('tendik/profil') ? 'bg-white text-maroon-950 shadow-xl' : 'text-white/50' }}">

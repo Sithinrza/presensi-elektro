@@ -5,17 +5,17 @@
     </div>
     <div class="flex flex-col gap-8 flex-1">
         <!-- Dashboard -->
-        <a href="{{ url('/tendik/dashboard') }}" title="Dashboard"
+        <a href="{{ route('tendik.dashboard') }}" title="Dashboard"
            class="p-3 transition-all duration-300 {{ request()->is('tendik/dashboard') ? 'bg-white text-maroon-950 rounded-2xl shadow-lg' : 'text-white/50 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </a>
         <!-- Presensi Masuk/Pulang -->
-        <a href="{{ url('/tendik/presensi') }}" title="Presensi"
+        <a href="{{ route('presensi.index') }}" title="Presensi"
            class="p-3 transition-all duration-300 {{ request()->is('tendik/presensi') ? 'bg-white text-maroon-950 rounded-2xl shadow-lg' : 'text-white/50 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
         </a>
         <!-- Riwayat -->
-        <a href="{{ url('/tendik/riwayat') }}" title="Riwayat"
+        <a href="{{ route('presensi.riwayat-presensi') }}" title="Riwayat"
            class="p-3 transition-all duration-300 {{ request()->is('tendik/riwayat') ? 'bg-white text-maroon-950 rounded-2xl shadow-lg' : 'text-white/50 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </a>
