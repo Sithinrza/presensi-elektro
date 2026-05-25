@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\RiwayatController;
 
 // Import Controller Admin
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
@@ -16,7 +17,7 @@ use App\Http\Controllers\Admin\UnitKerjaController;
 use App\Http\Controllers\Admin\HariLiburController;
 use App\Http\Controllers\Admin\LogController as AdminLog;
 use App\Http\Controllers\Admin\RiwayatController as AdminRiwayat;
-use App\Http\Controllers\Admin\HariLiburController as HariLibur;
+use App\Http\Controllers\Admin\KlaimController as AdminKlaim;
 
 // Import Controller Siswa
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
@@ -28,11 +29,12 @@ use App\Http\Controllers\Siswa\RiwayatController as SiswaRiwayat;
 use App\Http\Controllers\Pembimbing\DashboardController as PembimbingDashboard;
 use App\Http\Controllers\Pembimbing\PresensiSiswaController;
 use App\Http\Controllers\Pembimbing\ReportMonitoringController;
-use App\Http\Controllers\RiwayatController;
+
 // Import Controller Tendik
 use App\Http\Controllers\Tendik\ProfileController as TendikProfile;
 use App\Http\Controllers\Tendik\RiwayatController as TendikRiwayat;
 use App\Http\Controllers\Tendik\DashboardController as TendikDashboard;
+
 
 // ==========================================
 // PUBLIC ROUTES (Tidak Perlu Login)
@@ -56,6 +58,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/presensi-submit', [PresensiController::class, 'store'])->name('presensi.store');
 
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('presensi.riwayat-presensi');
+    Route::post('/presensi/ajukan-klaim', [PresensiController::class, 'ajukanKlaim'])->name('presensi.ajukan-klaim');
+
     // ------------------------------------------
     // AREA ADMIN
     // ------------------------------------------
@@ -74,9 +78,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/riwayat-presensi', [AdminRiwayat::class, 'index'])->name('riwayat.index');
         Route::get('/riwayat-presensi/detail/{id_user}', [AdminRiwayat::class, 'showDetail'])->name('riwayat.detail');
 
-        //ini sementara
+        // Rute untuk mengelola Klaim Lupa CO (Khusus Admin)
+        Route::get('/klaim', [AdminKlaim::class, 'index'])->name('klaim.index');
+        Route::post('/klaim/{id_klaim}', [AdminKlaim::class, 'verifikasi'])->name('klaim.verifikasi');
+
         Route::get('/log', [AdminLog::class, 'index'])->name('log');
-        Route::get('/hari-libur', [HariLibur::class, 'index'])->name('hari-libur');
     });
 
     // ------------------------------------------
@@ -87,12 +93,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/lengkapi-profil', [SiswaDashboard::class, 'simpanProfilLengkap'])->name('lengkapi.profil');
         Route::get('/log', [SiswaLog::class, 'index'])->name('log');
         Route::post('/log', [SiswaLog::class, 'store'])->name('log.store');
-
     });
 
-    // ------------------------------------------
-    // AREA PEMBIMBING
-    // ------------------------------------------
     // ------------------------------------------
     // AREA PEMBIMBING
     // ------------------------------------------
@@ -115,9 +117,6 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('tendik')->name('tendik.')->group(function () {
         Route::get('/dashboard', [TendikDashboard::class, 'index'])->name('dashboard');
         Route::post('/lengkapi-profil', [TendikDashboard::class, 'lengkapiProfil'])->name('lengkapi.profil');
-
-        // Route::get('/profile', [TendikProfile::class, 'index'])->name('profile');
-        // Route::get('/riwayat-presensi', [TendikRiwayat::class, 'index'])->name('riwayat');
     });
 
-}); // <-- PERHATIKAN: Kurung tutup pagar auth-nya dipindah ke ujung paling bawah sini!
+});

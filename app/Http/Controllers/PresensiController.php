@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Presensi;
 use App\Models\StatusPresensi;
+use App\Models\KlaimPresensi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -19,7 +20,6 @@ class PresensiController extends Controller
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
 
-        // Mengambil relasi status_ci dan status_co
         $presensiHariIni = Presensi::with(['statusCi', 'statusCo'])
                                    ->where('id_user', $user->id_user)
                                    ->where('tanggal', $tanggalHariIni)
@@ -27,16 +27,17 @@ class PresensiController extends Controller
 
         $presensiSelesai = $presensiHariIni && $presensiHariIni->jam_pulang != null;
         $belumWaktunyaPulang = false;
-        $jadwalPulang = '16:00';
+        $jadwalPulang = '07:30';
 
         if ($presensiHariIni && !$presensiSelesai) {
             $hariIni = $waktuSekarang->dayOfWeekIso;
 
-            if ($hariIni == 5) { // Jika hari Jumat
+            if ($hariIni == 5) {
                 $batasPulang = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar');
                 $jadwalPulang = '16:30';
             } else {
-                $batasPulang = Carbon::createFromTime(16, 0, 0, 'Asia/Makassar');
+                $batasPulang = Carbon::createFromTime(7, 30, 0, 'Asia/Makassar');
+                $jadwalPulang = '07:30';
             }
 
             if ($waktuSekarang->lessThan($batasPulang)) {
@@ -86,10 +87,9 @@ class PresensiController extends Controller
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
 
-        // 1. LOGIKA CHECK-IN
         if (!$presensiHariIni) {
-            $batasHadir = Carbon::createFromTime(9, 0, 0, 'Asia/Makassar');
-            $batasTelat = Carbon::createFromTime(9, 30, 0, 'Asia/Makassar');
+            $batasHadir = Carbon::createFromTime(6, 0, 0, 'Asia/Makassar');
+            $batasTelat = Carbon::createFromTime(6, 30, 0, 'Asia/Makassar');
 
             $statusNameCi = 'Tepat Waktu';
 
@@ -117,22 +117,20 @@ class PresensiController extends Controller
 
             $pesan = ($statusNameCi == 'Alfa') ? 'Anda absen terlalu siang, status tercatat sebagai Alfa.' : 'Presensi Masuk Berhasil dicatat!';
 
-        // 2. LOGIKA CHECK-OUT
         } else {
             if ($presensiHariIni->jam_pulang != null) {
                 return response()->json(['status' => 'error', 'message' => 'Anda sudah melakukan presensi pulang hari ini!']);
             }
 
             $hariIni = $waktuSekarang->dayOfWeekIso;
-            $batasPulang = ($hariIni == 5) ? Carbon::createFromTime(16, 30, 0, 'Asia/Makassar') : Carbon::createFromTime(16, 0, 0, 'Asia/Makassar');
-            $batasLupaCO = Carbon::createFromTime(18, 0, 0, 'Asia/Makassar');
 
-            // Cek apakah belum waktunya pulang
+            $batasPulang = ($hariIni == 5) ? Carbon::createFromTime(16, 30, 0, 'Asia/Makassar') : Carbon::createFromTime(7, 30, 0, 'Asia/Makassar');
+            $batasLupaCO = Carbon::createFromTime(8, 0, 0, 'Asia/Makassar');
+
             if ($waktuSekarang->lessThan($batasPulang)) {
                 return response()->json(['status' => 'error', 'message' => 'Belum waktunya pulang!']);
             }
 
-            // Tentukan status CO
             $statusNameCo = 'Tepat Waktu';
             if ($waktuSekarang->greaterThanOrEqualTo($batasLupaCO)) {
                 $statusNameCo = 'Lupa Check-Out';
@@ -156,5 +154,30 @@ class PresensiController extends Controller
             'message' => $pesan,
             'redirect' => $role == 'tendik' ? route('tendik.dashboard') : route('siswa.dashboard')
         ]);
+    }
+
+    public function ajukanKlaim(Request $request)
+    {
+        $request->validate([
+            'id_presensi' => 'required|exists:presensi,id_presensi',
+            'alasan' => 'required|string',
+            'dokumen_bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        $fileName = null;
+        if ($request->hasFile('dokumen_bukti')) {
+            $file = $request->file('dokumen_bukti');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $file->storeAs('public/uploads/klaim', $fileName);
+        }
+
+        KlaimPresensi::create([
+            'id_presensi' => $request->id_presensi,
+            'alasan' => $request->alasan,
+            'dokumen_bukti' => $fileName,
+            'status_verifikasi' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', 'Klaim berhasil diajukan dan menunggu verifikasi admin.');
     }
 }

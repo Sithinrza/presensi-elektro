@@ -12,41 +12,32 @@ class RiwayatController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        // Mengambil nama role dalam huruf kecil sesuai database
         $role = strtolower($user->roles->first()->name);
 
-        // Filter Bulan & Tahun (Default ke bulan/tahun berjalan)
-        $bulan = $request->get('bulan', date('m'));
-        $tahun = $request->get('tahun', date('Y'));
+        $bulan = $request->bulan ?? date('m');
+        $tahun = $request->tahun ?? date('Y');
 
-        // Ambil Data Riwayat milik User yang sedang login
-        $riwayat = Presensi::with('statusPresensi')
-                    ->where('id_user', $user->id_user)
-                    ->whereMonth('tanggal', $bulan)
-                    ->whereYear('tanggal', $tahun)
-                    ->orderBy('tanggal', 'desc')
-                    ->get();
+        // Panggil relasi yang baru: statusCi, statusCo, dan klaim
+        $riwayat = Presensi::with(['statusCi', 'statusCo', 'klaim'])
+                           ->where('id_user', $user->id_user)
+                           ->whereMonth('tanggal', $bulan)
+                           ->whereYear('tanggal', $tahun)
+                           ->orderBy('tanggal', 'desc')
+                           ->get();
 
-        // ==========================================
-        // Hitung Statistik Menggunakan ID Database Real
-        // 1 = Hadir, 2 = Terlambat, 3 = Alfa
-        // ==========================================
-        $hadir = $riwayat->where('id_status_presensi', 1)->count();
-        $telat = $riwayat->where('id_status_presensi', 2)->count();
-        $alfa  = $riwayat->where('id_status_presensi', 3)->count();
+        // Hitung statistik berdasarkan status pagi (Check-In)
+        $hadir = $riwayat->where('id_status_ci', 1)->count();
+        $telat = $riwayat->where('id_status_ci', 2)->count();
+        $alfa  = $riwayat->where('id_status_ci', 3)->count();
 
-        // Tentukan Layout & Dashboard URL secara otomatis
         if ($role == 'tendik') {
             $layout = 'layouts.tendik';
-            $url_dashboard = route('tendik.dashboard');
-        } else {
+        } elseif ($role == 'siswa' || $role == 'siswa magang') {
             $layout = 'layouts.siswa';
-            $url_dashboard = route('siswa.dashboard');
+        } else {
+            abort(403, 'Akses tidak diizinkan.');
         }
 
-        return view('presensi.riwayat-presensi', compact(
-            'riwayat', 'layout', 'role', 'url_dashboard',
-            'hadir', 'telat', 'alfa', 'bulan', 'tahun'
-        ));
+        return view('presensi.riwayat-presensi', compact('layout', 'riwayat', 'bulan', 'tahun', 'hadir', 'telat', 'alfa'));
     }
 }

@@ -8,19 +8,16 @@
     </div>
 
     <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto no-scrollbar">
-        <!-- 1. BERANDA -->
         <a href="{{ route('admin.dashboard') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/dashboard') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Beranda</span>
         </a>
 
-        <!-- LABEL: DATA MASTER -->
         <div class="sidebar-section-label pt-6 pb-2 px-4">
             <span class="text-[9px] font-black text-maroon-300/40 uppercase tracking-[0.2em]">Data Master</span>
         </div>
 
-        <!-- 2. DATA SISWA -->
         <a href="{{ route('admin.data.siswa.index') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/data/siswa') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform">
@@ -31,7 +28,6 @@
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Data Siswa</span>
         </a>
 
-        <!-- 3. DATA TENDIK -->
         <a href="{{ route('admin.data.tendik.index') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/data/tendik') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform">
@@ -42,26 +38,42 @@
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Data Tendik</span>
         </a>
 
-        <!-- 4. PEMBIMBING -->
         <a href="{{ route('admin.data.pembimbing.index') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/data/pembimbing') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Pembimbing</span>
         </a>
 
-        <!-- LABEL: PRESENSI -->
         <div class="sidebar-section-label pt-6 pb-2 px-4">
             <span class="text-[9px] font-black text-maroon-300/40 uppercase tracking-[0.2em]">Presensi & Laporan</span>
         </div>
 
-        <!-- 5. RIWAYAT PRESENSI -->
         <a href="{{ route('admin.riwayat.index') }}"
             class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->routeIs('admin.riwayat.*') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Riwayat Presensi</span>
         </a>
 
-        <!-- 6. LOGBOOK SISWA -->
+        <a href="{{ route('admin.klaim.index') }}"
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->routeIs('admin.klaim.*') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            <span class="sidebar-text flex-1 flex items-center justify-between text-xs font-bold uppercase tracking-wide whitespace-nowrap">
+                Verifikasi Klaim
+                @php
+                    $pendingCount = \App\Models\KlaimPresensi::where('status_verifikasi', 'pending')->count();
+                @endphp
+                @if($pendingCount > 0)
+                    <span class="bg-amber-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full ml-2 shadow-sm">{{ $pendingCount }}</span>
+                @endif
+            </span>
+        </a>
+
         <a href="{{ route('admin.log') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/log') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform">
@@ -71,8 +83,7 @@
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Logbook Siswa</span>
         </a>
 
-        <!-- 7. SERTIFIKAT -->
-        <a href="{{ route('admin.hari-libur') }}"
+        <a href="{{ route('admin.hari-libur.index') }}"
             class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->routeIs('admin.hari-libur*') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
@@ -81,9 +92,7 @@
         </a>
     </nav>
 
-    <!-- TOMBOL LOGOUT -->
     <div class="px-4 mt-6">
-        <!-- Menggunakan form untuk keamanan logout di Laravel -->
         <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit" class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-rose-500/10 text-rose-500 rounded-xl font-bold text-xs hover:bg-rose-500 hover:text-white transition-all overflow-hidden whitespace-nowrap">
