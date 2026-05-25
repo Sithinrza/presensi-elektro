@@ -33,17 +33,17 @@
 
     <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
-            <span class="text-3xl font-black text-emerald-600 leading-none">{{ $hadir }}</span>
-            <span class="text-[10px] text-emerald-700/60 font-bold mt-2 uppercase tracking-widest">Total Hadir</span>
+            <span class="text-3xl font-black text-emerald-600 leading-none">{{ $hadir ?? 0 }}</span>
+            <span class="text-[10px] text-emerald-700/60 font-bold mt-2 uppercase tracking-widest">Tepat Waktu</span>
         </div>
 
         <div class="bg-amber-50 border border-amber-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
-            <span class="text-3xl font-black text-amber-600 leading-none">{{ $telat }}</span>
+            <span class="text-3xl font-black text-amber-600 leading-none">{{ $telat ?? 0 }}</span>
             <span class="text-[10px] text-amber-700/60 font-bold mt-2 uppercase tracking-widest">Terlambat</span>
         </div>
 
         <div class="bg-maroon-50 border border-maroon-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
-            <span class="text-3xl font-black text-maroon-900 leading-none">{{ $alfa }}</span>
+            <span class="text-3xl font-black text-maroon-900 leading-none">{{ $alfa ?? 0 }}</span>
             <span class="text-[10px] text-maroon-700/60 font-bold mt-2 uppercase tracking-widest">Alfa</span>
         </div>
     </section>
@@ -54,9 +54,9 @@
                 <thead>
                     <tr class="bg-maroon-900 text-white">
                         <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest">Tanggal</th>
-                        <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest">Jam Masuk</th>
-                        <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest">Jam Pulang</th>
-                        <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest">Status</th>
+                        <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-center">Masuk</th>
+                        <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest text-center">Pulang</th>
+                        <th class="px-8 py-5 text-xs font-bold uppercase tracking-widest">Status Harian</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-maroon-50">
@@ -67,29 +67,32 @@
                                 {{ Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y') }}
                             </p>
                         </td>
+                        <td class="px-8 py-5 text-center">
+                            <span class="text-sm font-bold text-slate-600">{{ $r->jam_masuk ?? '--:--' }}</span>
+                        </td>
+                        <td class="px-8 py-5 text-center">
+                            <span class="text-sm font-bold text-slate-600">{{ $r->jam_pulang ?? '--:--' }}</span>
+                        </td>
                         <td class="px-8 py-5">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                                <span class="text-sm font-bold text-slate-600">{{ $r->jam_masuk ?? '--:--' }}</span>
+                            <div class="flex flex-col gap-1">
+                                @if($r->statusCi && $r->statusCi->name == 'Tepat Waktu')
+                                    <span class="w-fit px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[9px] font-black uppercase">CI: {{ $r->statusCi->name }}</span>
+                                @elseif($r->statusCi && $r->statusCi->name == 'Terlambat')
+                                    <span class="w-fit px-3 py-1 bg-amber-100 text-amber-700 rounded-lg text-[9px] font-black uppercase">CI: {{ $r->statusCi->name }}</span>
+                                @else
+                                    <span class="w-fit px-3 py-1 bg-rose-100 text-rose-700 rounded-lg text-[9px] font-black uppercase">CI: {{ $r->statusCi->name ?? 'Alfa' }}</span>
+                                @endif
+
+                                @if($r->statusCo)
+                                    @if($r->statusCo->name == 'Tepat Waktu')
+                                        <span class="w-fit px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[9px] font-black uppercase">CO: {{ $r->statusCo->name }}</span>
+                                    @else
+                                        <span class="w-fit px-3 py-1 bg-rose-100 text-rose-700 rounded-lg text-[9px] font-black uppercase">CO: {{ $r->statusCo->name }}</span>
+                                    @endif
+                                @else
+                                    <span class="w-fit px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-[9px] font-black uppercase">CO: Belum</span>
+                                @endif
                             </div>
-                        </td>
-                        <td class="px-8 py-5 text-sm font-bold text-slate-600">
-                            {{ $r->jam_pulang ?? '--:--' }}
-                        </td>
-                        <td class="px-8 py-5">
-                            @if($r->statusPresensi->name == 'Hadir')
-                                <span class="px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-xl text-[10px] font-black uppercase">
-                                    {{ $r->statusPresensi->name }}
-                                </span>
-                            @elseif($r->statusPresensi->name == 'Terlambat')
-                                <span class="px-3 py-1.5 bg-amber-100 text-amber-700 rounded-xl text-[10px] font-black uppercase">
-                                    {{ $r->statusPresensi->name }}
-                                </span>
-                            @else
-                                <span class="px-3 py-1.5 bg-rose-100 text-rose-700 rounded-xl text-[10px] font-black uppercase">
-                                    {{ $r->statusPresensi->name }}
-                                </span>
-                            @endif
                         </td>
                     </tr>
                     @empty

@@ -114,7 +114,7 @@
                     <p id="detail-instansi" class="text-maroon-100/60 text-xs font-bold uppercase mt-3 tracking-widest italic leading-none">Instansi</p>
                 </div>
                 <div class="ml-auto flex gap-10 pr-4 text-center">
-                    <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Hadir</p><p id="stat-hadir" class="text-3xl font-black text-white mt-1">0</p></div>
+                    <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Tepat Waktu</p><p id="stat-hadir" class="text-3xl font-black text-white mt-1">0</p></div>
                     <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Terlambat</p><p id="stat-telat" class="text-3xl font-black text-amber-400 mt-1">0</p></div>
                     <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Alfa</p><p id="stat-alfa" class="text-3xl font-black text-rose-400 mt-1">0</p></div>
                 </div>
@@ -146,7 +146,6 @@
 <script>
     let currentCategory = 'siswa';
 
-    // 1. Logika Tab Kategori (Sembunyikan/Tampilkan baris TR)
     function switchCategory(type) {
         currentCategory = type;
         const btnSiswa = document.getElementById('btn-siswa');
@@ -176,13 +175,11 @@
         }
     }
 
-    // 2. Fungsi Pencarian Live
     function filterTable() {
         const input = document.getElementById('searchInput').value.toLowerCase();
         const rows = document.querySelectorAll('.row-item');
 
         rows.forEach(row => {
-            // Hanya cari di kategori yang sedang aktif
             if(row.classList.contains('type-' + currentCategory)) {
                 const name = row.querySelector('.search-name').textContent.toLowerCase();
                 const id = row.querySelector('.search-id').textContent.toLowerCase();
@@ -196,12 +193,9 @@
         });
     }
 
-    // 3. Fetch Data Detail via AJAX
     function fetchDetail(id_user, name, role, instansi) {
-        // Tampilkan Loading
         document.getElementById('detail-table-body').innerHTML = '<tr><td colspan="4" class="text-center py-10 font-bold text-slate-400">Memuat data...</td></tr>';
 
-        // Update Header UI
         document.getElementById('master-view').classList.add('hidden');
         document.getElementById('detail-view').classList.remove('hidden');
         document.getElementById('detail-name').textContent = name;
@@ -210,27 +204,27 @@
         document.getElementById('detail-initial').textContent = name.charAt(0);
         window.scrollTo({top: 0, behavior: 'smooth'});
 
-        // Request ke server
         fetch(`/admin/riwayat-presensi/detail/${id_user}`)
             .then(response => response.json())
             .then(data => {
-                // Update Statistik Bulanan
                 document.getElementById('stat-hadir').textContent = data.statistik.hadir;
                 document.getElementById('stat-telat').textContent = data.statistik.telat;
                 document.getElementById('stat-alfa').textContent = data.statistik.alfa;
 
-                // Render Tabel
                 let html = '';
                 if(data.riwayat.length === 0) {
                     html = '<tr><td colspan="4" class="text-center py-10 font-bold text-slate-400">Belum ada riwayat presensi.</td></tr>';
                 } else {
                     data.riwayat.forEach(r => {
-                        // Format Tanggal Manual (bisa disesuaikan pakai library JS seperti Moment/DayJS jika ada)
                         const tgl = new Date(r.tanggal).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-                        let statusColor = 'bg-emerald-100 text-emerald-600';
-                        if(r.status_presensi.name === 'Terlambat') statusColor = 'bg-amber-100 text-amber-600';
-                        if(r.status_presensi.name === 'Alfa') statusColor = 'bg-rose-100 text-rose-600';
+                        // Badge untuk CI
+                        let statusCiName = r.status_ci ? r.status_ci.name : 'Alfa';
+                        let colorCi = statusCiName === 'Tepat Waktu' ? 'bg-emerald-100 text-emerald-600' : (statusCiName === 'Terlambat' ? 'bg-amber-100 text-amber-600' : 'bg-rose-100 text-rose-600');
+
+                        // Badge untuk CO
+                        let statusCoName = r.status_co ? r.status_co.name : 'Belum CO';
+                        let colorCo = statusCoName === 'Tepat Waktu' ? 'bg-emerald-100 text-emerald-600' : (statusCoName === 'Belum CO' ? 'bg-slate-100 text-slate-500' : 'bg-rose-100 text-rose-600');
 
                         html += `
                             <tr>
@@ -238,9 +232,14 @@
                                 <td class="px-10 py-5 text-center text-xs font-bold text-slate-600 italic">${r.jam_masuk || '--:--'}</td>
                                 <td class="px-10 py-5 text-center text-xs font-bold text-slate-600 italic">${r.jam_pulang || '--:--'}</td>
                                 <td class="px-10 py-5 text-center">
-                                    <span class="inline-flex px-3 py-1 ${statusColor} rounded-lg text-[9px] font-black uppercase tracking-tighter italic">
-                                        ${r.status_presensi.name}
-                                    </span>
+                                    <div class="flex flex-col items-center gap-1">
+                                        <span class="inline-flex px-3 py-1 ${colorCi} rounded-lg text-[9px] font-black uppercase tracking-tighter italic">
+                                            CI: ${statusCiName}
+                                        </span>
+                                        <span class="inline-flex px-3 py-1 ${colorCo} rounded-lg text-[9px] font-black uppercase tracking-tighter italic">
+                                            CO: ${statusCoName}
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                         `;

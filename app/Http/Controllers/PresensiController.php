@@ -19,7 +19,8 @@ class PresensiController extends Controller
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
 
-        $presensiHariIni = Presensi::with('statusPresensi')
+        // Mengambil relasi status_ci dan status_co
+        $presensiHariIni = Presensi::with(['statusCi', 'statusCo'])
                                    ->where('id_user', $user->id_user)
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
@@ -28,11 +29,10 @@ class PresensiController extends Controller
         $belumWaktunyaPulang = false;
         $jadwalPulang = '16:00';
 
-        // JIKA SUDAH ABSEN MASUK, TAPI BELUM PULANG
         if ($presensiHariIni && !$presensiSelesai) {
             $hariIni = $waktuSekarang->dayOfWeekIso;
 
-            if ($hariIni == 5) {
+            if ($hariIni == 5) { // Jika hari Jumat
                 $batasPulang = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar');
                 $jadwalPulang = '16:30';
             } else {
@@ -44,7 +44,6 @@ class PresensiController extends Controller
             }
         }
 
-        // Tentukan Layout & URL
         if ($role == 'tendik') {
             $layout = 'layouts.tendik';
             $backUrl = route('tendik.dashboard');
@@ -87,28 +86,28 @@ class PresensiController extends Controller
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
 
+        // 1. LOGIKA CHECK-IN
         if (!$presensiHariIni) {
-            $batasHadir = Carbon::createFromTime(8, 0, 0, 'Asia/Makassar');
-            $batasTelat = Carbon::createFromTime(8, 30, 0, 'Asia/Makassar');
+            $batasHadir = Carbon::createFromTime(9, 0, 0, 'Asia/Makassar');
+            $batasTelat = Carbon::createFromTime(9, 30, 0, 'Asia/Makassar');
 
-            $statusName = 'Hadir';
+            $statusNameCi = 'Tepat Waktu';
 
-            // LOGIKA PENCATATAN STATUS TETAP BERJALAN
             if ($waktuSekarang->greaterThan($batasTelat)) {
-                $statusName = 'Alfa';
+                $statusNameCi = 'Alfa';
             } elseif ($waktuSekarang->greaterThan($batasHadir)) {
-                $statusName = 'Terlambat';
+                $statusNameCi = 'Terlambat';
             }
 
-            $statusDb = StatusPresensi::where('name', $statusName)->first();
+            $statusDbCi = StatusPresensi::where('name', $statusNameCi)->first();
 
-            if (!$statusDb) {
-                return response()->json(['status' => 'error', 'message' => 'Status presensi ' . $statusName . ' tidak ditemukan di database!']);
+            if (!$statusDbCi) {
+                return response()->json(['status' => 'error', 'message' => 'Status presensi CI tidak ditemukan!']);
             }
 
             Presensi::create([
                 'id_user'            => $user->id_user,
-                'id_status_presensi' => $statusDb->id_status_presensi,
+                'id_status_ci'       => $statusDbCi->id_status_presensi,
                 'tanggal'            => $tanggalHariIni,
                 'jam_masuk'          => $jamSekarang,
                 'foto_masuk'         => $fileName,
@@ -116,8 +115,9 @@ class PresensiController extends Controller
                 'longitude_masuk'    => $request->longitude,
             ]);
 
-            $pesan = ($statusName == 'Alfa') ? 'Anda absen terlalu siang, status tercatat sebagai Alfa.' : 'Presensi Masuk Berhasil dicatat!';
+            $pesan = ($statusNameCi == 'Alfa') ? 'Anda absen terlalu siang, status tercatat sebagai Alfa.' : 'Presensi Masuk Berhasil dicatat!';
 
+        // 2. LOGIKA CHECK-OUT
         } else {
             if ($presensiHariIni->jam_pulang != null) {
                 return response()->json(['status' => 'error', 'message' => 'Anda sudah melakukan presensi pulang hari ini!']);
@@ -125,19 +125,30 @@ class PresensiController extends Controller
 
             $hariIni = $waktuSekarang->dayOfWeekIso;
             $batasPulang = ($hariIni == 5) ? Carbon::createFromTime(16, 30, 0, 'Asia/Makassar') : Carbon::createFromTime(16, 0, 0, 'Asia/Makassar');
+            $batasLupaCO = Carbon::createFromTime(18, 0, 0, 'Asia/Makassar');
 
+            // Cek apakah belum waktunya pulang
             if ($waktuSekarang->lessThan($batasPulang)) {
                 return response()->json(['status' => 'error', 'message' => 'Belum waktunya pulang!']);
             }
 
+            // Tentukan status CO
+            $statusNameCo = 'Tepat Waktu';
+            if ($waktuSekarang->greaterThanOrEqualTo($batasLupaCO)) {
+                $statusNameCo = 'Lupa Check-Out';
+            }
+
+            $statusDbCo = StatusPresensi::where('name', $statusNameCo)->first();
+
             $presensiHariIni->update([
+                'id_status_co'     => $statusDbCo->id_status_presensi,
                 'jam_pulang'       => $jamSekarang,
                 'foto_pulang'      => $fileName,
                 'latitude_pulang'  => $request->latitude,
                 'longitude_pulang' => $request->longitude,
             ]);
 
-            $pesan = 'Presensi Pulang Berhasil dicatat! Hati-hati di jalan.';
+            $pesan = ($statusNameCo == 'Lupa Check-Out') ? 'Anda lewat jam 18.00, tercatat sebagai Lupa Check-Out. Silakan ajukan klaim.' : 'Presensi Pulang Berhasil dicatat! Hati-hati di jalan.';
         }
 
         return response()->json([

@@ -9,7 +9,7 @@
 
     <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto no-scrollbar">
         <!-- 1. BERANDA -->
-        <a href="{{ url('/admin/dashboard') }}"
+        <a href="{{ route('admin.dashboard') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/dashboard') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Beranda</span>
@@ -21,7 +21,7 @@
         </div>
 
         <!-- 2. DATA SISWA -->
-        <a href="{{ url('/admin/data/siswa') }}"
+        <a href="{{ route('admin.data.siswa.index') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/data/siswa') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
@@ -32,7 +32,7 @@
         </a>
 
         <!-- 3. DATA TENDIK -->
-        <a href="{{ url('/admin/data/tendik') }}"
+        <a href="{{ route('admin.data.tendik.index') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/data/tendik') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -43,7 +43,7 @@
         </a>
 
         <!-- 4. PEMBIMBING -->
-        <a href="{{ url('/admin/data/pembimbing') }}"
+        <a href="{{ route('admin.data.pembimbing.index') }}"
            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/data/pembimbing') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Pembimbing</span>
@@ -56,7 +56,7 @@
 
         <!-- 5. RIWAYAT PRESENSI -->
         <a href="{{ route('admin.riwayat.index') }}"
-           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/riwayat/presensi') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->routeIs('admin.riwayat.*') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Riwayat Presensi</span>
         </a>
@@ -73,10 +73,10 @@
 
         <!-- 7. SERTIFIKAT -->
         <a href="{{ route('admin.hari-libur') }}"
-           class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->is('admin/harilibur') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
+            class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl transition-all {{ request()->routeIs('admin.hari-libur*') ? 'bg-maroon-500 text-white shadow-lg shadow-maroon-900/50' : 'text-white/50 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-hover:scale-110 transition-transform">
-                <path d="M12 15l-2 5l9-9l-7 0l2-5l-9 9l7 0"/
-                ></svg>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+            </svg>
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Hari Libur</span>
         </a>
     </nav>
@@ -84,7 +84,7 @@
     <!-- TOMBOL LOGOUT -->
     <div class="px-4 mt-6">
         <!-- Menggunakan form untuk keamanan logout di Laravel -->
-        <form action="{{ url('/logout') }}" method="POST">
+        <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit" class="w-full flex items-center justify-center gap-3 px-4 py-3 bg-rose-500/10 text-rose-500 rounded-xl font-bold text-xs hover:bg-rose-500 hover:text-white transition-all overflow-hidden whitespace-nowrap">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
