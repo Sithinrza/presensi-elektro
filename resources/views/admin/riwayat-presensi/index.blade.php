@@ -140,7 +140,7 @@
                         <p id="detail-instansi" class="text-maroon-200 text-xs font-bold uppercase mt-2 tracking-widest leading-none">Instansi / Unit</p>
                     </div>
                 </div>
-<<<<<<< HEAD
+
 
                 <div class="flex items-center gap-6 md:gap-10 bg-black/20 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
                     <div class="text-center">
@@ -157,7 +157,7 @@
                         <p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Alfa</p>
                         <p id="stat-alfa" class="text-3xl font-black text-rose-400 mt-1 leading-none">0</p>
                     </div>
-=======
+
                 <div>
                     <p id="detail-role" class="text-[10px] font-black text-gold uppercase tracking-[0.3em] mb-1 leading-none">Role</p>
                     <h2 id="detail-name" class="text-4xl font-black italic tracking-tight">Nama</h2>
@@ -167,7 +167,7 @@
                     <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Tepat Waktu</p><p id="stat-hadir" class="text-3xl font-black text-white mt-1">0</p></div>
                     <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Terlambat</p><p id="stat-telat" class="text-3xl font-black text-amber-400 mt-1">0</p></div>
                     <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Alfa</p><p id="stat-alfa" class="text-3xl font-black text-rose-400 mt-1">0</p></div>
->>>>>>> origin/presensi
+
                 </div>
             </div>
         </div>
