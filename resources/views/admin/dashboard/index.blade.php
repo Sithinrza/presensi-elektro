@@ -37,7 +37,7 @@
         <div class="flex items-center gap-3 px-2">
             <div class="w-1.5 h-6 bg-amber-400 rounded-full"></div>
             <h3 class="text-lg font-black text-slate-800 tracking-tight uppercase">Status Presensi Hari Ini</h3>
-            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">(Siswa & Intern)</span>
+            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">(Siswa & Tendik)</span>
         </div>
 
         <section class="animate-in grid grid-cols-1 md:grid-cols-3 gap-6" style="animation-delay: 0.2s">
