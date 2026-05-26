@@ -31,6 +31,15 @@ class TendikController extends Controller
             'tendik', 'totalTendik', 'tendikAktif', 'agama', 'unit_kerja', 'pangkat_golongan'
         ));
     }
+    public function create()
+    {
+        // Ambil data untuk dropdown (sesuaikan dengan nama Model Anda)
+        $pangkat_golongan = PangkatGolongan::with(['pangkat', 'golongan'])->get();
+        $unit_kerja = UnitKerja::all();
+        $agama = Agama::all();
+
+        return view('admin.data.tendik.create', compact('pangkat_golongan', 'unit_kerja', 'agama'));
+    }
     public function store(Request $request)
     {
         $request->validate([
@@ -149,6 +158,15 @@ class TendikController extends Controller
             DB::rollBack();
             return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
+    }
+    public function show($id)
+    {
+        // Mengambil data tendik beserta semua relasinya
+        $tendik = Tendik::with(['user', 'unitKerja', 'pangkatGolongan.pangkat', 'pangkatGolongan.golongan', 'jabatan', 'agama'])
+                ->where('id_tendik', $id)
+                ->firstOrFail();
+
+        return view('admin.data.tendik.show', compact('tendik'));
     }
 
 }

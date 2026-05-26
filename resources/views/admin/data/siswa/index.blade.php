@@ -8,90 +8,107 @@
     }
 </style>
 
-<main class="p-10 space-y-8 animate-in">
+<main class="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
-    <!-- ALERT NOTIFIKASI -->
     @if(session('success'))
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-2xl flex items-center gap-3 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl flex items-center gap-3 shadow-sm animate-pulse">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-500"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span class="text-sm font-bold">{{ session('success') }}</span>
         </div>
     @endif
 
     @if(session('error') || $errors->any())
-        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-2xl flex items-center gap-3 shadow-sm">
+        <div class="bg-rose-50 border border-rose-200 text-rose-700 px-5 py-4 rounded-2xl flex items-center gap-3 shadow-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-rose-500"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <span class="text-sm font-bold">{{ session('error') ?? $errors->first() }}</span>
         </div>
     @endif
 
-    <!-- HEADER ACTIONS -->
-    <section class="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
-        <div class="flex items-center gap-4 p-2 bg-maroon-50 w-fit rounded-3xl border border-maroon-100">
-            <div class="px-6 py-2">
-                <p class="text-[10px] font-black text-maroon-400 uppercase tracking-widest">Total Database</p>
-                <p class="text-xl font-black text-maroon-950 tracking-tighter">{{ $totalSiswa ?? 0 }} Siswa</p>
+    <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+        
+        <div class="flex flex-wrap items-center gap-4">
+            <div class="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex items-center gap-4 min-w-[220px]">
+                <div class="w-12 h-12 rounded-full bg-maroon-50 flex items-center justify-center text-maroon-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Database</p>
+                    <p class="text-2xl font-black text-slate-800 tracking-tight">{{ $totalSiswa ?? 0 }} <span class="text-sm font-bold text-slate-400">Siswa</span></p>
+                </div>
             </div>
-            <div class="w-[1px] h-8 bg-maroon-200"></div>
-            <div class="px-6 py-2">
-                <p class="text-[10px] font-black text-maroon-400 uppercase tracking-widest">Siswa Aktif</p>
-                <p class="text-xl font-black text-emerald-600 tracking-tighter">{{ $siswaAktif ?? 0 }} Orang</p>
+
+            <div class="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex items-center gap-4 min-w-[220px]">
+                <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                </div>
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Siswa Aktif</p>
+                    <p class="text-2xl font-black text-emerald-600 tracking-tight">{{ $siswaAktif ?? 0 }} <span class="text-sm font-bold text-emerald-400/80">Orang</span></p>
+                </div>
             </div>
         </div>
 
-        <button onclick="openModal('add')" class="bg-maroon-950 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl hover:bg-maroon-800 active:scale-95 transition-all flex items-center justify-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        <a href="{{ route('admin.data.siswa.create') }}" class="group bg-maroon-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-maroon-900/20 hover:bg-maroon-950 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3 w-full lg:w-fit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="group-hover:rotate-90 transition-transform duration-300"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
             Tambah Siswa Baru
-        </button>
+        </a>
     </section>
 
-    <!-- DATA TABLE -->
-    <section class="bg-white rounded-[3rem] border border-maroon-50 shadow-premium overflow-hidden">
-        <div class="overflow-x-auto no-scrollbar pt-4">
+    <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto no-scrollbar">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-maroon-50/20">
-                        <th class="px-10 py-6 text-[10px] font-black text-maroon-900 uppercase tracking-widest">Siswa Magang</th>
-                        <th class="px-10 py-6 text-[10px] font-black text-maroon-900 uppercase tracking-widest">NIS / ID</th>
-                        <th class="px-10 py-6 text-[10px] font-black text-maroon-900 uppercase tracking-widest">Sekolah Asal</th>
-                        <th class="px-10 py-6 text-[10px] font-black text-maroon-900 uppercase tracking-widest text-center">Status</th>
-                        <th class="px-10 py-6 text-[10px] font-black text-maroon-900 uppercase tracking-widest text-right">Aksi</th>
+                    <tr class="bg-slate-50 border-b border-slate-100">
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Siswa Magang</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">NIS / ID</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Sekolah Asal</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-maroon-50/50">
+                <tbody class="divide-y divide-slate-100">
 
-                    @forelse($siswa as $s)
-                    <tr class="hover:bg-maroon-50/20 transition-all duration-200 group">
-                        <td class="px-10 py-5">
+                    @forelse($siswa ?? [] as $s)<tr class="hover:bg-slate-50/80 transition-all duration-200 group cursor-pointer"
+                        onclick="window.location.href='{{ route('admin.data.siswa.show', $s->id_siswa) }}'">
+                        <td class="px-8 py-4">
                             <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-slate-100 overflow-hidden shadow-sm">
+                                <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
                                     <img src="https://ui-avatars.com/api/?name={{ urlencode($s->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
                                 </div>
                                 <div>
-                                    <p class="text-sm font-extrabold text-slate-800 leading-none tracking-tight group-hover:text-maroon-900 transition-colors">{{ $s->nama_lengkap }}</p>
-                                    <p class="text-[9px] font-bold text-slate-400 mt-1.5 uppercase">{{ $s->user->email ?? 'Tanpa Email' }}</p>
+                                    <p class="text-sm font-extrabold text-slate-800 leading-none tracking-tight group-hover:text-maroon-700 transition-colors">{{ $s->nama_lengkap }}</p>
+                                    <p class="text-[10px] font-bold text-slate-400 mt-1.5">{{ $s->user->email ?? 'Tidak ada email' }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-10 py-5"><p class="text-xs font-bold text-slate-500">{{ $s->nis }}</p></td>
-                        <td class="px-10 py-5">
-                            <p class="text-xs font-bold text-slate-600 uppercase tracking-tight leading-none">{{ $s->sekolah_asal }}</p>
-                            <p class="text-[9px] font-bold text-slate-300 mt-1 uppercase">{{ $s->jurusan }}</p>
+                        <td class="px-8 py-4">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold font-mono border border-slate-200">
+                                {{ $s->nis }}
+                            </span>
                         </td>
-                        <td class="px-10 py-5 text-center">
+                        <td class="px-8 py-4">
+                            <p class="text-xs font-bold text-slate-700 uppercase tracking-tight leading-none">{{ $s->sekolah_asal }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase">{{ $s->jurusan }}</p>
+                        </td>
+                        <td class="px-8 py-4 text-center">
                             @if($s->status == 'Aktif')
-                                <span class="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-lg text-[9px] font-black uppercase tracking-tighter">Aktif</span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Aktif
+                                </span>
                             @else
-                                <span class="px-3 py-1 bg-rose-100 text-rose-600 rounded-lg text-[9px] font-black uppercase tracking-tighter">Nonaktif</span>
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Nonaktif
+                                </span>
                             @endif
                         </td>
-                        <td class="px-10 py-5">
-                            <div class="flex justify-end gap-2 text-right">
-                                <!-- Tombol Edit (Akan kita bahas logikanya nanti) -->
-                                <button onclick="openModal('edit')" class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-maroon-100 hover:text-maroon-900 transition-all shadow-sm">
+                        <td class="px-8 py-4">
+                            <div class="flex justify-end gap-2 text-right opacity-80 group-hover:opacity-100 transition-opacity">
+                                <a href="{{ route('admin.data.siswa.edit', $s->id_siswa) }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-maroon-700 hover:border-maroon-200 transition-all shadow-sm" title="Edit Data">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                                </button>
-                                <!-- Tombol Hapus Sementara -->
-                                <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-rose-100 hover:text-rose-600 transition-all shadow-sm">
+                                </a>
+                                <button type="button" 
+                                        onclick="confirmDelete('{{ route('admin.data.siswa.destroy', $s->id_siswa) }}')"
+                                        class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-sm" title="Hapus Data">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                 </button>
                             </div>
@@ -99,7 +116,15 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-10 py-8 text-center text-slate-400 font-bold text-sm">Belum ada data Siswa Magang.</td>
+                        <td colspan="5" class="px-8 py-16 text-center">
+                            <div class="flex flex-col items-center justify-center gap-3">
+                                <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                                </div>
+                                <p class="text-slate-500 font-bold text-sm">Belum ada data Siswa Magang.</p>
+                                <p class="text-slate-400 text-xs">Silakan tambah siswa baru untuk mulai mengelola data.</p>
+                            </div>
+                        </td>
                     </tr>
                     @endforelse
 
@@ -109,153 +134,10 @@
     </section>
 </main>
 
-<!-- MODAL CRUD SISWA -->
-<div id="crudModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
-    <div class="absolute inset-0 modal-backdrop" onclick="closeModal()"></div>
-    <div class="relative w-full max-w-2xl animate-in">
-
-        <!-- FORM DIMULAI DI SINI -->
-        <form action="{{ route('admin.data.siswa.store') }}" method="POST" class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-maroon-100 max-h-[90vh] flex flex-col">
-            @csrf
-
-            <!-- Modal Header -->
-            <div class="bg-maroon-950 px-8 py-6 text-white flex items-center justify-between shrink-0">
-                <div>
-                    <h3 id="modalTitle" class="text-lg font-black tracking-tight italic">Tambah Siswa Magang</h3>
-                    <p class="text-[10px] font-bold text-maroon-300 uppercase tracking-widest mt-1">Lengkapi data master personel</p>
-                </div>
-                <button type="button" onclick="closeModal()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <!-- Modal Body -->
-           <!-- Modal Body -->
-            <div class="p-8 space-y-6 overflow-y-auto no-scrollbar">
-
-                <!-- BAGIAN WAJIB (AKUN) -->
-                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6">
-                    <h4 class="text-xs font-black text-maroon-900 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        Informasi Dasar Akun (Wajib)
-                    </h4>
-                    <div class="grid grid-cols-2 gap-6">
-                        <!-- Nama Lengkap -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Lengkap</label>
-                            <input type="text" name="nama_lengkap" required placeholder="Masukkan nama..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-                        <!-- Email -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Akun</label>
-                            <input type="email" name="email" required placeholder="contoh@sekolah.id" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-                        <!-- Password -->
-                        <div class="space-y-2 col-span-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-nowrap">Password Default</label>
-                            <input type="password" name="password" value="" required minlength="6" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-                    </div>
-                    <!-- BAGIAN DATA PENUGASAN (Diisi Admin) -->
-                <div>
-                    <h4 class="text-xs font-black text-maroon-900 uppercase tracking-widest mb-4 ml-1 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        Data Penugasan Magang
-                    </h4>
-                    <div class="grid grid-cols-2 gap-6 p-6 bg-slate-50 border border-slate-100 rounded-2xl">
-
-                        <!-- No HP -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">No. Handphone / WA</label>
-                            <input type="text" name="no_hp" placeholder="08..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-
-                        <!-- Pembimbing -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pembimbing Lapangan</label>
-                            <select name="id_pembimbing" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                                <option value="">Pilih Pembimbing...</option>
-                                @foreach($pembimbing as $p)
-                                    <option value="{{ $p->id_pembimbing }}">{{ $p->nama_lengkap }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Tanggal Mulai -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Mulai</label>
-                            <input type="date" name="tanggal_mulai" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-
-                        <!-- Tanggal Selesai -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Selesai</label>
-                            <input type="date" name="tanggal_selesai" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-
-                    </div>
-                </div>
-                </div>
-
-                <!-- BAGIAN OPSIONAL (DETAIL SISWA) -->
-                <div>
-                    <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-1 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        Detail Profil (Opsional)
-                    </h4>
-                    <div class="grid grid-cols-2 gap-6">
-                        <!-- NIS (Hilangkan atribut 'required') -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">NIS / Nomor Induk</label>
-                            <input type="text" name="nis" placeholder="Kosongkan jika belum tahu..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-
-                        <!-- Agama (Hilangkan atribut 'required') -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Agama</label>
-                            <select name="id_agama" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                                <option value="">Belum diisi...</option>
-                                @foreach($agama as $item)
-                                    <option value="{{ $item->id_agama }}">{{ $item->nama_agama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <!-- Sekolah Asal (Hilangkan atribut 'required') -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Sekolah Asal</label>
-                            <input type="text" name="sekolah_asal" placeholder="Nama sekolah..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-
-                        <!-- Jurusan (Hilangkan atribut 'required') -->
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Jurusan / Kelas</label>
-                            <input type="text" name="jurusan" placeholder="Contoh: TKJ / XII" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Info Box -->
-                <div class="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-3 mt-4">
-                    <div class="w-8 h-8 bg-amber-500 text-white rounded-lg flex items-center justify-center shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    </div>
-                    <p class="text-[10px] font-bold text-amber-800 leading-relaxed italic uppercase">
-                        Catatan: Bagian Detail Profil bersifat opsional. Jika dibiarkan kosong, sistem akan meminta siswa melengkapinya secara mandiri saat mereka login.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-8 pt-0 shrink-0 flex gap-4">
-                <button type="button" onclick="closeModal()" class="flex-1 bg-slate-100 text-slate-500 py-4 rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95 transition-all">Batal</button>
-                <button type="submit" class="flex-2 bg-maroon-950 text-white py-4 px-10 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition-all hover:bg-maroon-800">Simpan Data Siswa</button>
-            </div>
-        </form>
-        <!-- FORM SELESAI -->
-
-    </div>
-</div>
+<form id="deleteForm" method="POST" class="hidden">
+    @csrf
+    @method('DELETE')
+</form>
 
 <script>
     /* MODAL LOGIC */
@@ -263,18 +145,53 @@
         const modal = document.getElementById('crudModal');
         const title = document.getElementById('modalTitle');
 
-        if(mode === 'edit') {
-            title.textContent = "Edit Data Siswa";
-            // Catatan: Logika isi data edit akan kita tambahkan nanti jika diperlukan
-        } else {
-            title.textContent = "Tambah Siswa Baru";
+        if(modal && title) {
+            if(mode === 'edit') {
+                title.textContent = "Edit Data Siswa";
+            } else {
+                title.textContent = "Tambah Siswa Baru";
+            }
+            modal.classList.remove('hidden');
         }
-
-        modal.classList.remove('hidden');
     }
 
     function closeModal() {
-        document.getElementById('crudModal').classList.add('hidden');
+        const modal = document.getElementById('crudModal');
+        if(modal) modal.classList.add('hidden');
+    }
+
+    // Fungsi Delete dengan SweetAlert2
+    function confirmDelete(url) {
+        // Pastikan Swal sudah terdefinisi, jika belum bisa pakai confirm biasa sebagai fallback
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Hapus Data Siswa?',
+                text: "Data yang dihapus beserta rekam jejak presensinya tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#7f1d1d', // Warna setara maroon-900 di Tailwind
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Biar tombol Batal di kiri, Hapus di kanan (standar UI UX)
+                customClass: {
+                    popup: 'rounded-2xl',
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('deleteForm');
+                    form.action = url;
+                    form.submit();
+                }
+            })
+        } else {
+            // Fallback jika CDN SweetAlert gagal load
+            if (confirm('Apakah Anda yakin ingin menghapus data siswa ini?')) {
+                const form = document.getElementById('deleteForm');
+                form.action = url;
+                form.submit();
+            }
+        }
     }
 </script>
 @endsection

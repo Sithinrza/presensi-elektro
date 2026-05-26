@@ -24,6 +24,10 @@ class PembimbingController extends Controller
 
         return view('admin.data.pembimbing.index', compact('pembimbing', 'totalPembimbing', 'totalBimbingan'));
     }
+    public function create()
+    {
+        return view('admin.data.pembimbing.create');
+    }
 
     public function store(Request $request)
     {
@@ -76,9 +80,9 @@ class PembimbingController extends Controller
     public function edit($id)
     {
         // Cari data pembimbing berdasarkan ID
-        $p = Pembimbing::findOrFail($id);
-
-        return view('admin.data.pembimbing.edit', compact('p'));
+        $pembimbing = Pembimbing::with('user')->findOrFail($id);
+    
+        return view('admin.data.pembimbing.edit', compact('pembimbing'));
     }
 
     public function update(Request $request, $id)
@@ -137,5 +141,13 @@ class PembimbingController extends Controller
             DB::rollBack();
             return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
+    }
+    public function show($id)
+    {
+        // Mengambil data pembimbing
+        $pembimbing = Pembimbing::with('user')->where('id_pembimbing', $id)->firstOrFail();
+
+        // Pastikan pakai compact('pembimbing') agar namanya cocok dengan yang ada di view
+        return view('admin.data.pembimbing.show', compact('pembimbing'));
     }
 }

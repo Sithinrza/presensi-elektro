@@ -107,7 +107,7 @@
                  class="w-20 h-20 object-contain animate-float">
 
             <div class="mt-12 space-y-4">
-                <h2 class="font-display text-4xl text-white leading-tight">Presensi Masa Depan <br><span class="text-gold italic">Elektro Poliban.</span></h2>
+                <h2 class="font-display text-4xl text-white leading-tight">Presensi<br><span class="text-gold italic">Elektro Poliban.</span></h2>
                 <div class="w-16 h-1 bg-gold rounded-full"></div>
             </div>
         </div>
@@ -128,7 +128,7 @@
         </div>
 
         <p class="relative z-10 text-white/30 text-[10px] font-bold uppercase tracking-widest leading-none">
-            &copy; 2024 Jurusan Teknik Elektro • Poliban
+            &copy; 2026 Jurusan Teknik Elektro • Poliban
         </p>
     </div>
 

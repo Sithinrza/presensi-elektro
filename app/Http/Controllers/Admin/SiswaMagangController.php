@@ -26,6 +26,14 @@ class SiswaMagangController extends Controller
         return view('admin.data.siswa.index', compact('siswa', 'totalSiswa', 'siswaAktif', 'agama', 'pembimbing'));
     }
 
+    public function create()
+    {
+        $agama = Agama::all();
+        $pembimbing = Pembimbing::all();
+
+        return view('admin.data.siswa.create', compact('agama', 'pembimbing'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -141,5 +149,11 @@ class SiswaMagangController extends Controller
             DB::rollBack();
             return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
+    }
+    public function show($id)
+    {
+        // Cari data siswa berdasarkan ID, beserta data user/akun-nya
+        $siswa = SiswaMagang::with('user')->where('id_siswa', $id)->firstOrFail();
+        return view('admin.data.siswa.show', compact('siswa'));
     }
 }
