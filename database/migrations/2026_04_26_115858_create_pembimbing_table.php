@@ -23,8 +23,9 @@ return new class extends Migration
             $table->foreignId('id_agama')->nullable()->constrained('agama', 'id_agama');
 
             $table->string('no_induk', 50)->nullable();
-            $table->string('jabatan', 100)->nullable(); // Tadinya wajib, sekarang nullable
+            $table->string('jabatan', 100)->nullable(); 
             $table->string('no_telp', 20)->nullable();
+            $table->string('foto_profil')->nullable();
 
             $table->timestamps();
         });

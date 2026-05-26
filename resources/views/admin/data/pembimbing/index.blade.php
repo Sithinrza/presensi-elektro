@@ -18,7 +18,7 @@
     @endif
 
     <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-        
+
         <div class="flex flex-wrap items-center gap-4">
             <div class="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex items-center gap-4 min-w-[220px]">
                 <div class="w-12 h-12 rounded-full bg-maroon-50 flex items-center justify-center text-maroon-700">
@@ -48,7 +48,7 @@
     </section>
 
     <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-        
+
         <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white">
             <div class="relative group w-full max-w-md">
                 <input type="text" placeholder="Cari Nama atau NIP..." class="bg-slate-50 border border-slate-200 rounded-xl px-11 py-3 text-xs font-medium w-full focus:ring-2 focus:ring-maroon-500 focus:border-maroon-500 outline-none transition-all placeholder:text-slate-400">
@@ -68,9 +68,9 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                    
+
                     @forelse($pembimbing ?? [] as $p)
-                    <tr class="hover:bg-slate-50/80 transition-all duration-200 group cursor-pointer" 
+                    <tr class="hover:bg-slate-50/80 transition-all duration-200 group cursor-pointer"
                     onclick="window.location.href='{{ route('admin.data.pembimbing.show', $p->id_pembimbing) }}'">
                         <td class="px-8 py-4">
                             <div class="flex items-center gap-4">
@@ -105,16 +105,22 @@
                             @endif
                         </td>
                         <td class="px-8 py-4">
-                            <div class="flex justify-end gap-2 text-right opacity-80 group-hover:opacity-100 transition-opacity">
-                                <a href="{{ route('admin.data.pembimbing.edit', $p->id_pembimbing) }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-maroon-700 hover:border-maroon-200 transition-all shadow-sm" title="Edit Data">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                                </a>
-                                
-                                <button type="button" onclick="confirmDelete('{{ route('admin.data.pembimbing.destroy', $p->id_pembimbing) }}')" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-sm" title="Hapus Data">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                                </button>
-                            </div>
-                        </td>
+    <div class="flex justify-end gap-2 text-right opacity-80 group-hover:opacity-100 transition-opacity">
+
+        <a href="{{ route('admin.data.pembimbing.edit', $p->id_pembimbing) }}"
+           onclick="event.stopPropagation();"
+           class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-maroon-700 hover:border-maroon-200 transition-all shadow-sm" title="Edit Data">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+        </a>
+
+        <button type="button"
+                onclick="event.stopPropagation(); confirmDelete('{{ route('admin.data.pembimbing.destroy', $p->id_pembimbing) }}')"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-sm" title="Hapus Data">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+        </button>
+
+    </div>
+</td>
                     </tr>
                     @empty
                     <tr>

@@ -29,15 +29,30 @@ class SiswaMagang extends Model
         'status'
     ];
 
-    public function user() { return $this->belongsTo(User::class, 'id_user'); }
-    public function agama() { return $this->belongsTo(Agama::class, 'id_agama'); }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
+
+    public function agama()
+    {
+        return $this->belongsTo(Agama::class, 'id_agama');
+    }
 
     public function logbook()
     {
         return $this->hasMany(Log::class, 'id_user', 'id_user');
     }
 
-    public function presensi() {
+    public function presensi()
+    {
         return $this->hasMany(Presensi::class, 'id_user', 'id_user');
+    }
+
+    // Relasi ke tabel Pembimbing
+    public function pembimbing()
+    {
+        // Parameter: (Nama Model Tujuan, Foreign Key di tabel siswa_magang, Primary Key di tabel pembimbing)
+        return $this->belongsTo(Pembimbing::class, 'id_pembimbing', 'id_pembimbing');
     }
 }

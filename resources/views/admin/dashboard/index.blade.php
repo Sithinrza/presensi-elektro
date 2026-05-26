@@ -14,7 +14,7 @@
                 </div>
                 <h2 class="text-3xl lg:text-4xl font-black tracking-tight leading-tight">
                     Selamat Datang, <br class="hidden md:block">
-                    <span class="text-amber-400">{{ auth()->check() ? explode(' ', auth()->user()->name)[0] : 'Admin' }}!</span>
+                    <span class="text-amber-400">{{ auth()->check() ? auth()->user()->name : 'Admin' }}!</span>
                 </h2>
             </div>
 

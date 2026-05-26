@@ -25,7 +25,7 @@
     @endif
 
     <section class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-        
+
         <div class="flex flex-wrap items-center gap-4">
             <div class="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex items-center gap-4 min-w-[220px]">
                 <div class="w-12 h-12 rounded-full bg-maroon-50 flex items-center justify-center text-maroon-700">
@@ -62,14 +62,15 @@
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Siswa Magang</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">NIS / ID</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Sekolah Asal</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Pembimbing</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
 
-                    @forelse($siswa ?? [] as $s)<tr class="hover:bg-slate-50/80 transition-all duration-200 group cursor-pointer"
-                        onclick="window.location.href='{{ route('admin.data.siswa.show', $s->id_siswa) }}'">
+                    @forelse($siswa ?? [] as $s)
+                    <tr class="hover:bg-slate-50/80 transition-all duration-200 group cursor-pointer" onclick="window.location.href='{{ route('admin.data.siswa.show', $s->id_siswa) }}'">
                         <td class="px-8 py-4">
                             <div class="flex items-center gap-4">
                                 <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
@@ -90,6 +91,9 @@
                             <p class="text-xs font-bold text-slate-700 uppercase tracking-tight leading-none">{{ $s->sekolah_asal }}</p>
                             <p class="text-[10px] font-bold text-slate-400 mt-1 uppercase">{{ $s->jurusan }}</p>
                         </td>
+                        <td class="px-8 py-4">
+                            <p class="text-xs font-bold text-slate-700 leading-none">{{ $s->pembimbing->nama_lengkap ?? 'Belum Ditentukan' }}</p>
+                        </td>
                         <td class="px-8 py-4 text-center">
                             @if($s->status == 'Aktif')
                                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg text-[10px] font-black uppercase tracking-widest">
@@ -106,8 +110,8 @@
                                 <a href="{{ route('admin.data.siswa.edit', $s->id_siswa) }}" class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-maroon-700 hover:border-maroon-200 transition-all shadow-sm" title="Edit Data">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                                 </a>
-                                <button type="button" 
-                                        onclick="confirmDelete('{{ route('admin.data.siswa.destroy', $s->id_siswa) }}')"
+                                <button type="button"
+                                        onclick="event.stopPropagation(); confirmDelete('{{ route('admin.data.siswa.destroy', $s->id_siswa) }}')"
                                         class="w-9 h-9 flex items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shadow-sm" title="Hapus Data">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                 </button>
@@ -116,7 +120,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-8 py-16 text-center">
+                        <td colspan="6" class="px-8 py-16 text-center">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <div class="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 mb-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>

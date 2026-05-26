@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Pembimbing;
+use App\Models\SiswaMagang; // Jangan lupa panggil model SiswaMagang
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
@@ -14,16 +15,13 @@ class PembimbingController extends Controller
 {
     public function index()
     {
-        // Ambil semua data pembimbing beserta akunnya
         $pembimbing = Pembimbing::with('user')->get();
         $totalPembimbing = $pembimbing->count();
-
-        // Asumsi: Jika kamu punya relasi ke siswa, bisa dihitung total bimbingannya.
-        // Sementara kita buat 0 dulu agar tidak error.
         $totalBimbingan = 0;
 
         return view('admin.data.pembimbing.index', compact('pembimbing', 'totalPembimbing', 'totalBimbingan'));
     }
+
     public function create()
     {
         return view('admin.data.pembimbing.create');
@@ -31,14 +29,10 @@ class PembimbingController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi Fleksibel
         $request->validate([
-            // Wajib
             'nama_lengkap' => 'required|string|max:100',
             'email'        => 'required|email|unique:users,email',
             'password'     => 'required|min:6',
-
-            // Opsional
             'no_induk'     => 'nullable|string|max:50',
             'jabatan'      => 'nullable|string|max:100',
             'no_telp'      => 'nullable|string|max:20',
@@ -46,26 +40,21 @@ class PembimbingController extends Controller
 
         DB::beginTransaction();
         try {
-            // 2. Buat Akun User
             $user = User::create([
                 'email'    => $request->email,
                 'password' => Hash::make($request->password),
             ]);
 
-            // Beri Role Pembimbing
             $rolePembimbing = Role::firstOrCreate(['name' => 'Pembimbing']);
             $user->roles()->attach($rolePembimbing->getKey());
 
-            // 3. Buat Cangkang Profil Pembimbing
             Pembimbing::create([
                 'id_user'      => $user->id_user,
                 'nama_lengkap' => $request->nama_lengkap,
                 'status'       => 'Aktif',
-                // Data Opsional
                 'no_induk'     => $request->no_induk,
                 'jabatan'      => $request->jabatan,
                 'no_telp'      => $request->no_telp,
-                // id_agama dibiarkan NULL agar dilengkapi mandiri oleh pembimbing
             ]);
 
             DB::commit();
@@ -79,9 +68,7 @@ class PembimbingController extends Controller
 
     public function edit($id)
     {
-        // Cari data pembimbing berdasarkan ID
         $pembimbing = Pembimbing::with('user')->findOrFail($id);
-    
         return view('admin.data.pembimbing.edit', compact('pembimbing'));
     }
 
@@ -94,7 +81,7 @@ class PembimbingController extends Controller
             'nama_lengkap' => 'required|string|max:100',
             'email'        => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
             'password'     => 'nullable|min:6',
-            'status'       => 'required|in:Aktif,Tidak Aktif',
+            'status'       => 'required|in:Aktif,Nonaktif',
             'no_induk'     => 'nullable|string|max:50',
             'jabatan'      => 'nullable|string|max:100',
             'no_telp'      => 'nullable|string|max:20',
@@ -115,6 +102,16 @@ class PembimbingController extends Controller
                 'jabatan'      => $request->jabatan,
                 'no_telp'      => $request->no_telp,
             ]);
+
+            // ==========================================
+            // LOGIKA EFEK DOMINO ADA DI SINI
+            // ==========================================
+            // Jika pembimbing diubah jadi "Nonaktif", maka lepaskan siswa bimbingannya
+            if ($request->status === 'Nonaktif') {
+                SiswaMagang::where('id_pembimbing', $id)->update([
+                    'id_pembimbing' => null
+                ]);
+            }
 
             DB::commit();
             return redirect()->route('admin.data.pembimbing.index')->with('success', 'Data Pembimbing berhasil diperbarui!');
@@ -142,12 +139,10 @@ class PembimbingController extends Controller
             return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
+
     public function show($id)
     {
-        // Mengambil data pembimbing
         $pembimbing = Pembimbing::with('user')->where('id_pembimbing', $id)->firstOrFail();
-
-        // Pastikan pakai compact('pembimbing') agar namanya cocok dengan yang ada di view
         return view('admin.data.pembimbing.show', compact('pembimbing'));
     }
 }

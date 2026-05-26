@@ -109,7 +109,7 @@ class TendikController extends Controller
             'nama_lengkap'        => 'required|string|max:50',
             'email'               => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
             'password'            => 'nullable|min:6',
-            'status'              => 'required|in:Aktif,Tidak Aktif',
+            'status'              => 'required|in:Aktif,Nonaktif',
             'id_unit_kerja'       => 'required|integer|exists:unit_kerja,id_unit_kerja',
             'id_pangkat_golongan' => 'required|integer|exists:pangkat_golongan,id_pangkat_golongan',
             'nip'                 => 'nullable|string|max:50',

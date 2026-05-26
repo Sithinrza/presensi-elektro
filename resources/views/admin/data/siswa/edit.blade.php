@@ -91,16 +91,20 @@
                         <input type="text" name="no_hp" value="{{ old('no_hp', $siswa->no_hp ?? '') }}" required placeholder="08..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
-                    <!-- Pembimbing -->
-                    <div class="space-y-2">
+                   <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pembimbing Lapangan</label>
                         <select name="id_pembimbing" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                            <option value="" disabled>Pilih Pembimbing...</option>
+
+                            <option value="" {{ empty(old('id_pembimbing', $siswa->id_pembimbing)) ? 'selected' : '' }}>
+                                Pilih Pembimbing...
+                            </option>
+
                             @foreach($pembimbing ?? [] as $p)
-                                <option value="{{ $p->id_pembimbing }}" {{ (old('id_pembimbing', $siswa->id_pembimbing ?? '') == $p->id_pembimbing) ? 'selected' : '' }}>
+                                <option value="{{ $p->id_pembimbing }}" {{ (old('id_pembimbing', $siswa->id_pembimbing) == $p->id_pembimbing) ? 'selected' : '' }}>
                                     {{ $p->nama_lengkap }}
                                 </option>
                             @endforeach
+
                         </select>
                     </div>
 

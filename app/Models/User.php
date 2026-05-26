@@ -44,4 +44,26 @@ class User extends Authenticatable
     {
         return $this->hasOne(SiswaMagang::class, 'id_user');
     }
+
+    // Fungsi ini membuat semacam "kolom virtual" bernama 'name'
+    public function getNameAttribute()
+    {
+        // Jika akun ini adalah Admin
+        if ($this->hasRole('admin')) {
+            return 'Admin';
+        }
+
+        // Jika user ini adalah Tendik
+        if ($this->tendik) {
+            return $this->tendik->nama_lengkap;
+        }
+
+        // Jika user ini adalah Anak Magang
+        if ($this->siswaMagang) {
+            return $this->siswaMagang->nama_lengkap;
+        }
+
+        // Fallback terakhir jika ada user tanpa role
+        return 'Pengguna';
+    }
 }
