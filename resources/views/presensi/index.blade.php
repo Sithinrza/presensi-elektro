@@ -45,10 +45,16 @@
                     <span class="text-slate-500 text-sm">Jam Pulang</span>
                     <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_pulang }} WITA</span>
                 </div>
+                <div class="flex justify-between items-center pt-3 border-t mb-2">
+                    <span class="text-slate-500 text-sm font-bold">Status Masuk</span>
+                    <span class="font-black {{ $presensiHariIni->statusCi->name == 'Tepat Waktu' ? 'text-emerald-600' : ($presensiHariIni->statusCi->name == 'Terlambat' ? 'text-amber-500' : 'text-rose-600') }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
+                        {{ $presensiHariIni->statusCi->name ?? 'Tidak Diketahui' }}
+                    </span>
+                </div>
                 <div class="flex justify-between items-center pt-3 border-t">
-                    <span class="text-slate-500 text-sm font-bold">Status Kehadiran</span>
-                    <span class="font-black {{ $presensiHariIni->statusPresensi->name == 'Hadir' ? 'text-emerald-600' : ($presensiHariIni->statusPresensi->name == 'Terlambat' ? 'text-amber-500' : 'text-rose-600') }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
-                        {{ $presensiHariIni->statusPresensi->name ?? 'Tidak Diketahui' }}
+                    <span class="text-slate-500 text-sm font-bold">Status Pulang</span>
+                    <span class="font-black {{ $presensiHariIni->statusCo->name == 'Tepat Waktu' ? 'text-emerald-600' : 'text-rose-600' }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
+                        {{ $presensiHariIni->statusCo->name ?? 'Belum CO' }}
                     </span>
                 </div>
             </div>
@@ -77,8 +83,8 @@
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="text-slate-500 text-sm">Status Masuk:</span>
-                    <span class="font-black {{ $presensiHariIni->statusPresensi->name == 'Hadir' ? 'text-emerald-600' : ($presensiHariIni->statusPresensi->name == 'Terlambat' ? 'text-amber-500' : 'text-rose-600') }} bg-white px-3 py-1 rounded border shadow-sm uppercase tracking-wider text-xs">
-                        {{ $presensiHariIni->statusPresensi->name ?? 'Tidak Diketahui' }}
+                    <span class="font-black {{ $presensiHariIni->statusCi->name == 'Tepat Waktu' ? 'text-emerald-600' : ($presensiHariIni->statusCi->name == 'Terlambat' ? 'text-amber-500' : 'text-rose-600') }} bg-white px-3 py-1 rounded border shadow-sm uppercase tracking-wider text-xs">
+                        {{ $presensiHariIni->statusCi->name ?? 'Tidak Diketahui' }}
                     </span>
                 </div>
             </div>
@@ -117,7 +123,7 @@
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
     const KORDINAT_TARGET = [-3.2760497, 114.5935089];
-    const RADIUS_AMAN = 1000;
+    const RADIUS_AMAN = 2000;
 
     let userLat = 0; let userLng = 0;
     let faceLandmarker, objectDetector, drawingUtils;

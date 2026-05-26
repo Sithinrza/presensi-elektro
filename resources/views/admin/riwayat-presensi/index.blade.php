@@ -140,6 +140,7 @@
                         <p id="detail-instansi" class="text-maroon-200 text-xs font-bold uppercase mt-2 tracking-widest leading-none">Instansi / Unit</p>
                     </div>
                 </div>
+<<<<<<< HEAD
 
                 <div class="flex items-center gap-6 md:gap-10 bg-black/20 p-5 rounded-2xl border border-white/10 backdrop-blur-sm">
                     <div class="text-center">
@@ -156,6 +157,17 @@
                         <p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Alfa</p>
                         <p id="stat-alfa" class="text-3xl font-black text-rose-400 mt-1 leading-none">0</p>
                     </div>
+=======
+                <div>
+                    <p id="detail-role" class="text-[10px] font-black text-gold uppercase tracking-[0.3em] mb-1 leading-none">Role</p>
+                    <h2 id="detail-name" class="text-4xl font-black italic tracking-tight">Nama</h2>
+                    <p id="detail-instansi" class="text-maroon-100/60 text-xs font-bold uppercase mt-3 tracking-widest italic leading-none">Instansi</p>
+                </div>
+                <div class="ml-auto flex gap-10 pr-4 text-center">
+                    <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Tepat Waktu</p><p id="stat-hadir" class="text-3xl font-black text-white mt-1">0</p></div>
+                    <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Terlambat</p><p id="stat-telat" class="text-3xl font-black text-amber-400 mt-1">0</p></div>
+                    <div><p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest">Alfa</p><p id="stat-alfa" class="text-3xl font-black text-rose-400 mt-1">0</p></div>
+>>>>>>> origin/presensi
                 </div>
             </div>
         </div>
@@ -185,7 +197,6 @@
 <script>
     let currentCategory = 'siswa';
 
-    // 1. Logika Tab Kategori (Sembunyikan/Tampilkan baris TR)
     function switchCategory(type) {
         currentCategory = type;
         const btnSiswa = document.getElementById('btn-siswa');
@@ -219,13 +230,11 @@
         }
     }
 
-    // 2. Fungsi Pencarian Live
     function filterTable() {
         const input = document.getElementById('searchInput').value.toLowerCase();
         const rows = document.querySelectorAll('.row-item');
 
         rows.forEach(row => {
-            // Hanya cari di kategori yang sedang aktif
             if(row.classList.contains('type-' + currentCategory)) {
                 const name = row.querySelector('.search-name').textContent.toLowerCase();
                 const id = row.querySelector('.search-id').textContent.toLowerCase();
@@ -239,12 +248,14 @@
         });
     }
 
-    // 3. Fetch Data Detail via AJAX
     function fetchDetail(id_user, name, role, instansi) {
+<<<<<<< HEAD
         // Tampilkan Loading dengan desain baru
         document.getElementById('detail-table-body').innerHTML = '<tr><td colspan="4" class="text-center py-12"><div class="inline-block animate-spin w-8 h-8 border-4 border-maroon-200 border-t-maroon-900 rounded-full mb-3"></div><p class="font-bold text-slate-400 text-xs uppercase tracking-widest">Memuat Riwayat...</p></td></tr>';
+=======
+        document.getElementById('detail-table-body').innerHTML = '<tr><td colspan="4" class="text-center py-10 font-bold text-slate-400">Memuat data...</td></tr>';
+>>>>>>> origin/presensi
 
-        // Update Header UI
         document.getElementById('master-view').classList.add('hidden');
         document.getElementById('detail-view').classList.remove('hidden');
         document.getElementById('detail-name').textContent = name;
@@ -253,14 +264,13 @@
         document.getElementById('detail-initial').textContent = name.charAt(0);
         window.scrollTo({top: 0, behavior: 'smooth'});
 
-        // Request ke server
         fetch(`/admin/riwayat-presensi/detail/${id_user}`)
             .then(response => response.json())
             .then(data => {
-                // Update Statistik Bulanan
                 document.getElementById('stat-hadir').textContent = data.statistik.hadir;
                 document.getElementById('stat-telat').textContent = data.statistik.telat;
                 document.getElementById('stat-alfa').textContent = data.statistik.alfa;
+
 
                 // Render Tabel dengan desain Tailwind yang diperbarui
                 let html = '';

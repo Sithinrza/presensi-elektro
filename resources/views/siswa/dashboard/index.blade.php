@@ -76,7 +76,7 @@
                         </p>
                     </div>
                     <!-- Arahkan ke URL form tambah logbook -->
-                    <a href="{{ url('/siswa/logbook') }}" class="bg-maroon-950 text-white px-8 py-4 rounded-2xl font-bold hover:bg-maroon-800 transition-all shadow-lg active:scale-95 whitespace-nowrap w-full md:w-auto inline-block text-center">
+                    <a href="{{ route('siswa.log') }}" class="bg-maroon-950 text-white px-8 py-4 rounded-2xl font-bold hover:bg-maroon-800 transition-all shadow-lg active:scale-95 whitespace-nowrap w-full md:w-auto inline-block text-center">
                         Isi Log Hari Ini
                     </a>
                 </div>
