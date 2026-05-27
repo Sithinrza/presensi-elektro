@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Pembimbing;
 use App\Http\Controllers\Controller;
 use App\Models\SiswaMagang;
 use App\Models\Pembimbing;
-use App\Models\Presensi; // Import model Presensi
+use App\Models\Presensi;
 use Illuminate\Support\Facades\Auth;
 
 class PresensiSiswaController extends Controller
@@ -13,9 +13,9 @@ class PresensiSiswaController extends Controller
     public function index()
     {
         $pembimbing = Pembimbing::where('id_user', Auth::id())->first();
-        // Ambil siswa bimbingan beserta relasi presensinya
+
         $anakBimbingan = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing)
-                                    ->with(['presensi'])
+                                    ->with(['presensi.statusCi', 'presensi.statusCo'])
                                     ->get();
 
         return view('pembimbing.presensi-siswa.index', compact('anakBimbingan'));
@@ -25,15 +25,18 @@ class PresensiSiswaController extends Controller
     {
         $siswa = SiswaMagang::where('id_siswa', $id)->firstOrFail();
 
-        $riwayatPresensi = Presensi::where('id_user', $siswa->id_user)
+        $riwayatPresensi = Presensi::with(['statusCi', 'statusCo'])
+                                   ->where('id_user', $siswa->id_user)
                                    ->orderBy('tanggal', 'desc')
                                    ->get();
 
-        // Hitung statistik untuk header
+        // Statistik sekarang mencakup CI dan CO
         $statistik = [
-            'Hadir'  => $riwayatPresensi->where('status', 'Hadir')->count(),
-            'Telat'  => $riwayatPresensi->where('status', 'Terlambat')->count(),
-            'Alfa'   => $riwayatPresensi->where('status', 'Alfa')->count(),
+            'Tepat CI' => $riwayatPresensi->where('statusCi.name', 'Tepat Waktu')->count(),
+            'Telat CI' => $riwayatPresensi->where('statusCi.name', 'Terlambat')->count(),
+            'Alfa'     => $riwayatPresensi->where('statusCi.name', 'Alfa')->count(),
+            'Tepat CO' => $riwayatPresensi->where('statusCo.name', 'Tepat Waktu')->count(),
+            'Lupa CO'  => $riwayatPresensi->where('statusCo.name', 'Lupa Check-Out')->count(),
         ];
 
         return view('pembimbing.presensi-siswa.show', compact('siswa', 'riwayatPresensi', 'statistik'));

@@ -51,4 +51,5 @@ class Presensi extends Model
     {
         return $this->hasOne(KlaimPresensi::class, 'id_presensi', 'id_presensi');
     }
+
 }

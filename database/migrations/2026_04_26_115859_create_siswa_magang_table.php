@@ -12,27 +12,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('siswa_magang', function (Blueprint $table) {
-            $table->id('id_siswa'); // atau id() biasa, sesuaikan dengan aslinya
+            $table->id('id_siswa');
 
-            // Relasi User (Wajib)
+            // Relasi User (Wajib) - Jika user dihapus, data siswa magang ikut terhapus
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
 
-            // Data Cangkang (Wajib)
+            // Data Utama
             $table->string('nama_lengkap', 100);
             $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
-
-            // ==========================================
-            // DATA OPSIONAL (Diisi Siswa via Popup / Admin)
-            // ==========================================
 
             // Data Akademik
             $table->string('nis', 50)->nullable();
             $table->string('sekolah_asal', 100)->nullable();
             $table->string('jurusan', 100)->nullable();
 
-            // Relasi Master
-            $table->unsignedBigInteger('id_agama')->nullable(); // Biarkan tanpa foreign() dulu agar aman saat migrate:fresh
+            // Relasi Master (Sudah Menggunakan FK Resmi)
+            $table->unsignedBigInteger('id_agama')->nullable();
+
             $table->unsignedBigInteger('id_pembimbing')->nullable();
+            $table->foreign('id_pembimbing')
+                  ->references('id_pembimbing')->on('pembimbing')
+                  ->onDelete('set null');
 
             // Biodata Lengkap
             $table->enum('jk', ['L', 'P'])->nullable();
@@ -40,8 +40,9 @@ return new class extends Migration
             $table->date('tanggal_lahir')->nullable();
             $table->string('no_hp', 20)->nullable();
             $table->text('alamat')->nullable();
+            $table->string('foto_profil')->nullable();
 
-            // Data Penugasan Magang (Dari Admin)
+            // Data Penugasan Magang
             $table->date('tanggal_mulai')->nullable();
             $table->date('tanggal_selesai')->nullable();
 

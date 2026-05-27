@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Role;
 use App\Models\SiswaMagang;
 use App\Models\Agama;
-use App\Models\Pembimbing; 
+use App\Models\Pembimbing;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
@@ -29,7 +29,7 @@ class SiswaMagangController extends Controller
     public function create()
     {
         $agama = Agama::all();
-        $pembimbing = Pembimbing::all();
+        $pembimbing = Pembimbing::where('status', 'Aktif')->get();
 
         return view('admin.data.siswa.create', compact('agama', 'pembimbing'));
     }
@@ -83,7 +83,7 @@ class SiswaMagangController extends Controller
         $siswa = SiswaMagang::findOrFail($id);
 
         $agama = Agama::all();
-        $pembimbing = Pembimbing::all();
+        $pembimbing = Pembimbing::where('status', 'Aktif')->get();
 
         return view('admin.data.siswa.edit', compact('siswa', 'agama', 'pembimbing'));
     }
@@ -97,7 +97,7 @@ class SiswaMagangController extends Controller
             'nama_lengkap'    => 'required|string|max:100',
             'email'           => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
             'password'        => 'nullable|min:6', // Password opsional saat edit
-            'status'          => 'required|in:Aktif,Tidak Aktif',
+            'status'          => 'required|in:Aktif,Nonaktif',
             'id_pembimbing'   => 'nullable|integer',
             'tanggal_mulai'   => 'nullable|date',
             'tanggal_selesai' => 'nullable|date',

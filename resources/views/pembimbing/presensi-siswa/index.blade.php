@@ -18,8 +18,8 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             @forelse($anakBimbingan as $s)
-            <a href="{{ route('pembimbing.presensi-siswa.show', $s->id_siswa) }}" class="bg-white rounded-[2.5rem] p-8 border border-maroon-50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group">
-                <div class="flex items-center gap-5 mb-8">
+            <a href="{{ route('pembimbing.presensi-siswa.show', $s->id_siswa) }}" class="bg-white rounded-[2.5rem] pt-8 border border-maroon-50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all cursor-pointer group flex flex-col overflow-hidden">
+                <div class="flex items-center gap-5 mb-6 px-8">
                     <div class="relative">
                         <div class="w-20 h-20 rounded-3xl bg-slate-100 flex items-center justify-center font-black text-2xl text-maroon-900 border-2 border-white group-hover:border-maroon-200 shadow-inner overflow-hidden">
                             {{ substr($s->nama_lengkap, 0, 1) }}
@@ -31,22 +31,35 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-4 py-6 border-t border-slate-50 text-center">
-                    <div>
-                        <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1">Hadir</p>
-                        <p class="text-2xl font-black text-emerald-600 leading-none">{{ $s->presensi->where('status', 'Hadir')->count() }}</p>
+                <div class="mt-auto border-t border-slate-100 bg-slate-50/50 p-5">
+                    <div class="flex justify-between items-center text-center mb-4">
+                        <div class="flex-1">
+                            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Tepat CI</p>
+                            <p class="text-lg font-black text-emerald-600 leading-none">{{ $s->presensi->where('statusCi.name', 'Tepat Waktu')->count() }}</p>
+                        </div>
+                        <div class="flex-1 border-x border-slate-200">
+                            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Telat CI</p>
+                            <p class="text-lg font-black text-amber-500 leading-none">{{ $s->presensi->where('statusCi.name', 'Terlambat')->count() }}</p>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Alfa</p>
+                            <p class="text-lg font-black text-rose-500 leading-none">{{ $s->presensi->where('statusCi.name', 'Alfa')->count() }}</p>
+                        </div>
                     </div>
-                    <div class="text-center border-x border-slate-50">
-                        <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1">Telat</p>
-                        <p class="text-2xl font-black text-amber-500 leading-none">{{ $s->presensi->where('status', 'Terlambat')->count() }}</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-[8px] font-black text-slate-300 uppercase tracking-widest mb-1">Alfa</p>
-                        <p class="text-2xl font-black text-rose-500 leading-none">{{ $s->presensi->where('status', 'Alfa')->count() }}</p>
+
+                    <div class="flex justify-center gap-6 text-center pt-3 border-t border-slate-200/60">
+                        <div class="flex-1">
+                            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Tepat CO</p>
+                            <p class="text-lg font-black text-emerald-600 leading-none">{{ $s->presensi->where('statusCo.name', 'Tepat Waktu')->count() }}</p>
+                        </div>
+                        <div class="flex-1 border-l border-slate-200">
+                            <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Lupa CO</p>
+                            <p class="text-lg font-black text-rose-500 leading-none">{{ $s->presensi->where('statusCo.name', 'Lupa Check-Out')->count() }}</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mt-4 flex items-center justify-center gap-2 text-[10px] font-black text-maroon-900 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                <div class="bg-maroon-900 py-3 flex items-center justify-center gap-2 text-[10px] font-black text-white uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                     Lihat Detail Riwayat
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                 </div>
