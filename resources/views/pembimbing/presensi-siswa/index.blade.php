@@ -3,10 +3,10 @@
 @section('content')
 <!-- KONTEN UTAMA SISWA BIMBINGAN -->
 <main class="max-w-7xl mx-auto p-4 sm:p-5 lg:p-10 animate-in">
-    
+
     <!-- VIEW 1: MASTER LIST (SEMUA SISWA) -->
     <section id="view-master" class="space-y-6 sm:space-y-10">
-        
+
         <!-- HEADER & PENCARIAN (Desain Baru Minimalis & Responsif) -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white/50 backdrop-blur-md p-4 sm:p-6 rounded-3xl sm:rounded-[2.5rem] border border-maroon-50/50 shadow-sm">
             <div class="flex items-center gap-3 sm:gap-4 pl-1 sm:pl-2">
@@ -18,7 +18,7 @@
                     <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 line-clamp-1">Pantau Rekapitulasi Kehadiran</p>
                 </div>
             </div>
-            
+
             <form action="{{ route('pembimbing.presensi-siswa.index') }}" method="GET" class="relative group w-full md:w-auto">
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama siswa..." class="w-full md:w-80 bg-white border-2 border-slate-100 rounded-2xl px-10 sm:px-12 py-3 sm:py-3.5 text-xs font-bold text-maroon-950 shadow-sm hover:border-maroon-200 focus:border-maroon-500 focus:ring-4 focus:ring-maroon-500/10 outline-none transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-maroon-500 transition-colors duration-300"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -32,15 +32,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 xl:gap-8">
 
             @forelse($anakBimbingan ?? [] as $s)
-            <a href="{{ route('pembimbing.presensi-siswa.show', $s->id_siswa) }}" class="relative bg-white rounded-3xl sm:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-maroon-100 transition-all duration-300 group flex flex-col overflow-hidden">
-                
+            <a href="{{ route('pembimbing.presensi-siswa.show', $s->id_user) }}" class="relative bg-white rounded-3xl sm:rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-maroon-100 transition-all duration-300 group flex flex-col overflow-hidden">
+
                 <!-- Card Banner Top (Diperkecil di mobile) -->
                 <div class="h-16 sm:h-20 bg-maroon-950 relative overflow-hidden shrink-0">
                     <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#d8b98b 1.5px, transparent 1.5px); background-size: 16px 16px;"></div>
                 </div>
 
                 <div class="px-5 pb-5 sm:px-6 sm:pb-6 relative flex flex-col flex-1">
-                    
+
                     <!-- Avatar & Quick Action Button -->
                     <div class="flex justify-between items-end -mt-8 sm:-mt-10 mb-4 sm:mb-5">
                         <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl sm:rounded-[1.5rem] p-1 shadow-sm">
@@ -93,7 +93,7 @@
                 </div>
             </a>
             @empty
-            
+
             <!-- EMPTY STATE -->
             <div class="col-span-full bg-white/50 backdrop-blur-sm p-8 sm:p-12 rounded-3xl sm:rounded-[3rem] border-2 border-dashed border-maroon-100 flex flex-col items-center justify-center text-center">
                 <div class="w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-full shadow-sm flex items-center justify-center text-maroon-200 mb-4 sm:mb-6">

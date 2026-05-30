@@ -1,6 +1,8 @@
 @extends($layout)
 
 @section('content')
+
+{{-- RIWAYAT PRESENSI TENDIK DAN SISWA --}}
 <main class="max-w-7xl mx-auto p-5 lg:p-10 space-y-8">
     <section class="bg-white rounded-[2.5rem] p-6 lg:p-8 border border-maroon-100 shadow-sm">
         <form action="{{ route('presensi.riwayat-presensi') }}" method="GET" class="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -63,9 +65,9 @@
                     @forelse($riwayat as $r)
                     <tr class="hover:bg-maroon-50/40 transition-colors">
                         <td class="px-8 py-5">
-                            <p class="text-sm font-extrabold text-slate-800">
+                            <a href="{{ route('presensi.detail', $r->id_presensi) }}" class="text-sm font-extrabold text-maroon-900 hover:text-maroon-600 underline decoration-maroon-200 underline-offset-4 transition-colors">
                                 {{ Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y') }}
-                            </p>
+                            </a>
                         </td>
                         <td class="px-8 py-5 text-center">
                             <span class="text-sm font-bold text-slate-600">{{ $r->jam_masuk ?? '--:--' }}</span>

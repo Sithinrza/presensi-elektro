@@ -33,7 +33,7 @@
         <div class="relative z-10 text-center md:text-left flex-1 w-full">
             <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.25em] mb-2 leading-none">Pembimbing Akademik / Lapangan</p>
             <h2 class="text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight mb-4">{{ $pembimbing->nama_lengkap }}</h2>
-            
+
             <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
                 @if($pembimbing->status == 'Aktif')
                     <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest backdrop-blur-sm">
@@ -54,7 +54,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
+
         <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-8 hover:shadow-md transition-shadow">
             <div class="flex items-center gap-3 mb-6">
                 <div class="w-10 h-10 bg-maroon-50 text-maroon-700 rounded-xl flex items-center justify-center shrink-0">
@@ -62,7 +62,7 @@
                 </div>
                 <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest">Posisi & Struktural</h3>
             </div>
-            
+
             <div class="space-y-6">
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">NIP / Nomor Induk</p>
@@ -80,13 +80,17 @@
                 <div class="w-10 h-10 bg-slate-50 text-slate-500 rounded-xl flex items-center justify-center shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </div>
-                <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest">Kontak Akun</h3>
+                <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest">Kontak & Personal</h3>
             </div>
-            
+
             <div class="space-y-6">
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Email Terdaftar</p>
                     <p class="text-sm font-bold text-slate-800">{{ $pembimbing->user->email ?? 'Belum ada email yang ditautkan.' }}</p>
+                </div>
+                <div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Agama</p>
+                    <p class="text-sm font-bold text-slate-800">{{ $pembimbing->agama->name ?? 'Belum Diatur' }}</p>
                 </div>
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tanggal Bergabung</p>
@@ -102,9 +106,9 @@
                 </div>
                 <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest">Aktivitas Bimbingan</h3>
             </div>
-            
+
             <div class="flex flex-col items-center justify-center h-full pb-8">
-                <p class="text-5xl font-black text-amber-500 tracking-tighter leading-none mb-2">0</p>
+                <p class="text-5xl font-black text-amber-500 tracking-tighter leading-none mb-2">{{ $pembimbing->siswa_magang_count ?? 0 }}</p>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Siswa Magang Dibimbing<br>Saat Ini</p>
             </div>
         </div>

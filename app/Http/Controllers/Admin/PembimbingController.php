@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Pembimbing;
-use App\Models\SiswaMagang; // Jangan lupa panggil model SiswaMagang
+use App\Models\Agama;
+use App\Models\SiswaMagang;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
@@ -15,16 +16,23 @@ class PembimbingController extends Controller
 {
     public function index()
     {
-        $pembimbing = Pembimbing::with('user')->get();
+        // 1. Tambahkan withCount('siswaMagang') untuk menghitung jumlah siswa per pembimbing
+        $pembimbing = Pembimbing::with(['user', 'agama'])
+            ->withCount('siswaMagang')
+            ->get();
+
         $totalPembimbing = $pembimbing->count();
-        $totalBimbingan = 0;
+
+        // 2. Hitung total siswa yang sedang dibimbing (tidak null id_pembimbing-nya)
+        $totalBimbingan = SiswaMagang::whereNotNull('id_pembimbing')->count();
 
         return view('admin.data.pembimbing.index', compact('pembimbing', 'totalPembimbing', 'totalBimbingan'));
     }
 
     public function create()
     {
-        return view('admin.data.pembimbing.create');
+        $agama = Agama::all();
+        return view('admin.data.pembimbing.create', compact('agama'));
     }
 
     public function store(Request $request)
@@ -36,6 +44,7 @@ class PembimbingController extends Controller
             'no_induk'     => 'nullable|string|max:50',
             'jabatan'      => 'nullable|string|max:100',
             'no_telp'      => 'nullable|string|max:20',
+            'id_agama'     => 'nullable|integer',
         ]);
 
         DB::beginTransaction();
@@ -55,6 +64,7 @@ class PembimbingController extends Controller
                 'no_induk'     => $request->no_induk,
                 'jabatan'      => $request->jabatan,
                 'no_telp'      => $request->no_telp,
+                'id_agama'     => $request->id_agama,
             ]);
 
             DB::commit();
@@ -69,7 +79,8 @@ class PembimbingController extends Controller
     public function edit($id)
     {
         $pembimbing = Pembimbing::with('user')->findOrFail($id);
-        return view('admin.data.pembimbing.edit', compact('pembimbing'));
+        $agama = Agama::all();
+        return view('admin.data.pembimbing.edit', compact('pembimbing', 'agama'));
     }
 
     public function update(Request $request, $id)
@@ -85,6 +96,7 @@ class PembimbingController extends Controller
             'no_induk'     => 'nullable|string|max:50',
             'jabatan'      => 'nullable|string|max:100',
             'no_telp'      => 'nullable|string|max:20',
+            'id_agama'     => 'nullable|integer',
         ]);
 
         DB::beginTransaction();
@@ -101,12 +113,10 @@ class PembimbingController extends Controller
                 'no_induk'     => $request->no_induk,
                 'jabatan'      => $request->jabatan,
                 'no_telp'      => $request->no_telp,
+                'id_agama'     => $request->id_agama,
             ]);
 
-            // ==========================================
-            // LOGIKA EFEK DOMINO ADA DI SINI
-            // ==========================================
-            // Jika pembimbing diubah jadi "Nonaktif", maka lepaskan siswa bimbingannya
+            // Jika pembimbing diubah jadi "Nonaktif", lepaskan siswa bimbingannya
             if ($request->status === 'Nonaktif') {
                 SiswaMagang::where('id_pembimbing', $id)->update([
                     'id_pembimbing' => null
@@ -142,7 +152,12 @@ class PembimbingController extends Controller
 
     public function show($id)
     {
-        $pembimbing = Pembimbing::with('user')->where('id_pembimbing', $id)->firstOrFail();
+        // 3. Tambahkan withCount('siswaMagang') juga di sini
+        $pembimbing = Pembimbing::with(['user', 'agama'])
+            ->withCount('siswaMagang')
+            ->where('id_pembimbing', $id)
+            ->firstOrFail();
+
         return view('admin.data.pembimbing.show', compact('pembimbing'));
     }
 }

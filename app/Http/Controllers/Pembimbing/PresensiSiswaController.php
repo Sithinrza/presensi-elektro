@@ -21,12 +21,12 @@ class PresensiSiswaController extends Controller
         return view('pembimbing.presensi-siswa.index', compact('anakBimbingan'));
     }
 
-    public function show($id)
+    public function show($id_user)
     {
-        $siswa = SiswaMagang::where('id_siswa', $id)->firstOrFail();
+        $siswa = SiswaMagang::where('id_user', $id_user)->firstOrFail();
 
         $riwayatPresensi = Presensi::with(['statusCi', 'statusCo'])
-                                   ->where('id_user', $siswa->id_user)
+                                   ->where('id_user', $id_user)
                                    ->orderBy('tanggal', 'desc')
                                    ->get();
 

@@ -11,6 +11,7 @@ use App\Models\Agama;
 use App\Models\Pembimbing;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class SiswaMagangController extends Controller
 {
@@ -40,11 +41,21 @@ class SiswaMagangController extends Controller
             'nama_lengkap'    => 'required|string|max:100',
             'email'           => 'required|email|unique:users,email',
             'password'        => 'required|min:6',
-
             'no_hp'           => 'nullable|string|max:20',
             'id_pembimbing'   => 'nullable|integer',
             'tanggal_mulai'   => 'nullable|date',
             'tanggal_selesai' => 'nullable|date',
+
+            // Data Opsional Tambahan
+            'nis'             => 'nullable|string|max:50',
+            'id_agama'        => 'nullable|integer',
+            'sekolah_asal'    => 'nullable|string|max:100',
+            'jurusan'         => 'nullable|string|max:100',
+            'jk'              => 'nullable|in:L,P',
+            'tempat_lahir'    => 'nullable|string|max:50',
+            'tanggal_lahir'   => 'nullable|date',
+            'alamat'          => 'nullable|string',
+            'foto_profil'     => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Maksimal 2MB
         ]);
 
         DB::beginTransaction();
@@ -57,15 +68,30 @@ class SiswaMagangController extends Controller
             $roleSiswa = Role::where('name', 'siswa')->first();
             $user->roles()->attach($roleSiswa->getKey());
 
+            // Handle Upload Foto Profil
+            $fotoPath = null;
+            if ($request->hasFile('foto_profil')) {
+                $fotoPath = $request->file('foto_profil')->store('profil/siswa', 'public');
+            }
+
             SiswaMagang::create([
                 'id_user'         => $user->id_user,
                 'nama_lengkap'    => $request->nama_lengkap,
                 'status'          => 'Aktif',
-
                 'no_hp'           => $request->no_hp,
                 'id_pembimbing'   => $request->id_pembimbing,
                 'tanggal_mulai'   => $request->tanggal_mulai,
                 'tanggal_selesai' => $request->tanggal_selesai,
+
+                'nis'             => $request->nis,
+                'id_agama'        => $request->id_agama,
+                'sekolah_asal'    => $request->sekolah_asal,
+                'jurusan'         => $request->jurusan,
+                'jk'              => $request->jk,
+                'tempat_lahir'    => $request->tempat_lahir,
+                'tanggal_lahir'   => $request->tanggal_lahir,
+                'alamat'          => $request->alamat,
+                'foto_profil'     => $fotoPath,
             ]);
 
             DB::commit();
@@ -96,23 +122,42 @@ class SiswaMagangController extends Controller
         $request->validate([
             'nama_lengkap'    => 'required|string|max:100',
             'email'           => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
-            'password'        => 'nullable|min:6', // Password opsional saat edit
+            'password'        => 'nullable|min:6',
             'status'          => 'required|in:Aktif,Nonaktif',
             'id_pembimbing'   => 'nullable|integer',
             'tanggal_mulai'   => 'nullable|date',
             'tanggal_selesai' => 'nullable|date',
+            'no_hp'           => 'nullable|string|max:20',
+
+            // Data Opsional Tambahan
+            'nis'             => 'nullable|string|max:50',
+            'id_agama'        => 'nullable|integer',
+            'sekolah_asal'    => 'nullable|string|max:100',
+            'jurusan'         => 'nullable|string|max:100',
+            'jk'              => 'nullable|in:L,P',
+            'tempat_lahir'    => 'nullable|string|max:50',
+            'tanggal_lahir'   => 'nullable|date',
+            'alamat'          => 'nullable|string',
+            'foto_profil'     => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         DB::beginTransaction();
         try {
-            $userData = [
-                'email' => $request->email,
-            ];
-            // Update password hanya jika diisi
+            $userData = ['email' => $request->email];
             if ($request->filled('password')) {
                 $userData['password'] = Hash::make($request->password);
             }
             $user->update($userData);
+
+            // Handle Upload Foto Profil Baru
+            $fotoPath = $siswa->foto_profil;
+            if ($request->hasFile('foto_profil')) {
+                // Hapus foto lama jika ada
+                if ($fotoPath && Storage::disk('public')->exists($fotoPath)) {
+                    Storage::disk('public')->delete($fotoPath);
+                }
+                $fotoPath = $request->file('foto_profil')->store('profil/siswa', 'public');
+            }
 
             $siswa->update([
                 'nama_lengkap'    => $request->nama_lengkap,
@@ -121,6 +166,16 @@ class SiswaMagangController extends Controller
                 'id_pembimbing'   => $request->id_pembimbing,
                 'tanggal_mulai'   => $request->tanggal_mulai,
                 'tanggal_selesai' => $request->tanggal_selesai,
+
+                'nis'             => $request->nis,
+                'id_agama'        => $request->id_agama,
+                'sekolah_asal'    => $request->sekolah_asal,
+                'jurusan'         => $request->jurusan,
+                'jk'              => $request->jk,
+                'tempat_lahir'    => $request->tempat_lahir,
+                'tanggal_lahir'   => $request->tanggal_lahir,
+                'alamat'          => $request->alamat,
+                'foto_profil'     => $fotoPath,
             ]);
 
             DB::commit();

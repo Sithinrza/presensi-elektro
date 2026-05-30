@@ -26,7 +26,8 @@ class SiswaMagang extends Model
         'alamat',
         'tanggal_mulai',
         'tanggal_selesai',
-        'status'
+        'status',
+        'foto_profil'
     ];
 
     public function user()

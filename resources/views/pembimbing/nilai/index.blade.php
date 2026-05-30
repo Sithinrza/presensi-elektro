@@ -19,7 +19,7 @@
 </style>
 
 <main class="no-print max-w-6xl mx-auto p-5 lg:p-10 space-y-8 animate-in">
-    
+
     <div class="flex items-center justify-between mb-4 lg:hidden">
         <h1 class="text-xl font-extrabold text-maroon-950 tracking-tight leading-none uppercase">Penilaian & Sertifikat</h1>
         <div class="px-2 py-1 bg-gold text-maroon-950 rounded-full shadow-lg shadow-gold/20">

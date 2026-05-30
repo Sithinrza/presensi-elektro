@@ -68,20 +68,40 @@ class PresensiController extends Controller
             'longitude'    => 'required|numeric',
         ]);
 
+        $waktuSekarang = Carbon::now('Asia/Makassar');
+
+        // PROTEKSI SERVER: Tolak presensi jika hari Minggu
+        if ($waktuSekarang->isSunday()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Hari Libur! Sistem presensi dinonaktifkan pada hari Minggu.'
+            ]);
+        }
+
         $user = Auth::user();
         $role = strtolower($user->roles->first()->name);
 
-        $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
         $jamSekarang = $waktuSekarang->format('H:i:s');
 
+        // Memecah dan mendecode gambar base64 dari canvas
         $img = $request->image_base64;
         $image_parts = explode(";base64,", $img);
         $image_base64 = base64_decode($image_parts[1]);
 
         $fileName = $user->id_user . '_' . $tanggalHariIni . '_' . time() . '.jpeg';
-        $folderPath = "public/uploads/presensi/";
-        Storage::put($folderPath . $fileName, $image_base64);
+
+        // --- JALAN PINTAS ANTI-PUSING (TANPA SYMLINK) ---
+        $folderPath = public_path('uploads/presensi');
+
+        // Buat foldernya otomatis jika belum ada
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0755, true);
+        }
+
+        // Simpan fotonya langsung ke dalam folder public
+        file_put_contents($folderPath . '/' . $fileName, $image_base64);
+        // ------------------------------------------------
 
         $presensiHariIni = Presensi::where('id_user', $user->id_user)
                                    ->where('tanggal', $tanggalHariIni)
@@ -154,6 +174,41 @@ class PresensiController extends Controller
             'message' => $pesan,
             'redirect' => $role == 'tendik' ? route('tendik.dashboard') : route('siswa.dashboard')
         ]);
+    }
+
+    public function show($id)
+    {
+        $user = Auth::user();
+        $role = strtolower($user->roles->first()->name);
+
+        // Ambil data presensi
+        $query = Presensi::with(['statusCi', 'statusCo'])->where('id_presensi', $id);
+
+        // GEMBOK KEAMANAN: Jika yang login BUKAN admin,
+        // pastikan dia hanya bisa melihat absen miliknya sendiri.
+        if ($role !== 'admin' && $role !== 'pembimbing') {
+            $query->where('id_user', $user->id_user);
+        }
+
+        $presensi = $query->firstOrFail();
+
+        // Penyesuaian layout dan tombol kembali
+        if ($role == 'admin') {
+            $layout = 'layouts.admin';
+            $backUrl = route('admin.riwayat.detail', $presensi->id_user);
+        } elseif ($role == 'pembimbing') {
+            $layout = 'layouts.pembimbing';
+            // Kembali ke detail rekap siswa yang sedang dilihat pembimbing
+            $backUrl = route('pembimbing.presensi-siswa.show', $presensi->id_user);
+        } elseif ($role == 'tendik') {
+            $layout = 'layouts.tendik';
+            $backUrl = route('presensi.riwayat-presensi');
+        } else {
+            $layout = 'layouts.siswa';
+            $backUrl = route('presensi.riwayat-presensi');
+        }
+
+        return view('presensi.show', compact('layout', 'backUrl', 'presensi'));
     }
 
     public function ajukanKlaim(Request $request)

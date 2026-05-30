@@ -19,10 +19,21 @@ class Tendik extends Model
 
     // PERHATIKAN: id_pangkat_golongan dan id_jabatan sudah dimasukkan ke sini
     protected $fillable = [
-        'id_unit_kerja', 'id_agama', 'id_user', 'id_pend_terakhir',
-        'id_pangkat_golongan', 'id_jabatan',
-        'nip', 'nama_lengkap', 'jk', 'tempat_lahir', 'tanggal_lahir',
-        'no_hp', 'alamat', 'foto_profil', 'status'
+        'id_unit_kerja',
+        'id_agama',
+        'id_user',
+        'id_pend_terakhir',
+        'id_pangkat_golongan',
+        'id_jabatan',
+        'nip',
+        'nama_lengkap',
+        'jk',
+        'tempat_lahir',
+        'tanggal_lahir',
+        'no_hp',
+        'alamat',
+        'foto_profil',
+        'status'
     ];
 
     // --- RELASI LAMA ---

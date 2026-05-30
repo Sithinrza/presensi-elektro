@@ -150,12 +150,13 @@
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Masuk</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Pulang</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status Masuk</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Verifikasi Fisik</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Detail</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
+
                     @forelse($aktivitasHariIni as $aktivitas)
-                    <tr class="hover:bg-slate-50/80 transition-all duration-200 group">
+                    <tr onclick="window.location.href='{{ route('presensi.detail', $aktivitas->id_presensi) }}'" class="hover:bg-slate-50/80 transition-all duration-200 group cursor-pointer">
                         <td class="px-8 py-4">
                             <div class="flex items-center gap-4">
                                 <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center font-black text-maroon-900">
@@ -195,8 +196,8 @@
                         </td>
                         <td class="px-8 py-4 text-right">
                             <div class="flex justify-end items-center gap-2">
-                                <span class="w-2.5 h-2.5 {{ !empty($aktivitas->latitude_masuk) ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300' }} rounded-full" title="GPS Masuk"></span>
-                                <span class="w-2.5 h-2.5 {{ !empty($aktivitas->foto_masuk) ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-slate-300' }} rounded-full" title="Foto Liveness Masuk"></span>
+                                <span class="text-[10px] font-black text-slate-400 group-hover:text-maroon-700 uppercase tracking-widest transition-colors">Lihat</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0"><path d="m9 18 6-6-6-6"/></svg>
                             </div>
                         </td>
                     </tr>
