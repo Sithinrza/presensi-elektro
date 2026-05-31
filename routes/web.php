@@ -88,6 +88,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/log', [AdminLog::class, 'index'])->name('log');
 
         Route::get('/riwayat-presensi/cetak/{id_user}', [AdminRiwayat::class, 'cetakPdf'])->name('riwayat.cetak');
+        Route::get('/riwayat-presensi/export-excel', [AdminRiwayat::class, 'exportExcel'])->name('riwayat.excel');
     });
 
     // ------------------------------------------
@@ -100,6 +101,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/log', [SiswaLog::class, 'store'])->name('log.store');
 
         Route::get('/profil', [SiswaProfil::class, 'index'])->name('profil.index');
+        Route::put('/profil/update', [SiswaProfil::class, 'update'])->name('profil.update');
+        Route::put('/profil/update-foto', [SiswaProfil::class, 'updateFoto'])->name('profil.update-foto');
     });
 
     // ------------------------------------------

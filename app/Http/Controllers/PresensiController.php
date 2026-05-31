@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Presensi;
 use App\Models\StatusPresensi;
 use App\Models\KlaimPresensi;
+use App\Models\HariLibur; // JANGAN LUPA IMPORT INI
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
@@ -19,6 +20,11 @@ class PresensiController extends Controller
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
+
+        // --- 1. CEK HARI LIBUR ---
+        $hariLiburIni = HariLibur::where('tanggal_mulai', '<=', $tanggalHariIni)
+                                 ->where('tanggal_selesai', '>=', $tanggalHariIni)
+                                 ->first();
 
         $presensiHariIni = Presensi::with(['statusCi', 'statusCo'])
                                    ->where('id_user', $user->id_user)
@@ -57,7 +63,8 @@ class PresensiController extends Controller
             abort(403, 'Akses tidak diizinkan.');
         }
 
-        return view('presensi.index', compact('layout', 'backUrl', 'role', 'url_dashboard', 'presensiHariIni', 'presensiSelesai', 'belumWaktunyaPulang', 'jadwalPulang'));
+        // TAMBAHKAN $hariLiburIni KE COMPACT
+        return view('presensi.index', compact('layout', 'backUrl', 'role', 'url_dashboard', 'presensiHariIni', 'presensiSelesai', 'belumWaktunyaPulang', 'jadwalPulang', 'hariLiburIni'));
     }
 
     public function store(Request $request)
@@ -69,8 +76,21 @@ class PresensiController extends Controller
         ]);
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
+        $tanggalHariIni = $waktuSekarang->format('Y-m-d');
 
-        // PROTEKSI SERVER: Tolak presensi jika hari Minggu
+        // PROTEKSI SERVER 1: Tolak presensi jika hari libur (dari database)
+        $hariLiburIni = HariLibur::where('tanggal_mulai', '<=', $tanggalHariIni)
+                                 ->where('tanggal_selesai', '>=', $tanggalHariIni)
+                                 ->first();
+
+        if ($hariLiburIni) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Sistem ditutup! Hari ini libur: ' . $hariLiburIni->nama_libur
+            ]);
+        }
+
+        // PROTEKSI SERVER 2: Tolak presensi jika hari Minggu (otomatis)
         if ($waktuSekarang->isSunday()) {
             return response()->json([
                 'status' => 'error',
@@ -80,8 +100,6 @@ class PresensiController extends Controller
 
         $user = Auth::user();
         $role = strtolower($user->roles->first()->name);
-
-        $tanggalHariIni = $waktuSekarang->format('Y-m-d');
         $jamSekarang = $waktuSekarang->format('H:i:s');
 
         // Memecah dan mendecode gambar base64 dari canvas
@@ -91,17 +109,12 @@ class PresensiController extends Controller
 
         $fileName = $user->id_user . '_' . $tanggalHariIni . '_' . time() . '.jpeg';
 
-        // --- JALAN PINTAS ANTI-PUSING (TANPA SYMLINK) ---
+        // Simpan fotonya
         $folderPath = public_path('uploads/presensi');
-
-        // Buat foldernya otomatis jika belum ada
         if (!file_exists($folderPath)) {
             mkdir($folderPath, 0755, true);
         }
-
-        // Simpan fotonya langsung ke dalam folder public
         file_put_contents($folderPath . '/' . $fileName, $image_base64);
-        // ------------------------------------------------
 
         $presensiHariIni = Presensi::where('id_user', $user->id_user)
                                    ->where('tanggal', $tanggalHariIni)
@@ -181,24 +194,19 @@ class PresensiController extends Controller
         $user = Auth::user();
         $role = strtolower($user->roles->first()->name);
 
-        // Ambil data presensi
         $query = Presensi::with(['statusCi', 'statusCo'])->where('id_presensi', $id);
 
-        // GEMBOK KEAMANAN: Jika yang login BUKAN admin,
-        // pastikan dia hanya bisa melihat absen miliknya sendiri.
         if ($role !== 'admin' && $role !== 'pembimbing') {
             $query->where('id_user', $user->id_user);
         }
 
         $presensi = $query->firstOrFail();
 
-        // Penyesuaian layout dan tombol kembali
         if ($role == 'admin') {
             $layout = 'layouts.admin';
             $backUrl = route('admin.riwayat.detail', $presensi->id_user);
         } elseif ($role == 'pembimbing') {
             $layout = 'layouts.pembimbing';
-            // Kembali ke detail rekap siswa yang sedang dilihat pembimbing
             $backUrl = route('pembimbing.presensi-siswa.show', $presensi->id_user);
         } elseif ($role == 'tendik') {
             $layout = 'layouts.tendik';

@@ -17,26 +17,22 @@
 </head>
 <body>
 
-    <!-- KOP SURAT (Silakan disesuaikan) -->
     <div class="header">
         <h2>YAYASAN HASNUR CENTRE</h2>
         <h3>LAPORAN PRESENSI SISWA MAGANG / TENDIK</h3>
-        <p>Jl. Contoh Alamat No. 123, Kalimantan Selatan</p>
-    </div>
+        <p>Periode: <strong>{{ strtoupper($periode) }}</strong></p> </div>
 
-    <!-- INFO PROFIL -->
     <table class="info-table">
         <tr>
             <td>Nama Lengkap</td>
             <td>: {{ $siswa->nama_lengkap }}</td>
         </tr>
         <tr>
-            <td>Instansi Asal</td>
+            <td>Instansi Asal / Unit Kerja</td>
             <td>: {{ $siswa->sekolah_asal ?? '-' }}</td>
         </tr>
     </table>
 
-    <!-- TABEL RIWAYAT -->
     <table class="data-table">
         <thead>
             <tr>
@@ -44,30 +40,29 @@
                 <th>Tanggal</th>
                 <th>Jam Masuk</th>
                 <th>Jam Pulang</th>
-                <th>Status</th>
+                <th>Status Kehadiran</th>
             </tr>
         </thead>
         <tbody>
             @forelse($riwayat as $index => $r)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ \Carbon\Carbon::parse($r->tanggal)->translatedFormat('d F Y') }}</td>
+                    <td style="text-align: left;">{{ \Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y') }}</td>
                     <td>{{ $r->jam_masuk ?? '-' }}</td>
                     <td>{{ $r->jam_pulang ?? '-' }}</td>
                     <td>
-                        CI: {{ $r->statusCi->name ?? 'Alfa' }} <br>
-                        CO: {{ $r->statusCo ? $r->statusCo->name : 'Belum' }}
+                        IN: {{ $r->statusCi->name ?? 'Alfa' }} <br>
+                        OUT: {{ $r->statusCo ? $r->statusCo->name : 'Belum' }}
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="5">Belum ada riwayat presensi.</td>
+                    <td colspan="5">Belum ada riwayat presensi di bulan ini.</td>
                 </tr>
             @endforelse
         </tbody>
     </table>
 
-    <!-- TANDA TANGAN -->
     <div class="ttd-container">
         <p>Banjarbaru, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
         <br><br><br>

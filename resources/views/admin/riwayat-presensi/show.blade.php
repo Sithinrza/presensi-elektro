@@ -43,6 +43,11 @@
                 </div>
                 <div class="w-[1px] h-10 bg-white/10 shrink-0"></div>
                 <div class="text-center shrink-0 px-2">
+                    <p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Libur</p>
+                    <p class="text-2xl font-black text-blue-400 leading-none">{{ $statistik['Libur'] ?? 0 }}</p>
+                </div>
+                <div class="w-[1px] h-10 bg-white/10 shrink-0"></div>
+                <div class="text-center shrink-0 px-2">
                     <p class="text-[9px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Tepat CO</p>
                     <p class="text-2xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CO'] ?? 0 }}</p>
                 </div>
@@ -57,13 +62,32 @@
     </div>
 
     <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between">
+
+        <div class="px-8 py-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h3 class="text-lg font-black text-slate-800 tracking-tight">Data Riwayat Presensi</h3>
-            <!-- Ganti <button> menjadi <a> -->
-            <a href="{{ route('admin.riwayat.cetak', request()->route('id_user')) }}" target="_blank" class="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-maroon-700 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
-                Export Riwayat
-            </a>
+
+            <div class="flex items-center gap-4">
+                <form action="{{ route('admin.riwayat.detail', $id_user) }}" method="GET" class="flex items-center gap-2">
+                    <select name="bulan" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none">
+                        @for ($i = 1; $i <= 12; $i++)
+                            <option value="{{ $i }}" {{ $bulan == $i ? 'selected' : '' }}>{{ Carbon\Carbon::create()->month($i)->translatedFormat('M') }}</option>
+                        @endfor
+                    </select>
+                    <select name="tahun" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none">
+                        @for ($y = date('Y'); $y >= 2024; $y--)
+                            <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                    <button type="submit" class="bg-maroon-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-maroon-800 transition">Lihat</button>
+                </form>
+
+                <div class="w-[1px] h-6 bg-slate-200"></div>
+
+                <a href="{{ route('admin.riwayat.cetak', ['id_user' => $id_user, 'bulan' => request('bulan', date('m')), 'tahun' => request('tahun', date('Y'))]) }}" target="_blank" class="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-maroon-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                    Export PDF
+                </a>
+            </div>
         </div>
 
         <div class="overflow-x-auto no-scrollbar">
@@ -79,7 +103,11 @@
                 <tbody class="divide-y divide-slate-100">
 
                     @forelse($riwayat ?? [] as $r)
-                        <tr onclick="window.location.href='{{ route('presensi.detail', $r->id_presensi) }}'" class="hover:bg-slate-50/80 transition-colors group cursor-pointer">
+                        @if($r->id_presensi)
+                            <tr onclick="window.location.href='{{ route('presensi.detail', $r->id_presensi) }}'" class="hover:bg-slate-50/80 transition-colors group cursor-pointer">
+                        @else
+                            <tr class="hover:bg-slate-50/80 transition-colors group">
+                        @endif
 
                             <td class="px-8 py-4 text-xs font-bold text-slate-700 group-hover:text-maroon-800 transition-colors">
                                 {{ \Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y') }}
@@ -97,6 +125,8 @@
                                         <span class="w-fit px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-md text-[9px] font-black uppercase tracking-widest">CI: {{ $r->statusCi->name }}</span>
                                     @elseif($r->statusCi && $r->statusCi->name == 'Terlambat')
                                         <span class="w-fit px-3 py-1 bg-amber-50 text-amber-600 border border-amber-200 rounded-md text-[9px] font-black uppercase tracking-widest">CI: {{ $r->statusCi->name }}</span>
+                                    @elseif($r->statusCi && $r->statusCi->name == 'Libur')
+                                        <span class="w-fit px-3 py-1 bg-blue-50 text-blue-600 border border-blue-200 rounded-md text-[9px] font-black uppercase tracking-widest">CI: {{ $r->statusCi->name }}</span>
                                     @else
                                         <span class="w-fit px-3 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-md text-[9px] font-black uppercase tracking-widest">CI: {{ $r->statusCi->name ?? 'Alfa' }}</span>
                                     @endif
@@ -113,6 +143,8 @@
                                                     </span>
                                                 @endif
                                             </span>
+                                        @elseif($r->statusCo->name == 'Libur')
+                                            <span class="w-fit px-3 py-1 bg-blue-50 text-blue-600 border border-blue-200 rounded-md text-[9px] font-black uppercase tracking-widest">CO: {{ $r->statusCo->name }}</span>
                                         @else
                                             <span class="w-fit px-3 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-md text-[9px] font-black uppercase tracking-widest">CO: {{ $r->statusCo->name }}</span>
                                         @endif
@@ -124,7 +156,9 @@
                             </td>
 
                             <td class="pr-6 text-right">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 opacity-0 group-hover:opacity-100 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0"><path d="m9 18 6-6-6-6"/></svg>
+                                @if($r->id_presensi)
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 opacity-0 group-hover:opacity-100 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0"><path d="m9 18 6-6-6-6"/></svg>
+                                @endif
                             </td>
 
                         </tr>

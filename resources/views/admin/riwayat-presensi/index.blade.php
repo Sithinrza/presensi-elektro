@@ -6,11 +6,11 @@
 </style>
 
 <main id="content-area" class="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-    
+
     <div id="master-view" class="space-y-8">
-        
+
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            
+
             <div class="flex items-center p-1.5 bg-slate-100/80 rounded-2xl w-full lg:w-fit border border-slate-200/60">
                 <button onclick="switchCategory('siswa')" id="btn-siswa" class="px-6 py-3 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white text-maroon-900 shadow-sm w-1/2 lg:w-auto text-center">
                     Siswa Magang
@@ -75,7 +75,7 @@
                             </td>
                             <td class="px-8 py-4 text-right">
                                 <div class="inline-flex items-center gap-2 text-maroon-600 font-black text-[10px] uppercase opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-                                    Lihat Detail 
+                                    Lihat Detail
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                                 </div>
                             </td>
@@ -106,7 +106,7 @@
                             </td>
                             <td class="px-8 py-4 text-right">
                                 <div class="inline-flex items-center gap-2 text-maroon-600 font-black text-[10px] uppercase opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-                                    Lihat Detail 
+                                    Lihat Detail
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                                 </div>
                             </td>
@@ -120,7 +120,50 @@
     </div>
 
 </main>
+<div id="modal-cetak" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300" id="modal-cetak-content">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-black text-maroon-950 italic">Cetak Rekap Bulanan</h3>
+            <button onclick="closePrintModal()" class="text-slate-400 hover:text-rose-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+        </div>
 
+        <form action="{{ route('admin.riwayat.excel') }}" method="GET" class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Pilih Kategori</label>
+                <select name="kategori" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all">
+                    <option value="siswa">Siswa Magang</option>
+                    <option value="tendik">Tenaga Kependidikan</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Bulan</label>
+                    <select name="bulan" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all">
+                        @for ($i = 1; $i <= 12; $i++)
+                            <option value="{{ $i }}" {{ date('m') == $i ? 'selected' : '' }}>{{ Carbon\Carbon::create()->month($i)->translatedFormat('F') }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-2 uppercase tracking-wide">Tahun</label>
+                    <select name="tahun" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all">
+                        @for ($y = date('Y'); $y >= 2024; $y--)
+                            <option value="{{ $y }}" {{ date('Y') == $y ? 'selected' : '' }}>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" onclick="closePrintModal()" class="w-full flex items-center justify-center gap-2 bg-emerald-600 text-white font-bold py-3.5 rounded-xl hover:bg-emerald-700 active:scale-95 transition-all shadow-lg mt-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M8 13h2"/><path d="M8 17h2"/><path d="M14 13h2"/><path d="M14 17h2"/></svg>
+                Download Excel
+            </button>
+        </form>
+    </div>
+</div>
 <script>
     let currentCategory = 'siswa';
 
@@ -176,8 +219,23 @@
 
     /* Modal Print Kolektif Tetap Dipertahankan (Jika Ada) */
     function openPrintModal() {
-        // Implementasi modal cetak (dapat ditambahkan jika Anda menggunakan pop-up untuk cetak kolektif)
-        alert('Modal Cetak Laporan Kolektif Dibuka');
+        const modal = document.getElementById('modal-cetak');
+        const content = document.getElementById('modal-cetak-content');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('scale-95');
+        }, 10);
+    }
+
+    function closePrintModal() {
+        const modal = document.getElementById('modal-cetak');
+        const content = document.getElementById('modal-cetak-content');
+        modal.classList.add('opacity-0');
+        content.classList.add('scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
     }
 </script>
 @endsection

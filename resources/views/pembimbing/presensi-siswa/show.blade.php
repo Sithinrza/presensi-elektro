@@ -44,6 +44,11 @@
                 </div>
                 <div class="w-[1px] h-10 bg-slate-200 shrink-0"></div>
                 <div class="text-center shrink-0 px-2">
+                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Libur</p>
+                    <p class="text-xl sm:text-2xl font-black text-blue-500 leading-none">{{ $statistik['Libur'] ?? 0 }}</p>
+                </div>
+                <div class="w-[1px] h-10 bg-slate-200 shrink-0"></div>
+                <div class="text-center shrink-0 px-2">
                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Tepat CO</p>
                     <p class="text-xl sm:text-2xl font-black text-emerald-500 leading-none">{{ $statistik['Tepat CO'] ?? 0 }}</p>
                 </div>
@@ -72,7 +77,11 @@
                 <tbody class="divide-y divide-slate-50">
 
                     @forelse($riwayatPresensi as $p)
-                    <tr onclick="window.location.href='{{ route('presensi.detail', $p->id_presensi) }}'" class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+                    @if($p->id_presensi)
+                        <tr onclick="window.location.href='{{ route('presensi.detail', $p->id_presensi) }}'" class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
+                    @else
+                        <tr class="hover:bg-slate-50/50 transition-colors group">
+                    @endif
                         <td class="px-6 sm:px-8 py-4 sm:py-5">
                             <p class="font-bold text-slate-800 text-xs sm:text-sm group-hover:text-maroon-800 transition-colors">{{ \Carbon\Carbon::parse($p->tanggal)->translatedFormat('l, d M Y') }}</p>
                         </td>
@@ -86,10 +95,14 @@
                             <div class="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2">
                                 @php
                                     $ciName = $p->statusCi ? $p->statusCi->name : 'Alfa';
-                                    $colorCi = $ciName === 'Tepat Waktu' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : ($ciName === 'Terlambat' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-rose-50 text-rose-600 border-rose-200');
+                                    $colorCi = $ciName === 'Tepat Waktu' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
+                                              ($ciName === 'Terlambat' ? 'bg-amber-50 text-amber-600 border-amber-200' :
+                                              ($ciName === 'Libur' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-rose-50 text-rose-600 border-rose-200'));
 
                                     $coName = $p->statusCo ? $p->statusCo->name : 'Belum CO';
-                                    $colorCo = $coName === 'Tepat Waktu' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : ($coName === 'Belum CO' ? 'bg-slate-50 text-slate-500 border-slate-200' : 'bg-rose-50 text-rose-600 border-rose-200');
+                                    $colorCo = $coName === 'Tepat Waktu' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
+                                              ($coName === 'Belum CO' ? 'bg-slate-50 text-slate-500 border-slate-200' :
+                                              ($coName === 'Libur' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-rose-50 text-rose-600 border-rose-200'));
                                 @endphp
 
                                 <span class="inline-flex items-center px-2.5 py-1 {{ $colorCi }} border rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-widest w-[85px] justify-center">
@@ -101,7 +114,9 @@
                             </div>
                         </td>
                         <td class="pr-6 sm:pr-8 text-right">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 opacity-0 group-hover:opacity-100 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0 ml-auto"><path d="m9 18 6-6-6-6"/></svg>
+                            @if($p->id_presensi)
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 opacity-0 group-hover:opacity-100 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0 ml-auto"><path d="m9 18 6-6-6-6"/></svg>
+                            @endif
                         </td>
                     </tr>
                     @empty
