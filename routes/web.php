@@ -121,6 +121,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/presensi-siswa/{id}', [PresensiSiswaController::class, 'show'])->name('presensi-siswa.show');
 
         Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+        Route::post('/nilai/simpan', [NilaiController::class, 'store'])->name('nilai.store');
+        Route::get('/nilai/cetak/{id_siswa}', [NilaiController  ::class, 'cetakSertifikat'])->name('nilai.cetak');
         });
 
     // ------------------------------------------
