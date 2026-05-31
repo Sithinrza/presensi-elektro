@@ -26,7 +26,8 @@ class SiswaMagang extends Model
         'alamat',
         'tanggal_mulai',
         'tanggal_selesai',
-        'status'
+        'status',
+        'foto_profil'
     ];
 
     public function user()
@@ -54,5 +55,10 @@ class SiswaMagang extends Model
     {
         // Parameter: (Nama Model Tujuan, Foreign Key di tabel siswa_magang, Primary Key di tabel pembimbing)
         return $this->belongsTo(Pembimbing::class, 'id_pembimbing', 'id_pembimbing');
+    }
+
+    public function penilaian()
+    {
+        return $this->hasOne(PenilaianMagang::class, 'id_siswa', 'id_siswa');
     }
 }

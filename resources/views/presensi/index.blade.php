@@ -61,6 +61,27 @@
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
 
+    @elseif($hariLiburIni)
+        <div class="card-presensi animate-in">
+            <div class="flex items-center gap-4 mb-5">
+                <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </a>
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Libur Nasional</h2>
+            </div>
+            <div class="p-8 bg-rose-50 border border-rose-200 rounded-xl mb-6">
+                <div class="w-20 h-20 bg-white text-rose-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm border border-rose-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><line x1="10" y1="14" x2="14" y2="18"></line><line x1="14" y1="14" x2="10" y2="18"></line></svg>
+                </div>
+                <h3 class="text-2xl font-black text-rose-800 tracking-tight leading-none mb-3">Sistem Ditutup</h3>
+                <p class="text-rose-700 text-sm">Hari ini sistem presensi tidak diaktifkan karena sedang libur:</p>
+                <div class="mt-4 px-4 py-2 bg-white rounded-lg border border-rose-100 shadow-sm inline-block">
+                    <span class="text-rose-900 font-extrabold uppercase tracking-widest text-xs">{{ $hariLiburIni->nama_libur }}</span>
+                </div>
+            </div>
+            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+        </div>
+
     @elseif($belumWaktunyaPulang)
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
@@ -117,7 +138,7 @@
     @endif
 </div>
 
-@if(!$presensiSelesai && !$belumWaktunyaPulang)
+@if(!$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni)
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
@@ -282,12 +303,23 @@
             document.getElementById('status-global').innerText = "Menyimpan ke Database...";
             document.getElementById('status-global').style.display = "block";
 
-            fetch('{{ route("presensi.store") }}', {
+            fetch('/presensi-submit', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'ngrok-skip-browser-warning': 'true'
+                },
                 body: JSON.stringify({ image_base64: fotoBase64, latitude: userLat, longitude: userLng })
             })
-            .then(response => response.json())
+            .then(async response => {
+                if (!response.ok) {
+                    const errText = await response.text();
+                    console.error("SERVER ERROR:", errText);
+                    throw new Error("Server Laravel mengalami error.");
+                }
+                return response.json();
+            })
             .then(data => {
                 if(data.status === 'success') {
                     document.getElementById('status-global').style.display = "none";
@@ -298,7 +330,10 @@
                     alert("Gagal: " + data.message); location.reload();
                 }
             })
-            .catch(error => { alert("Koneksi terputus."); location.reload(); });
+            .catch(error => {
+                alert("GAGAL MENGIRIM: " + error.message);
+                document.getElementById('status-global').innerText = "Gagal memproses data.";
+            });
         }, 500);
     }
 </script>

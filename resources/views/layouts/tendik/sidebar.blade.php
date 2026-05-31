@@ -13,7 +13,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->is('tendik/dashboard') ? 'opacity-100' : 'opacity-40' }}">Beranda</span>
         </a>
-        
+
         <!-- 2. Absen -->
         <a href="{{ route('presensi.index') }}" title="Presensi"
            class="group nav-transition flex flex-col items-center justify-center py-4 rounded-[2rem] {{ request()->is('tendik/presensi') || request()->routeIs('presensi.index') ? 'bg-white text-maroon-950 shadow-xl scale-105' : 'text-white/40 hover:bg-white/5 hover:text-white' }}">
@@ -30,14 +30,14 @@
     </div>
 
     <!-- Profil Saja -->
-    <div class="w-full px-3 mt-4">
-        <a href="{{ url('/tendik/profil') }}" title="Profil Saya"
-           class="group nav-transition flex flex-col items-center justify-center py-4 rounded-[2rem] {{ request()->is('tendik/profil') ? 'bg-white text-maroon-950 shadow-xl scale-105' : 'text-white/40 hover:bg-white/5 hover:text-white' }}">
+    <div class="w-full px-3 mt-4 space-y-2">
+        <a href="{{ route('tendik.profil.index') }}" title="Profil Saya"
+        class="group nav-transition flex flex-col items-center justify-center py-4 rounded-[2rem] {{ request()->routeIs('tendik.profil.*') ? 'bg-white text-maroon-950 shadow-xl scale-105' : 'text-white/40 hover:bg-white/5 hover:text-white' }}">
             <div class="relative">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-maroon-950 rounded-full"></span>
             </div>
-            <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->is('tendik/profil') ? 'opacity-100' : 'opacity-40' }}">Profil</span>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('tendik.profil.*') ? 'opacity-100' : 'opacity-40' }}">Profil</span>
         </a>
     </div>
 </aside>

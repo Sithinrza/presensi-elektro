@@ -36,7 +36,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Bimbingan</p>
-                    <p class="text-2xl font-black text-amber-600 tracking-tight">0 <span class="text-sm font-bold text-amber-500/80">Siswa</span></p>
+                    <p class="text-2xl font-black text-amber-600 tracking-tight">{{ str_pad($totalBimbingan ?? 0, 2, '0', STR_PAD_LEFT) }} <span class="text-sm font-bold text-amber-500/80">Siswa</span></p>
                 </div>
             </div>
         </div>

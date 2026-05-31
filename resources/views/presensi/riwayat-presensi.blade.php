@@ -1,12 +1,14 @@
 @extends($layout)
 
 @section('content')
+
+{{-- RIWAYAT PRESENSI TENDIK DAN SISWA --}}
 <main class="max-w-7xl mx-auto p-5 lg:p-10 space-y-8">
     <section class="bg-white rounded-[2.5rem] p-6 lg:p-8 border border-maroon-100 shadow-sm">
         <form action="{{ route('presensi.riwayat-presensi') }}" method="GET" class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
                 <h2 class="text-xl font-black text-maroon-950 tracking-tight italic">Filter Periode</h2>
-                <p class="text-sm text-slate-500 font-medium">Lihat data kehadiran Anda bulan ini.</p>
+                <p class="text-sm text-slate-500 font-medium">Lihat data kehadiran bulan ini.</p>
             </div>
 
             <div class="flex flex-wrap items-center gap-3">
@@ -31,7 +33,7 @@
         </form>
     </section>
 
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-emerald-50 border border-emerald-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
             <span class="text-3xl font-black text-emerald-600 leading-none">{{ $hadir ?? 0 }}</span>
             <span class="text-[10px] text-emerald-700/60 font-bold mt-2 uppercase tracking-widest">Tepat Waktu</span>
@@ -45,6 +47,11 @@
         <div class="bg-maroon-50 border border-maroon-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
             <span class="text-3xl font-black text-maroon-900 leading-none">{{ $alfa ?? 0 }}</span>
             <span class="text-[10px] text-maroon-700/60 font-bold mt-2 uppercase tracking-widest">Alfa</span>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-100 p-6 rounded-[2rem] flex flex-col items-center shadow-sm">
+            <span class="text-3xl font-black text-blue-600 leading-none">{{ $libur ?? 0 }}</span>
+            <span class="text-[10px] text-blue-700/60 font-bold mt-2 uppercase tracking-widest">Libur</span>
         </div>
     </section>
 
@@ -63,9 +70,15 @@
                     @forelse($riwayat as $r)
                     <tr class="hover:bg-maroon-50/40 transition-colors">
                         <td class="px-8 py-5">
-                            <p class="text-sm font-extrabold text-slate-800">
-                                {{ Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y') }}
-                            </p>
+                            @if($r->id_presensi)
+                                <a href="{{ route('presensi.detail', $r->id_presensi) }}" class="text-sm font-extrabold text-maroon-900 hover:text-maroon-600 underline decoration-maroon-200 underline-offset-4 transition-colors">
+                                    {{ Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y') }}
+                                </a>
+                            @else
+                                <span class="text-sm font-extrabold text-slate-400">
+                                    {{ Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y') }}
+                                </span>
+                            @endif
                         </td>
                         <td class="px-8 py-5 text-center">
                             <span class="text-sm font-bold text-slate-600">{{ $r->jam_masuk ?? '--:--' }}</span>
@@ -75,10 +88,13 @@
                         </td>
                         <td class="px-8 py-5">
                             <div class="flex flex-col gap-1 items-start">
+
                                 @if($r->statusCi && $r->statusCi->name == 'Tepat Waktu')
                                     <span class="w-fit px-3 py-1 bg-emerald-100 text-emerald-700 rounded-lg text-[9px] font-black uppercase">CI: {{ $r->statusCi->name }}</span>
                                 @elseif($r->statusCi && $r->statusCi->name == 'Terlambat')
                                     <span class="w-fit px-3 py-1 bg-amber-100 text-amber-700 rounded-lg text-[9px] font-black uppercase">CI: {{ $r->statusCi->name }}</span>
+                                @elseif($r->statusCi && $r->statusCi->name == 'Libur')
+                                    <span class="w-fit px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-[9px] font-black uppercase">CI: {{ $r->statusCi->name }}</span>
                                 @else
                                     <span class="w-fit px-3 py-1 bg-rose-100 text-rose-700 rounded-lg text-[9px] font-black uppercase">CI: {{ $r->statusCi->name ?? 'Alfa' }}</span>
                                 @endif
@@ -90,20 +106,25 @@
                                         <span class="w-fit px-3 py-1 bg-rose-100 text-rose-700 rounded-lg text-[9px] font-black uppercase mb-1">CO: {{ $r->statusCo->name }}</span>
 
                                         @if(!$r->klaim)
-                                            <button onclick="bukaModalKlaim({{ $r->id_presensi }}, '{{ Carbon\Carbon::parse($r->tanggal)->format('d/m/Y') }}')" class="bg-maroon-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-maroon-800 transition shadow-sm">
-                                                Ajukan Klaim
-                                            </button>
+                                            @if($r->id_presensi)
+                                                <button onclick="bukaModalKlaim({{ $r->id_presensi }}, '{{ Carbon\Carbon::parse($r->tanggal)->format('d/m/Y') }}')" class="bg-maroon-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-maroon-800 transition shadow-sm">
+                                                    Ajukan Klaim
+                                                </button>
+                                            @endif
                                         @else
                                             <span class="text-[9px] font-bold italic {{ $r->klaim->status_verifikasi == 'pending' ? 'text-amber-600' : ($r->klaim->status_verifikasi == 'disetujui' ? 'text-emerald-600' : 'text-rose-600') }}">
                                                 Klaim: {{ ucfirst($r->klaim->status_verifikasi) }}
                                             </span>
                                         @endif
+                                    @elseif($r->statusCo->name == 'Libur')
+                                        <span class="w-fit px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-[9px] font-black uppercase">CO: {{ $r->statusCo->name }}</span>
                                     @else
                                         <span class="w-fit px-3 py-1 bg-rose-100 text-rose-700 rounded-lg text-[9px] font-black uppercase">CO: {{ $r->statusCo->name }}</span>
                                     @endif
                                 @else
                                     <span class="w-fit px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-[9px] font-black uppercase">CO: Belum</span>
                                 @endif
+
                             </div>
                         </td>
                     </tr>

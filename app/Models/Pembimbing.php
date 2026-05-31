@@ -30,4 +30,10 @@ class Pembimbing extends Model
     {
         return $this->belongsTo(Agama::class, 'id_agama');
     }
+    
+    // Relasi ke Siswa Magang (1 Pembimbing memiliki banyak Siswa)
+    public function siswaMagang()
+    {
+        return $this->hasMany(SiswaMagang::class, 'id_pembimbing', 'id_pembimbing');
+    }
 }

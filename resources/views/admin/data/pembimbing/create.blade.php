@@ -3,7 +3,6 @@
 @section('content')
 <main class="p-10 space-y-8 animate-in">
 
-    <!-- HEADER & TOMBOL KEMBALI -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-center gap-4">
             <a href="{{ route('admin.data.pembimbing.index') }}" class="w-10 h-10 bg-white border border-maroon-100 rounded-xl flex items-center justify-center text-maroon-900 hover:bg-maroon-50 transition-all shadow-sm group">
@@ -22,14 +21,12 @@
         </div>
     </div>
 
-    <!-- ALERT NOTIFIKASI ERROR -->
     @if(session('error') || $errors->any())
         <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-2xl flex items-center gap-3 shadow-sm">
             <span class="text-sm font-bold">{{ session('error') ?? $errors->first() }}</span>
         </div>
     @endif
 
-    <!-- FORM TAMBAH -->
     <form action="{{ route('admin.data.pembimbing.store') }}" method="POST" class="bg-white rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
 
@@ -51,7 +48,7 @@
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Lengkap & Gelar</label>
                         <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required placeholder="Contoh: Budi, M.T." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
-                    
+
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">NIP / Nomor Induk</label>
                         <input type="text" name="no_induk" value="{{ old('no_induk') }}" placeholder="18 digit NIP..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
@@ -73,6 +70,18 @@
                     </div>
 
                     <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Agama</label>
+                        <select name="id_agama" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                            <option value="" disabled {{ empty(old('id_agama')) ? 'selected' : '' }}>Pilih Agama...</option>
+                            @foreach($agama ?? [] as $item)
+                                <option value="{{ $item->id_agama }}" {{ old('id_agama') == $item->id_agama ? 'selected' : '' }}>
+                                    {{ $item->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2 md:col-span-2">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Password Default</label>
                         <div class="relative group">
                             <input id="passwordInput" type="password" name="password" required minlength="6" placeholder="Masukkan password awal (min 6 karakter)" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 pr-12 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
@@ -95,7 +104,6 @@
 
         </div>
 
-        <!-- FOOTER ACTIONS -->
         <div class="bg-maroon-50/50 border-t border-maroon-100 p-8 flex flex-col sm:flex-row gap-4 justify-end">
             <a href="{{ route('admin.data.pembimbing.index') }}" class="bg-white text-maroon-900 border border-maroon-100 py-4 px-10 rounded-2xl font-black text-xs uppercase tracking-widest text-center shadow-sm hover:bg-maroon-50 active:scale-95 transition-all">
                 Batalkan
@@ -111,7 +119,7 @@
     function togglePassword() {
         const input = document.getElementById('passwordInput');
         const icon = document.getElementById('eyeIcon');
-        
+
         if (input.type === 'password') {
             input.type = 'text';
             icon.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>';

@@ -39,7 +39,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        
+
         <div class="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
             <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
                 <div class="w-1.5 h-4 bg-maroon-900 rounded-full"></div> Informasi Pribadi
@@ -48,6 +48,18 @@
                 <div><p class="text-[9px] font-bold text-slate-400 uppercase">Email</p><p class="text-sm font-bold text-slate-800">{{ $siswa->user->email ?? '-' }}</p></div>
                 <div><p class="text-[9px] font-bold text-slate-400 uppercase">Tempat, Tanggal Lahir</p><p class="text-sm font-bold text-slate-800">{{ $siswa->tempat_lahir ?? '-' }}, {{ $siswa->tanggal_lahir ?? '-' }}</p></div>
                 <div><p class="text-[9px] font-bold text-slate-400 uppercase">Agama</p><p class="text-sm font-bold text-slate-800">{{ $siswa->agama->name ?? '-' }}</p></div>
+                <div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase">Jenis Kelamin</p>
+                    <p class="text-sm font-bold text-slate-800">
+                        @if($siswa->jk == 'L')
+                            Laki-laki
+                        @elseif($siswa->jk == 'P')
+                            Perempuan
+                        @else
+                            Belum diisi
+                        @endif
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -81,7 +93,7 @@
                         </p>
                     </div>
                 </div>
-                
+
                 <div><p class="text-[9px] font-bold text-slate-400 uppercase">No. HP / WhatsApp</p><p class="text-sm font-bold text-slate-800">{{ $siswa->no_hp ?? '-' }}</p></div>
                 <div><p class="text-[9px] font-bold text-slate-400 uppercase">Alamat</p><p class="text-sm font-bold text-slate-800">{{ $siswa->alamat ?? '-' }}</p></div>
             </div>

@@ -22,18 +22,19 @@ use App\Http\Controllers\Admin\KlaimController as AdminKlaim;
 // Import Controller Siswa
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
 use App\Http\Controllers\Siswa\LogController as SiswaLog;
-use App\Http\Controllers\Siswa\ProfileController as SiswaProfile;
 use App\Http\Controllers\Siswa\RiwayatController as SiswaRiwayat;
+use App\Http\Controllers\Siswa\ProfilController as SiswaProfil;
 
 // Import Controller Pembimbing
 use App\Http\Controllers\Pembimbing\DashboardController as PembimbingDashboard;
 use App\Http\Controllers\Pembimbing\PresensiSiswaController;
 use App\Http\Controllers\Pembimbing\ReportMonitoringController;
+use App\Http\Controllers\Pembimbing\NilaiController;
 
 // Import Controller Tendik
-use App\Http\Controllers\Tendik\ProfileController as TendikProfile;
 use App\Http\Controllers\Tendik\RiwayatController as TendikRiwayat;
 use App\Http\Controllers\Tendik\DashboardController as TendikDashboard;
+use App\Http\Controllers\Tendik\ProfilController as TendikProfil;
 
 
 // ==========================================
@@ -60,6 +61,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('presensi.riwayat-presensi');
     Route::post('/presensi/ajukan-klaim', [PresensiController::class, 'ajukanKlaim'])->name('presensi.ajukan-klaim');
 
+
+    Route::get('/presensi/{id}/detail', [PresensiController::class, 'show'])->name('presensi.detail');
     // ------------------------------------------
     // AREA ADMIN
     // ------------------------------------------
@@ -83,6 +86,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/klaim/{id_klaim}', [AdminKlaim::class, 'verifikasi'])->name('klaim.verifikasi');
 
         Route::get('/log', [AdminLog::class, 'index'])->name('log');
+
+        Route::get('/riwayat-presensi/cetak/{id_user}', [AdminRiwayat::class, 'cetakPdf'])->name('riwayat.cetak');
+        Route::get('/riwayat-presensi/export-excel', [AdminRiwayat::class, 'exportExcel'])->name('riwayat.excel');
     });
 
     // ------------------------------------------
@@ -93,6 +99,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/lengkapi-profil', [SiswaDashboard::class, 'simpanProfilLengkap'])->name('lengkapi.profil');
         Route::get('/log', [SiswaLog::class, 'index'])->name('log');
         Route::post('/log', [SiswaLog::class, 'store'])->name('log.store');
+
+        Route::get('/profil', [SiswaProfil::class, 'index'])->name('profil.index');
+        Route::put('/profil/update', [SiswaProfil::class, 'update'])->name('profil.update');
+        Route::put('/profil/update-foto', [SiswaProfil::class, 'updateFoto'])->name('profil.update-foto');
     });
 
     // ------------------------------------------
@@ -109,7 +119,11 @@ Route::middleware(['auth'])->group(function () {
         // Presensi Siswa (Dibuat eksplisit agar rutenya terdaftar dengan pasti)
         Route::get('/presensi-siswa', [PresensiSiswaController::class, 'index'])->name('presensi-siswa.index');
         Route::get('/presensi-siswa/{id}', [PresensiSiswaController::class, 'show'])->name('presensi-siswa.show');
-    });
+
+        Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+        Route::post('/nilai/simpan', [NilaiController::class, 'store'])->name('nilai.store');
+        Route::get('/nilai/cetak/{id_siswa}', [NilaiController  ::class, 'cetakSertifikat'])->name('nilai.cetak');
+        });
 
     // ------------------------------------------
     // AREA TENDIK
@@ -117,6 +131,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('tendik')->name('tendik.')->group(function () {
         Route::get('/dashboard', [TendikDashboard::class, 'index'])->name('dashboard');
         Route::post('/lengkapi-profil', [TendikDashboard::class, 'lengkapiProfil'])->name('lengkapi.profil');
-    });
+    Route::get('/profil', [TendikProfil::class, 'index'])->name('profil.index');
+        });
 
 });
