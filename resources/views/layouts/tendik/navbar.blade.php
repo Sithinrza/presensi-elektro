@@ -17,20 +17,20 @@
             </div>
         </div>
         <div class="flex items-center gap-4">
-            <!-- Tombol Lonceng/Notifikasi -->
             <button class="relative w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-maroon-100 shadow-sm text-maroon-900 active:scale-90 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                 <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
             </button>
             
-            <!-- BAGIAN PROFIL & DROPDOWN LOGOUT -->
             <div x-data="{ open: false }" class="relative">
-                <!-- Foto Profil sebagai Tombol Pemicu -->
-                <button @click="open = !open" class="w-10 h-10 rounded-full border-2 border-gold p-0.5 block focus:outline-none active:scale-95 transition-transform shadow-sm">
-                    <img src="https://ui-avatars.com/api/?name={{ urlencode($profil->nama_lengkap ?? Auth::user()->email) }}&background=800000&color=fff&bold=true" alt="Profile" class="w-full h-full rounded-full object-cover">
+                <button @click="open = !open" class="w-10 h-10 rounded-full border-2 border-gold p-0.5 block focus:outline-none active:scale-95 transition-transform shadow-sm overflow-hidden bg-white">
+                    @if($profil && $profil->foto)
+                        <img src="{{ asset('uploads/profil/' . $profil->foto) }}" alt="Foto Profil" class="w-full h-full rounded-full object-cover">
+                    @else
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($profil->nama_lengkap ?? Auth::user()->email) }}&background=800000&color=fff&bold=true" alt="Profile" class="w-full h-full rounded-full object-cover">
+                    @endif
                 </button>
 
-                <!-- Menu Dropdown -->
                 <div x-show="open" 
                      @click.outside="open = false"
                      x-transition:enter="transition ease-out duration-200"

@@ -131,7 +131,6 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('tendik')->name('tendik.')->group(function () {
         Route::get('/dashboard', [TendikDashboard::class, 'index'])->name('dashboard');
         Route::post('/lengkapi-profil', [TendikDashboard::class, 'lengkapiProfil'])->name('lengkapi.profil');
-    Route::get('/profil', [TendikProfil::class, 'index'])->name('profil.index');
+        Route::get('/profil', [TendikProfil::class, 'index'])->name('profil.index');
         });
-
 });

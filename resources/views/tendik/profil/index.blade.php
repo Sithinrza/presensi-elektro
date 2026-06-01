@@ -1,4 +1,10 @@
-@extends('layouts.siswa')
+@extends('layouts.tendik')
+
+@php
+    // Ambil data profil tendik yang sedang login
+    $user = Auth::user();
+    $profil = \App\Models\Tendik::with('unitKerja')->where('id_user', $user->id)->first();
+@endphp
 
 @section('content')
 <style>
@@ -37,14 +43,16 @@
 
             <div class="relative group">
                 <div class="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-gold p-1 shadow-2xl bg-white overflow-hidden">
-                    @if($siswa->foto)
-                        <img src="{{ asset('uploads/profil/' . $siswa->foto) }}" alt="Foto Profil" class="w-full h-full rounded-full object-cover">
+                    @if($profil && $profil->foto_profil)
+                        <img src="{{ asset('uploads/profil/' . $profil->foto_profil) }}"
+                        alt="Foto Profil"
+                        class="w-full h-full rounded-full object-cover">
                     @else
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($siswa->nama_lengkap) }}&background=bc5a75&color=fff" alt="Foto Profil" class="w-full h-full rounded-full object-cover">
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($profil->nama_lengkap ?? Auth::user()->email) }}&background=bc5a75&color=fff" alt="Foto Profil" class="w-full h-full rounded-full object-cover">
                     @endif
                 </div>
 
-                <form id="form-foto" action="{{ route('siswa.profil.update-foto') }}" method="POST" enctype="multipart/form-data">
+                <form id="form-foto" action="{{ url('profil.update-foto') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <input type="file" id="input-foto" name="foto" class="hidden" accept="image/png, image/jpeg, image/jpg" onchange="document.getElementById('form-foto').submit()">
@@ -56,11 +64,11 @@
             </div>
 
             <div class="text-center md:text-left space-y-2">
-                <h2 class="text-3xl md:text-4xl font-black tracking-tight leading-none italic">{{ $siswa->nama_lengkap }}</h2>
+                <h2 class="text-3xl md:text-4xl font-black tracking-tight leading-none italic">{{ $profil->nama_lengkap ?? 'Nama Belum Diisi' }}</h2>
                 <div class="flex flex-col md:flex-row items-center gap-3">
-                    <span class="text-gold font-bold text-sm tracking-[0.2em] uppercase">Siswa Magang</span>
+                    <span class="text-gold font-bold text-sm tracking-[0.2em] uppercase">Pembimbing / Tendik</span>
                     <span class="hidden md:block w-1.5 h-1.5 bg-white/30 rounded-full"></span>
-                    <span class="text-maroon-100/70 text-sm font-medium">{{ $siswa->sekolah_asal ?? 'Instansi Belum Diisi' }}</span>
+                    <span class="text-maroon-100/70 text-sm font-medium">{{ $profil->unitKerja->nama_unit ?? 'Unit Kerja Belum Diisi' }}</span>
                 </div>
                 <p class="text-[10px] text-maroon-200/50 font-bold uppercase tracking-widest pt-2">
                     Bergabung Sejak {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('F Y') }}
@@ -72,7 +80,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
 
         <section id="personal-info-card" class="bg-white rounded-[2.5rem] p-8 border border-maroon-100 shadow-sm transition-all duration-300">
-            <form id="form-foto" action="{{ route('profil.update-foto') }}" method="POST" enctype="multipart/form-data">
+            <form id="form-profil" action="{{ url('profil.update') }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -92,9 +100,9 @@
 
                 <div class="space-y-5">
                     <div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Nomor Induk Siswa (NIM/NIS)</p>
-                        <div id="nis-view" class="text-sm font-bold text-maroon-950">{{ $siswa->nis ?? '-' }}</div>
-                        <input id="nis-input" type="text" name="nis" value="{{ $siswa->nis }}" required class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">NIP / Nomor Identitas</p>
+                        <div id="nip-view" class="text-sm font-bold text-maroon-950">{{ $profil->nip ?? '-' }}</div>
+                        <input id="nip-input" type="text" name="nip" value="{{ $profil->nip ?? '' }}" required class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
                     </div>
                     <div>
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Email Terdaftar</p>
@@ -103,8 +111,8 @@
                     </div>
                     <div>
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Nomor Telepon</p>
-                        <div id="phone-view" class="text-sm font-bold text-maroon-950">{{ $siswa->no_hp ?? '-' }}</div>
-                        <input id="phone-input" type="text" name="no_hp" value="{{ $siswa->no_hp }}" class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
+                        <div id="phone-view" class="text-sm font-bold text-maroon-950">{{ $profil->no_hp ?? '-' }}</div>
+                        <input id="phone-input" type="text" name="no_hp" value="{{ $profil->no_hp ?? '' }}" class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
                     </div>
                 </div>
 
@@ -161,8 +169,10 @@
     function toggleEditMode() {
         isEditMode = !isEditMode;
 
-        const views = ['nis-view', 'email-view', 'phone-view'];
-        const inputs = ['nis-input', 'email-input', 'phone-input'];
+        // Ubah ID yang dicari sesuai dengan form Tendik
+        const views = ['nip-view', 'email-view', 'phone-view'];
+        const inputs = ['nip-input', 'email-input', 'phone-input'];
+        
         const editBtn = document.getElementById('edit-btn');
         const actions = document.getElementById('edit-actions');
         const card = document.getElementById('personal-info-card');
