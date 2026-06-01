@@ -45,7 +45,7 @@
                             <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Identitas Personel</th>
                             <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">ID / Nomor Induk</th>
                             <th id="col-extra" class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Instansi Sekolah</th>
-                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Efektivitas</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status Hari Ini</th>
                             <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Opsi</th>
                         </tr>
                     </thead>
@@ -67,11 +67,18 @@
                             </td>
                             <td class="px-8 py-4"><p class="text-xs font-bold text-slate-600 uppercase">{{ $s->sekolah_asal ?? '-' }}</p></td>
                             <td class="px-8 py-4 text-center">
-                                @if($s->efektivitas >= 80)
-                                    <span class="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg text-[10px] font-black uppercase tracking-tight">{{ $s->efektivitas }}%</span>
-                                @else
-                                    <span class="inline-flex items-center px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-lg text-[10px] font-black uppercase tracking-tight">{{ $s->efektivitas }}%</span>
-                                @endif
+                                @php
+                                    $status = $s->status_hari_ini;
+                                    $badgeColor = match($status) {
+                                        'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                                        'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                        'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Sakit', 'Izin' => 'bg-indigo-50 text-indigo-600 border-indigo-200',
+                                        'Alfa' => 'bg-rose-50 text-rose-600 border-rose-200',
+                                        default => 'bg-slate-50 text-slate-500 border-slate-200' // Belum Hadir
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-3 py-1.5 {{ $badgeColor }} border rounded-lg text-[10px] font-black uppercase tracking-tight">{{ $status }}</span>
                             </td>
                             <td class="px-8 py-4 text-right">
                                 <div class="inline-flex items-center gap-2 text-maroon-600 font-black text-[10px] uppercase opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
@@ -98,11 +105,18 @@
                             </td>
                             <td class="px-8 py-4"><p class="text-xs font-bold text-slate-600 uppercase">{{ $t->unitKerja->nama_unit ?? '-' }}</p></td>
                             <td class="px-8 py-4 text-center">
-                                @if($t->efektivitas >= 80)
-                                    <span class="inline-flex items-center px-3 py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-lg text-[10px] font-black uppercase tracking-tight">{{ $t->efektivitas }}%</span>
-                                @else
-                                    <span class="inline-flex items-center px-3 py-1.5 bg-amber-50 text-amber-600 border border-amber-200 rounded-lg text-[10px] font-black uppercase tracking-tight">{{ $t->efektivitas }}%</span>
-                                @endif
+                                @php
+                                    $status = $t->status_hari_ini;
+                                    $badgeColor = match($status) {
+                                        'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                                        'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                        'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Sakit', 'Izin' => 'bg-indigo-50 text-indigo-600 border-indigo-200',
+                                        'Alfa' => 'bg-rose-50 text-rose-600 border-rose-200',
+                                        default => 'bg-slate-50 text-slate-500 border-slate-200' // Belum Hadir
+                                    };
+                                @endphp
+                                <span class="inline-flex items-center px-3 py-1.5 {{ $badgeColor }} border rounded-lg text-[10px] font-black uppercase tracking-tight">{{ $status }}</span>
                             </td>
                             <td class="px-8 py-4 text-right">
                                 <div class="inline-flex items-center gap-2 text-maroon-600 font-black text-[10px] uppercase opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">

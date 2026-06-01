@@ -15,8 +15,12 @@
         <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start lg:items-center">
 
             <div class="flex items-center gap-4 sm:gap-5 flex-1 w-full">
-                <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-[1.5rem] bg-slate-50 text-maroon-900 border border-slate-100 flex items-center justify-center text-2xl sm:text-4xl font-black shrink-0 shadow-inner">
-                    {{ substr($siswa->nama_lengkap, 0, 1) }}
+                <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-[1.5rem] bg-slate-50 text-maroon-900 border border-slate-100 flex items-center justify-center text-2xl sm:text-4xl font-black shrink-0 shadow-inner overflow-hidden">
+                    @if(isset($siswa->foto_profil) && $siswa->foto_profil)
+                        <img src="/uploads/profil/{{ $siswa->foto_profil }}" class="w-full h-full object-cover">
+                    @else
+                        {{ substr($siswa->nama_lengkap, 0, 1) }}
+                    @endif
                 </div>
                 <div>
                     <h2 class="text-xl sm:text-3xl font-black text-maroon-950 tracking-tight leading-none">{{ $siswa->nama_lengkap }}</h2>
@@ -63,6 +67,35 @@
     </section>
 
     <section class="bg-white rounded-3xl sm:rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+
+        <div class="px-6 sm:px-8 py-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <h3 class="text-base sm:text-lg font-black text-slate-800 tracking-tight">Data Riwayat Presensi</h3>
+
+            <div class="flex items-center gap-3">
+                <form action="{{ route('pembimbing.presensi-siswa.show', $siswa->id_user) }}" method="GET" class="flex items-center gap-2">
+                    <select name="bulan" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 cursor-pointer">
+                        @for ($i = 1; $i <= 12; $i++)
+                            <option value="{{ $i }}" {{ request('bulan', date('m')) == $i ? 'selected' : '' }}>
+                                {{ Carbon\Carbon::create()->month($i)->translatedFormat('M') }}
+                            </option>
+                        @endfor
+                    </select>
+
+                    <select name="tahun" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-[10px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 cursor-pointer">
+                        @for ($y = date('Y'); $y >= 2024; $y--)
+                            <option value="{{ $y }}" {{ request('tahun', date('Y')) == $y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endfor
+                    </select>
+
+                    <button type="submit" class="bg-maroon-900 text-white px-4 py-2 rounded-xl text-[10px] sm:text-xs font-bold hover:bg-maroon-800 transition shadow-sm active:scale-95 cursor-pointer">
+                        Filter
+                    </button>
+                </form>
+            </div>
+        </div>
+
         <div class="overflow-x-auto no-scrollbar">
             <table class="w-full text-left border-collapse min-w-[600px]">
                 <thead class="bg-slate-50/80 border-b border-slate-100">
