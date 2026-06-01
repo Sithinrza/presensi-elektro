@@ -77,4 +77,24 @@ class ProfilController extends Controller
 
         return redirect()->back()->with('error', 'Gagal mengunggah foto.');
     }
+    public function deleteFoto()
+    {
+        $siswa = SiswaMagang::where('id_user', auth()->id())->first();
+
+        if ($siswa && $siswa->foto_profil) {
+            $fotoPath = public_path('uploads/profil/' . $siswa->foto_profil);
+            
+            // Menghapus file fisik foto
+            if (file_exists($fotoPath)) {
+                unlink($fotoPath);
+            }
+
+            // Hapus nama file dari database
+            $siswa->update(['foto_profil' => null]);
+
+            return redirect()->back()->with('success', 'Foto profil berhasil dihapus.');
+        }
+
+        return redirect()->back()->with('error', 'Tidak ada foto profil yang dapat dihapus.');
+    }
 }

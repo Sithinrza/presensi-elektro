@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profil', [SiswaProfil::class, 'index'])->name('profil.index');
         Route::put('/profil/update', [SiswaProfil::class, 'update'])->name('profil.update');
         Route::put('/profil/update-foto', [SiswaProfil::class, 'updateFoto'])->name('profil.update-foto');
+        Route::delete('/profil/hapus-foto', [SiswaProfil::class, 'deleteFoto'])->name('profil.delete-foto');
     });
 
     // ------------------------------------------
@@ -137,6 +138,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/profil', [TendikProfil::class, 'index'])->name('profil.index');
         Route::put('/profil/update', [TendikProfil::class, 'update'])->name('profil.update');
         Route::put('/profil/update-foto', [TendikProfil::class, 'updateFoto'])->name('profil.update-foto');
+        Route::delete('/tendik/profil/hapus-foto', [TendikProfil::class, 'deleteFoto'])->name('profil.delete-foto');
         });
 
 });
