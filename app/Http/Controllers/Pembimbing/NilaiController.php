@@ -29,6 +29,18 @@ class NilaiController extends Controller
         return view('pembimbing.nilai.index', compact('daftarSiswa', 'hariIni'));
     }
 
+    public function create($id_siswa)
+    {
+        $siswa = SiswaMagang::with('presensi')->findOrFail($id_siswa);
+        if ($siswa->penilaian) {
+            return redirect()->route('pembimbing.nilai.edit', $id_siswa);
+        }
+        $sakit = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 7)->count() : 0;
+        $izin  = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 8)->count() : 0;
+        $alpa  = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 3)->count() : 0;
+        return view('pembimbing.nilai.form', compact('siswa', 'sakit', 'izin', 'alpa'));
+    }
+
     // Fungsi Baru: Menyimpan nilai ke database
     public function store(Request $request)
     {
@@ -77,6 +89,58 @@ class NilaiController extends Controller
 
         // Langsung arahkan ke rute cetak PDF setelah sukses menyimpan
         return redirect()->route('pembimbing.nilai.cetak', $request->id_siswa);
+    }
+
+    public function edit($id_siswa)
+    {
+        // Ambil data siswa lengkap dengan data nilai lamanya
+        $siswa = SiswaMagang::with(['presensi', 'penilaian'])->findOrFail($id_siswa);
+        if (!$siswa->penilaian) {
+            return redirect()->route('pembimbing.nilai.create', $id_siswa);
+        }
+        $sakit = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 7)->count() : 0;
+        $izin  = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 8)->count() : 0;
+        $alpa  = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 3)->count() : 0;
+        return view('pembimbing.nilai.form', compact('siswa', 'sakit', 'izin', 'alpa'));
+    }
+
+    public function update(Request $request, $id_siswa)
+    {
+        $request->validate([
+            'kecakapan_kerja'       => 'required|numeric|min:0|max:10',
+            'menerima_perintah'     => 'required|numeric|min:0|max:10',
+            'sikap_perilaku'        => 'required|numeric|min:0|max:10',
+            'inisiatif_kreatifitas' => 'required|numeric|min:0|max:10',
+            'disiplin_kehadiran'    => 'required|numeric|min:0|max:10',
+            'tanggung_jawab'        => 'required|numeric|min:0|max:10',
+            'pemahaman_teknis'      => 'required|numeric|min:0|max:10',
+            'persiapan_kerja'       => 'required|numeric|min:0|max:10',
+            'kerjasama_team'        => 'required|numeric|min:0|max:10',
+            'mutu_hasil_kerja'      => 'required|numeric|min:0|max:10',
+        ]);
+
+        $nilai = PenilaianMagang::where('id_siswa', $id_siswa)->firstOrFail();
+
+        $totalNilai = $request->kecakapan_kerja + $request->menerima_perintah +
+                      $request->sikap_perilaku + $request->inisiatif_kreatifitas +
+                      $request->disiplin_kehadiran + $request->tanggung_jawab +
+                      $request->pemahaman_teknis + $request->persiapan_kerja +
+                      $request->kerjasama_team + $request->mutu_hasil_kerja;
+        $rataRata = round($totalNilai / 10, 2);
+        $nilai->update([
+            'kecakapan_kerja'       => $request->kecakapan_kerja,
+            'menerima_perintah'     => $request->menerima_perintah,
+            'sikap_perilaku'        => $request->sikap_perilaku,
+            'inisiatif_kreatifitas' => $request->inisiatif_kreatifitas,
+            'disiplin_kehadiran'    => $request->disiplin_kehadiran,
+            'tanggung_jawab'        => $request->tanggung_jawab,
+            'pemahaman_teknis'      => $request->pemahaman_teknis,
+            'persiapan_kerja'       => $request->persiapan_kerja,
+            'kerjasama_team'        => $request->kerjasama_team,
+            'mutu_hasil_kerja'      => $request->mutu_hasil_kerja,
+            'rata_rata'            => $rataRata
+        ]);
+        return redirect()->route('pembimbing.nilai.index')->with('success', 'Pembaruan nilai berhasil diperbarui!');
     }
 
     // Fungsi Baru: Merilis PDF Sertifikat

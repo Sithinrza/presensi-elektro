@@ -121,8 +121,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/presensi-siswa/{id}', [PresensiSiswaController::class, 'show'])->name('presensi-siswa.show');
 
         Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
-        Route::post('/nilai/simpan', [NilaiController::class, 'store'])->name('nilai.store');
-        Route::get('/nilai/cetak/{id_siswa}', [NilaiController  ::class, 'cetakSertifikat'])->name('nilai.cetak');
+        Route::get('/nilai/create/{id_siswa}', [NilaiController::class, 'create'])->name('nilai.create');
+        Route::post('/nilai/store', [NilaiController::class, 'store'])->name('nilai.store');
+        Route::get('/nilai/edit/{id_siswa}', [NilaiController::class, 'edit'])->name('nilai.edit');
+        Route::put('/nilai/update/{id_siswa}', [NilaiController::class, 'update'])->name('nilai.update');
+        Route::get('/nilai/cetak/{id_siswa}', [NilaiController::class, 'cetakSertifikat'])->name('nilai.cetak');
         });
 
     // ------------------------------------------
@@ -131,7 +134,9 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('tendik')->name('tendik.')->group(function () {
         Route::get('/dashboard', [TendikDashboard::class, 'index'])->name('dashboard');
         Route::post('/lengkapi-profil', [TendikDashboard::class, 'lengkapiProfil'])->name('lengkapi.profil');
-    Route::get('/profil', [TendikProfil::class, 'index'])->name('profil.index');
+        Route::get('/profil', [TendikProfil::class, 'index'])->name('profil.index');
+        Route::put('/profil/update', [TendikProfil::class, 'update'])->name('profil.update');
+        Route::put('/profil/update-foto', [TendikProfil::class, 'updateFoto'])->name('profil.update-foto');
         });
 
 });

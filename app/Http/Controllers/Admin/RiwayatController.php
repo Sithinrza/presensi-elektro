@@ -14,28 +14,44 @@ class RiwayatController extends Controller
 {
     public function index()
     {
-        $totalHariKerja = 22;
+        $hariIni = Carbon::now('Asia/Makassar')->format('Y-m-d');
 
-        $siswa = SiswaMagang::with('user')->get()->map(function ($s) use ($totalHariKerja) {
-            // Dihitung berdasarkan status CI = Tepat Waktu (ID 1)
-            $totalHadir = Presensi::where('id_user', $s->id_user)
-                                  ->where('id_status_ci', 1)
-                                  ->whereMonth('tanggal', date('m'))
-                                  ->count();
+        // 1. Ambil semua data presensi hari ini dalam satu query (Optimasi agar tidak lemot)
+        $presensiHariIni = Presensi::with('statusCi')
+                                   ->whereDate('tanggal', $hariIni)
+                                   ->get()
+                                   ->keyBy('id_user');
 
-            $efektivitas = $totalHariKerja > 0 ? round(($totalHadir / $totalHariKerja) * 100) : 0;
-            $s->efektivitas = $efektivitas > 100 ? 100 : $efektivitas;
+        // 2. Cek apakah hari ini bertepatan dengan hari libur nasional atau hari Minggu
+        $isMinggu = Carbon::now('Asia/Makassar')->isSunday();
+        $liburNasional = \App\Models\HariLibur::whereDate('tanggal_mulai', '<=', $hariIni)
+                                              ->whereDate('tanggal_selesai', '>=', $hariIni)
+                                              ->exists();
+        $isLiburHariIni = $isMinggu || $liburNasional;
+
+        // 3. Map status kehadiran hari ini untuk Siswa
+        $siswa = SiswaMagang::with('user')->get()->map(function ($s) use ($presensiHariIni, $isLiburHariIni) {
+            $status = 'Belum Hadir';
+            if ($presensiHariIni->has($s->id_user)) {
+                $p = $presensiHariIni->get($s->id_user);
+                $status = $p->statusCi ? $p->statusCi->name : 'Belum Hadir';
+            } elseif ($isLiburHariIni) {
+                $status = 'Libur';
+            }
+            $s->status_hari_ini = $status;
             return $s;
         });
 
-        $tendik = Tendik::with(['user', 'unitKerja'])->get()->map(function ($t) use ($totalHariKerja) {
-            $totalHadir = Presensi::where('id_user', $t->id_user)
-                                  ->where('id_status_ci', 1)
-                                  ->whereMonth('tanggal', date('m'))
-                                  ->count();
-
-            $efektivitas = $totalHariKerja > 0 ? round(($totalHadir / $totalHariKerja) * 100) : 0;
-            $t->efektivitas = $efektivitas > 100 ? 100 : $efektivitas;
+        // 4. Map status kehadiran hari ini untuk Tendik
+        $tendik = Tendik::with(['user', 'unitKerja'])->get()->map(function ($t) use ($presensiHariIni, $isLiburHariIni) {
+            $status = 'Belum Hadir';
+            if ($presensiHariIni->has($t->id_user)) {
+                $p = $presensiHariIni->get($t->id_user);
+                $status = $p->statusCi ? $p->statusCi->name : 'Belum Hadir';
+            } elseif ($isLiburHariIni) {
+                $status = 'Libur';
+            }
+            $t->status_hari_ini = $status;
             return $t;
         });
 
