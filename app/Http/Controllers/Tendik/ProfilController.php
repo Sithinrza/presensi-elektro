@@ -77,4 +77,26 @@ class ProfilController extends Controller
 
         return redirect()->back()->with('error', 'Gagal mengunggah foto.');
     }
+    public function deleteFoto()
+    {
+        // Cari data tendik berdasarkan user yang login
+        $tendik = \App\Models\Tendik::where('id_user', auth()->id())->first();
+
+        if ($tendik && $tendik->foto_profil) {
+            // Path foto: sesuaikan dengan folder penyimpanan Anda (misal public/uploads/profil)
+            $fotoPath = public_path('uploads/profil/' . $tendik->foto_profil);
+            
+            // Hapus file fisik dari folder jika ada
+            if (file_exists($fotoPath)) {
+                unlink($fotoPath);
+            }
+
+            // Hapus nama file dari database
+            $tendik->update(['foto_profil' => null]);
+
+            return redirect()->back()->with('success', 'Foto profil berhasil dihapus.');
+        }
+
+        return redirect()->back()->with('error', 'Tidak ada foto profil yang dapat dihapus.');
+    }
 }

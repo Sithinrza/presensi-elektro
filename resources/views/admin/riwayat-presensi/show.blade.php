@@ -3,6 +3,7 @@
 @section('content')
 <main class="p-6 lg:p-10 space-y-6 animate-in fade-in slide-in-from-right-8 duration-500">
 
+    <!-- TOMBOL KEMBALI -->
     <button onclick="window.location.href='{{ url('/admin/riwayat-presensi') }}'" class="flex items-center gap-3 text-xs font-black text-slate-500 uppercase tracking-widest hover:text-maroon-700 transition-colors group w-fit mb-2">
         <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:border-maroon-200 group-hover:bg-maroon-50 transition-all">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -10,6 +11,7 @@
         Kembali ke Daftar
     </button>
 
+    <!-- PROFIL RINGKAS PERSONIL -->
     <div class="bg-maroon-900 rounded-3xl p-8 lg:p-10 text-white shadow-lg shadow-maroon-900/20 overflow-hidden border border-maroon-800 relative">
         <div class="absolute -top-20 -right-20 w-80 h-80 bg-amber-400/10 rounded-full blur-[80px] pointer-events-none"></div>
 
@@ -61,29 +63,55 @@
         </div>
     </div>
 
+    <!-- TABEL RIWAYAT INDIVIDU -->
     <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
 
-        <div class="px-8 py-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h3 class="text-lg font-black text-slate-800 tracking-tight">Data Riwayat Presensi</h3>
+        <!-- HEADER SECTION DENGAN FILTER (Desain Diperbarui) -->
+        <div class="px-6 sm:px-8 py-6 border-b border-slate-100 flex flex-col xl:flex-row xl:items-center justify-between gap-6 bg-white">
+            <div>
+                <h3 class="text-lg sm:text-xl font-black text-maroon-950 tracking-tight leading-none italic">Data Riwayat Presensi</h3>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2 line-clamp-1">Filter laporan berdasarkan bulan dan tahun</p>
+            </div>
 
-            <div class="flex items-center gap-4">
-                <form action="{{ route('admin.riwayat.detail', $id_user) }}" method="GET" class="flex items-center gap-2">
-                    <select name="bulan" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none">
-                        @for ($i = 1; $i <= 12; $i++)
-                            <option value="{{ $i }}" {{ $bulan == $i ? 'selected' : '' }}>{{ Carbon\Carbon::create()->month($i)->translatedFormat('M') }}</option>
-                        @endfor
-                    </select>
-                    <select name="tahun" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none">
-                        @for ($y = date('Y'); $y >= 2024; $y--)
-                            <option value="{{ $y }}" {{ $tahun == $y ? 'selected' : '' }}>{{ $y }}</option>
-                        @endfor
-                    </select>
-                    <button type="submit" class="bg-maroon-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-maroon-800 transition">Lihat</button>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 w-full xl:w-auto">
+                
+                <form action="{{ route('admin.riwayat.detail', $id_user ?? 1) }}" method="GET" class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                    <!-- Dropdown Bulan -->
+                    <div class="relative flex-1 sm:flex-none">
+                        <select name="bulan" class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pr-10 text-[10px] sm:text-xs font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-maroon-500 transition-all cursor-pointer">
+                            @for ($i = 1; $i <= 12; $i++)
+                                <option value="{{ $i }}" {{ ($bulan ?? date('m')) == $i ? 'selected' : '' }}>{{ Carbon\Carbon::create()->month($i)->translatedFormat('F') }}</option>
+                            @endfor
+                        </select>
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Tahun -->
+                    <div class="relative w-[35%] sm:w-auto">
+                        <select name="tahun" class="w-full appearance-none bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pr-10 text-[10px] sm:text-xs font-bold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-maroon-500 transition-all cursor-pointer">
+                            @for ($y = date('Y'); $y >= 2024; $y--)
+                                <option value="{{ $y }}" {{ ($tahun ?? date('Y')) == $y ? 'selected' : '' }}>{{ $y }}</option>
+                            @endfor
+                        </select>
+                        <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Terapkan Filter -->
+                    <button type="submit" class="w-full sm:w-auto bg-maroon-950 text-white px-5 py-2.5 rounded-xl shadow-md hover:bg-maroon-800 active:scale-95 transition-all flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21 21-4.3-4.3"/><circle cx="10" cy="10" r="7"/></svg>
+                        <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest">Filter</span>
+                    </button>
                 </form>
 
-                <div class="w-[1px] h-6 bg-slate-200"></div>
+                <!-- Garis Pemisah (Hanya tampil di Desktop) -->
+                <div class="hidden sm:block w-[1px] h-8 bg-slate-200"></div>
 
-                <a href="{{ route('admin.riwayat.cetak', ['id_user' => $id_user, 'bulan' => request('bulan', date('m')), 'tahun' => request('tahun', date('Y'))]) }}" target="_blank" class="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-maroon-700 transition-colors">
+                <!-- Tombol Cetak PDF -->
+                <a href="{{ route('admin.riwayat.cetak', ['id_user' => $id_user ?? 1, 'bulan' => request('bulan', date('m')), 'tahun' => request('tahun', date('Y'))]) }}" target="_blank" class="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-rose-50 border border-rose-200 text-rose-600 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest hover:bg-rose-100 transition-colors shadow-sm active:scale-95">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                     Export PDF
                 </a>
@@ -103,7 +131,7 @@
                 <tbody class="divide-y divide-slate-100">
 
                     @forelse($riwayat ?? [] as $r)
-                        @if($r->id_presensi)
+                        @if(isset($r->id_presensi))
                             <tr onclick="window.location.href='{{ route('presensi.detail', $r->id_presensi) }}'" class="hover:bg-slate-50/80 transition-colors group cursor-pointer">
                         @else
                             <tr class="hover:bg-slate-50/80 transition-colors group">
@@ -121,23 +149,23 @@
                             <td class="px-8 py-4 text-center">
                                 <div class="flex flex-col sm:flex-row gap-1.5 items-center justify-center">
 
-                                    @if($r->statusCi && $r->statusCi->name == 'Tepat Waktu')
+                                    @if(isset($r->statusCi) && $r->statusCi->name == 'Tepat Waktu')
                                         <span class="w-fit px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-md text-[9px] font-black uppercase tracking-widest">CI: {{ $r->statusCi->name }}</span>
-                                    @elseif($r->statusCi && $r->statusCi->name == 'Terlambat')
+                                    @elseif(isset($r->statusCi) && $r->statusCi->name == 'Terlambat')
                                         <span class="w-fit px-3 py-1 bg-amber-50 text-amber-600 border border-amber-200 rounded-md text-[9px] font-black uppercase tracking-widest">CI: {{ $r->statusCi->name }}</span>
-                                    @elseif($r->statusCi && $r->statusCi->name == 'Libur')
+                                    @elseif(isset($r->statusCi) && $r->statusCi->name == 'Libur')
                                         <span class="w-fit px-3 py-1 bg-blue-50 text-blue-600 border border-blue-200 rounded-md text-[9px] font-black uppercase tracking-widest">CI: {{ $r->statusCi->name }}</span>
                                     @else
                                         <span class="w-fit px-3 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-md text-[9px] font-black uppercase tracking-widest">CI: {{ $r->statusCi->name ?? 'Alfa' }}</span>
                                     @endif
 
-                                    @if($r->statusCo)
+                                    @if(isset($r->statusCo))
                                         @if($r->statusCo->name == 'Tepat Waktu' || $r->statusCo->name == 'Check Out')
                                             <span class="w-fit px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-md text-[9px] font-black uppercase tracking-widest">CO: {{ $r->statusCo->name }}</span>
                                         @elseif($r->statusCo->name == 'Lupa Check-Out')
                                             <span class="w-fit px-3 py-1 bg-rose-50 text-rose-600 border border-rose-200 rounded-md text-[9px] font-black uppercase tracking-widest flex flex-col items-center">
                                                 CO: {{ $r->statusCo->name }}
-                                                @if($r->klaim)
+                                                @if(isset($r->klaim))
                                                     <span class="text-[7px] mt-0.5 {{ $r->klaim->status_verifikasi == 'pending' ? 'text-amber-600' : ($r->klaim->status_verifikasi == 'disetujui' ? 'text-emerald-600' : 'text-rose-600') }}">
                                                         (Klaim: {{ ucfirst($r->klaim->status_verifikasi) }})
                                                     </span>
@@ -156,7 +184,7 @@
                             </td>
 
                             <td class="pr-6 text-right">
-                                @if($r->id_presensi)
+                                @if(isset($r->id_presensi))
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 opacity-0 group-hover:opacity-100 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0"><path d="m9 18 6-6-6-6"/></svg>
                                 @endif
                             </td>
@@ -164,7 +192,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-10 font-bold text-slate-400 text-sm">Belum ada riwayat presensi yang tercatat.</td>
+                            <td colspan="5" class="text-center py-10 font-bold text-slate-400 text-sm">Belum ada riwayat presensi yang tercatat pada filter ini.</td>
                         </tr>
                     @endforelse
 
