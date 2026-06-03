@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SiswaMagang;
 use App\Models\User;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage; // Pastikan ini ada
 
 class ProfilController extends Controller
 {
@@ -50,46 +50,42 @@ class ProfilController extends Controller
     public function updateFoto(Request $request)
     {
         $request->validate([
-            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Maksimal 2MB
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $siswa = SiswaMagang::where('id_user', Auth::id())->firstOrFail();
 
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-
-            // Format nama file: foto_profil_12_1634567890.jpg
-            $fileName = 'foto_profil_' . $siswa->id_siswa . '_' . time() . '.' . $file->getClientOriginalExtension();
-
-            // Simpan ke folder public/uploads/profil
-            $file->move(public_path('uploads/profil'), $fileName);
-
-            // PERUBAHAN DI SINI: Hapus foto lama jika ada
-            if ($siswa->foto_profil && file_exists(public_path('uploads/profil/' . $siswa->foto_profil))) {
-                unlink(public_path('uploads/profil/' . $siswa->foto_profil));
+            // 1. Hapus foto lama JIKA ADA
+            if ($siswa->foto_profil && Storage::disk('public')->exists($siswa->foto_profil)) {
+                Storage::disk('public')->delete($siswa->foto_profil);
             }
 
-            // PERUBAHAN DI SINI: Simpan nama file ke kolom 'foto_profil'
-            $siswa->update(['foto_profil' => $fileName]);
+            // 2. Simpan file baru ke folder storage/app/public/profil
+            // Kodingan ini otomatis membuat file dengan nama unik dan mengembalikan path-nya (misal: "profil/namafile.jpg")
+            $path = $request->file('foto')->store('profil', 'public');
+
+            // 3. Simpan path tersebut ke database
+            $siswa->update(['foto_profil' => $path]);
 
             return redirect()->back()->with('success', 'Foto profil berhasil diperbarui!');
         }
 
         return redirect()->back()->with('error', 'Gagal mengunggah foto.');
     }
+
     public function deleteFoto()
     {
-        $siswa = SiswaMagang::where('id_user', auth()->id())->first();
+        $user = Auth::user();
+        $siswa = SiswaMagang::where('id_user', $user->id_user)->first();
 
         if ($siswa && $siswa->foto_profil) {
-            $fotoPath = public_path('uploads/profil/' . $siswa->foto_profil);
-            
-            // Menghapus file fisik foto
-            if (file_exists($fotoPath)) {
-                unlink($fotoPath);
+            // 1. Hapus file fisik dari storage
+            if (Storage::disk('public')->exists($siswa->foto_profil)) {
+                Storage::disk('public')->delete($siswa->foto_profil);
             }
 
-            // Hapus nama file dari database
+            // 2. Kosongkan data di database
             $siswa->update(['foto_profil' => null]);
 
             return redirect()->back()->with('success', 'Foto profil berhasil dihapus.');

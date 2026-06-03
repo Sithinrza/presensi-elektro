@@ -8,7 +8,7 @@
         <!-- Dekorasi Background -->
         <div class="absolute -top-20 -right-20 w-72 h-72 lg:w-96 lg:h-96 bg-gold/20 rounded-full blur-[80px] lg:blur-[100px] pointer-events-none"></div>
         <div class="absolute -bottom-20 -left-20 w-64 h-64 lg:w-80 lg:h-80 bg-rose-500/10 rounded-full blur-[60px] lg:blur-[80px] pointer-events-none"></div>
-        
+
         <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8">
             <div class="space-y-2.5 lg:space-y-3 max-w-2xl">
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-gold shadow-sm">
@@ -22,7 +22,7 @@
                     Pantau rekapitulasi kehadiran, lakukan validasi pada jurnal harian, serta evaluasi kesiapan penilaian akhir anak bimbingan Anda secara real-time.
                 </p>
             </div>
-            
+
             <!-- Widget Waktu Live -->
             <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl lg:rounded-[2rem] p-4 lg:p-6 text-center shrink-0 shadow-inner w-full lg:w-auto flex flex-row lg:flex-col items-center justify-between lg:justify-center">
                 <div class="text-left lg:text-center">
@@ -108,7 +108,7 @@
             @forelse($daftarSiswa as $siswa)
                 @php
                     $isSelesai = \Carbon\Carbon::parse($siswa->tanggal_selesai)->endOfDay()->isPast();
-                    
+
                     $presensiHariIni = collect($siswa->presensi)->first();
                     $statusCi = $presensiHariIni ? $presensiHariIni->id_status_ci : null;
                 @endphp
@@ -122,7 +122,7 @@
                         <div class="flex items-center gap-3.5 lg:gap-4 mb-4 lg:mb-6 mt-3">
                             <div class="w-14 h-14 lg:w-16 lg:h-16 rounded-2xl bg-slate-100 overflow-hidden shadow-inner border-2 border-gold group-hover:scale-105 transition-all shrink-0 flex items-center justify-center font-black text-xl lg:text-2xl text-maroon-900">
                                 @if($siswa->foto_profil)
-                                    <img src="{{ asset('storage/' . $siswa->foto_profil) }}" class="w-full h-full object-cover">
+                                    <img src="/uploads/profil/{{ $siswa->foto_profil }}" class="w-full h-full object-cover">
                                 @else
                                     {{ substr($siswa->nama_lengkap, 0, 1) }}
                                 @endif
@@ -149,7 +149,7 @@
                 @else
                     <!-- Tampilan Magang Berjalan -->
                     <div class="bg-white rounded-[1.5rem] lg:rounded-[2.5rem] p-5 lg:p-6 border border-slate-100 shadow-sm hover:shadow-lg hover:border-maroon-100 transition-all group flex flex-col h-full relative overflow-hidden">
-                        
+
                         <!-- Tanda Hadir Hari Ini -->
                         @if($statusCi == 1 || $statusCi == 2)
                             <div class="absolute top-0 right-0 bg-emerald-50 text-emerald-600 text-[7px] lg:text-[8px] font-black uppercase tracking-widest px-2.5 py-1 lg:px-3 lg:py-1.5 rounded-bl-xl border-b border-l border-emerald-100 flex items-center gap-1.5 shadow-sm">

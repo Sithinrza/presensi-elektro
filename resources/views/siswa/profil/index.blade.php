@@ -29,10 +29,8 @@
         <div class="text-[10px] font-black text-maroon-600 bg-maroon-50 px-2 py-1 rounded-lg uppercase tracking-widest">Aktif</div>
     </div>
 
-    <!-- DIUBAH: Menghapus overflow-hidden dari <section> utama agar dropdown tidak terpotong -->
     <section class="bg-maroon-900 rounded-[3rem] p-8 md:p-12 text-white shadow-premium border border-maroon-800 relative">
-        
-        <!-- Pembungkus khusus efek cahaya -->
+
         <div class="absolute inset-0 overflow-hidden rounded-[3rem] pointer-events-none">
             <div class="absolute -top-12 -right-12 w-64 h-64 bg-gold/20 rounded-full blur-[80px]"></div>
             <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-white/10 rounded-full blur-[60px]"></div>
@@ -40,32 +38,28 @@
 
         <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
 
-            <!-- FOTO PROFIL & DROPDOWN MENU -->
             <div x-data="{ openPhotoMenu: false }" class="relative group">
-                
-                <!-- Tombol Avatar -->
+
                 <button type="button" @click="openPhotoMenu = !openPhotoMenu" class="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-gold p-1 shadow-2xl bg-white focus:outline-none transition-transform active:scale-95 group block">
                     <div class="w-full h-full rounded-full overflow-hidden relative">
+
                         @if($siswa->foto_profil)
-                            <img src="/uploads/profil/{{ $siswa->foto_profil }}" alt="Foto Profil" class="w-full h-full object-cover">
+                            <img src="{{ asset('storage/' . $siswa->foto_profil) }}" alt="Foto Profil" class="w-full h-full object-cover">
                         @else
                             <img src="https://ui-avatars.com/api/?name={{ urlencode($siswa->nama_lengkap) }}&background=bc5a75&color=fff" alt="Foto Profil" class="w-full h-full object-cover">
                         @endif
-                        
-                        <!-- Overlay saat di-hover -->
+
                         <div class="absolute inset-0 bg-maroon-950/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                         </div>
                     </div>
-                    
-                    <!-- Ikon Edit Kecil di Pojok Kanan Bawah -->
+
                     <div class="absolute bottom-1 right-1 w-10 h-10 bg-gold text-maroon-950 rounded-full flex items-center justify-center border-4 border-maroon-900 shadow-lg z-10 pointer-events-none">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     </div>
                 </button>
 
-                <!-- Dropdown Menu -->
-                <div x-show="openPhotoMenu" 
+                <div x-show="openPhotoMenu"
                      @click.outside="openPhotoMenu = false"
                      x-transition:enter="transition ease-out duration-200"
                      x-transition:enter-start="opacity-0 scale-95 translate-y-2"
@@ -75,14 +69,12 @@
                      x-transition:leave-end="opacity-0 scale-95 translate-y-2"
                      class="absolute top-[110%] left-1/2 -translate-x-1/2 md:left-0 md:translate-x-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50"
                      style="display: none;">
-                    
-                    <!-- Opsi Unggah -->
+
                     <button type="button" onclick="document.getElementById('input-foto').click();" class="w-full text-left px-5 py-3 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-3 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-maroon-900"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                         Unggah Foto Baru
                     </button>
 
-                    <!-- Opsi Hapus (Hanya muncul jika ada foto) -->
                     @if($siswa->foto_profil)
                         <div class="h-px bg-slate-100 my-1 mx-4"></div>
                         <form action="{{ route('siswa.profil.delete-foto') }}" method="POST" class="m-0">
@@ -96,7 +88,6 @@
                     @endif
                 </div>
 
-                <!-- Form Upload Tersembunyi -->
                 <form id="form-foto" action="{{ route('siswa.profil.update-foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
                     @csrf
                     @method('PUT')
@@ -168,7 +159,7 @@
             <section class="bg-white rounded-[2.5rem] p-8 border border-maroon-100 shadow-sm space-y-6">
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-10 h-10 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1-1-1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                     </div>
                     <h3 class="text-lg font-black text-maroon-950 tracking-tight">Pengaturan Keamanan</h3>
                 </div>
@@ -204,7 +195,6 @@
     </div>
 </main>
 
-
 <script>
     let isEditMode = false;
 
@@ -232,8 +222,8 @@
 
     // Fungsi konfirmasi Hapus Foto menggunakan SweetAlert
     function confirmDeleteFoto(event) {
-        event.preventDefault(); // Mencegah form langsung tersubmit
-        
+        event.preventDefault();
+
         Swal.fire({
             title: 'Hapus Foto Profil?',
             text: "Foto profil Anda akan dihapus secara permanen.",
@@ -250,7 +240,6 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit form hapus foto
                 event.target.closest('form').submit();
             }
         });

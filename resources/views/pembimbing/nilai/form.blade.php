@@ -25,27 +25,27 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Kecakapan Kerja</label>
-                        <input type="number" step="0.1" max="10" name="kecakapan_kerja" value="{{ $siswa->penilaian->kecakapan_kerja ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="kecakapan_kerja" value="{{ isset($siswa->penilaian->kecakapan_kerja) ? number_format($siswa->penilaian->kecakapan_kerja, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Menerima Perintah</label>
-                        <input type="number" step="0.1" max="10" name="menerima_perintah" value="{{ $siswa->penilaian->menerima_perintah ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="menerima_perintah" value="{{ isset($siswa->penilaian->menerima_perintah) ? number_format($siswa->penilaian->menerima_perintah, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Sikap / Perilaku</label>
-                        <input type="number" step="0.1" max="10" name="sikap_perilaku" value="{{ $siswa->penilaian->sikap_perilaku ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="sikap_perilaku" value="{{ isset($siswa->penilaian->sikap_perilaku) ? number_format($siswa->penilaian->sikap_perilaku, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Inisiatif & Kreatifitas</label>
-                        <input type="number" step="0.1" max="10" name="inisiatif_kreatifitas" value="{{ $siswa->penilaian->inisiatif_kreatifitas ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="inisiatif_kreatifitas" value="{{ isset($siswa->penilaian->inisiatif_kreatifitas) ? number_format($siswa->penilaian->inisiatif_kreatifitas, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Disiplin & Kehadiran</label>
-                        <input type="number" step="0.1" max="10" name="disiplin_kehadiran" value="{{ $siswa->penilaian->disiplin_kehadiran ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="disiplin_kehadiran" value="{{ isset($siswa->penilaian->disiplin_kehadiran) ? number_format($siswa->penilaian->disiplin_kehadiran, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Tanggung Jawab</label>
-                        <input type="number" step="0.1" max="10" name="tanggung_jawab" value="{{ $siswa->penilaian->tanggung_jawab ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="tanggung_jawab" value="{{ isset($siswa->penilaian->tanggung_jawab) ? number_format($siswa->penilaian->tanggung_jawab, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                 </div>
             </div>
@@ -55,19 +55,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Pemahaman Teknis</label>
-                        <input type="number" step="0.1" max="10" name="pemahaman_teknis" value="{{ $siswa->penilaian->pemahaman_teknis ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="pemahaman_teknis" value="{{ isset($siswa->penilaian->pemahaman_teknis) ? number_format($siswa->penilaian->pemahaman_teknis, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Persiapan Kerja</label>
-                        <input type="number" step="0.1" max="10" name="persiapan_kerja" value="{{ $siswa->penilaian->persiapan_kerja ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="persiapan_kerja" value="{{ isset($siswa->penilaian->persiapan_kerja) ? number_format($siswa->penilaian->persiapan_kerja, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Kerjasama Team</label>
-                        <input type="number" step="0.1" max="10" name="kerjasama_team" value="{{ $siswa->penilaian->kerjasama_team ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="kerjasama_team" value="{{ isset($siswa->penilaian->kerjasama_team) ? number_format($siswa->penilaian->kerjasama_team, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-400 uppercase">Mutu Hasil Kerja</label>
-                        <input type="number" step="0.1" max="10" name="mutu_hasil_kerja" value="{{ $siswa->penilaian->mutu_hasil_kerja ?? '' }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500">
+                        <input type="text" name="mutu_hasil_kerja" value="{{ isset($siswa->penilaian->mutu_hasil_kerja) ? number_format($siswa->penilaian->mutu_hasil_kerja, 1, ',', '') : '' }}" required class="numeric-input w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-center font-bold outline-none focus:ring-2 focus:ring-maroon-500" placeholder="0,0">
                     </div>
                 </div>
             </div>
@@ -93,4 +93,21 @@
         </form>
     </section>
 </main>
+
+<script>
+    // JS Untuk Otomatis Mengubah Angka (Ketik 95 jadi 9,5)
+    document.querySelectorAll('.numeric-input').forEach(input => {
+        input.addEventListener('input', function(e) {
+            // Hilangkan semua karakter kecuali angka
+            let val = this.value.replace(/[^0-9]/g, '');
+
+            // Sisipkan koma jika angka lebih dari 1 digit
+            if (val.length > 1) {
+                this.value = val.slice(0, -1) + ',' + val.slice(-1);
+            } else {
+                this.value = val;
+            }
+        });
+    });
+</script>
 @endsection
