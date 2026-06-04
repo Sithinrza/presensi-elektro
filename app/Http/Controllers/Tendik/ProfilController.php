@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tendik;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage; // Wajib di-import untuk fitur Storage
 use App\Models\Tendik;
 use App\Models\User;
 
@@ -52,46 +53,38 @@ class ProfilController extends Controller
             'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Maksimal 2MB
         ]);
 
-        // Gunakan Auth::user()->id_user untuk mencari data tendik
         $tendik = Tendik::where('id_user', Auth::user()->id_user)->firstOrFail();
 
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-
-            // Format nama file disesuaikan untuk tendik: foto_profil_tendik_1_1634567890.jpg
-            $fileName = 'foto_profil_tendik_' . $tendik->id_tendik . '_' . time() . '.' . $file->getClientOriginalExtension();
-
-            // Simpan ke folder public/uploads/profil
-            $file->move(public_path('uploads/profil'), $fileName);
-
-            // Hapus foto lama jika ada
-            if ($tendik->foto_profil && file_exists(public_path('uploads/profil/' . $tendik->foto_profil))) {
-                unlink(public_path('uploads/profil/' . $tendik->foto_profil));
+            // 1. Hapus foto lama dari storage jika ada
+            if ($tendik->foto_profil && Storage::disk('public')->exists($tendik->foto_profil)) {
+                Storage::disk('public')->delete($tendik->foto_profil);
             }
 
-            // Simpan nama file ke kolom 'foto_profil' di tabel tendik
-            $tendik->update(['foto_profil' => $fileName]);
+            // 2. Simpan file baru ke folder storage/app/public/profil
+            $path = $request->file('foto')->store('profil', 'public');
+
+            // 3. Simpan path tersebut ke database
+            $tendik->update(['foto_profil' => $path]);
 
             return redirect()->back()->with('success', 'Foto profil berhasil diperbarui!');
         }
 
         return redirect()->back()->with('error', 'Gagal mengunggah foto.');
     }
+
     public function deleteFoto()
     {
-        // Cari data tendik berdasarkan user yang login
-        $tendik = \App\Models\Tendik::where('id_user', auth()->id())->first();
+        // Ganti auth()->id() ke Auth::user()->id_user agar aman dari error Intelephense
+        $tendik = Tendik::where('id_user', Auth::user()->id_user)->first();
 
         if ($tendik && $tendik->foto_profil) {
-            // Path foto: sesuaikan dengan folder penyimpanan Anda (misal public/uploads/profil)
-            $fotoPath = public_path('uploads/profil/' . $tendik->foto_profil);
-            
-            // Hapus file fisik dari folder jika ada
-            if (file_exists($fotoPath)) {
-                unlink($fotoPath);
+            // 1. Hapus file fisik dari storage
+            if (Storage::disk('public')->exists($tendik->foto_profil)) {
+                Storage::disk('public')->delete($tendik->foto_profil);
             }
 
-            // Hapus nama file dari database
+            // 2. Hapus nama file dari database
             $tendik->update(['foto_profil' => null]);
 
             return redirect()->back()->with('success', 'Foto profil berhasil dihapus.');

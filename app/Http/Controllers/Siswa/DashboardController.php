@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SiswaMagang;
 use App\Models\Agama;
+use App\Models\Presensi; 
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -18,11 +20,9 @@ class DashboardController extends Controller
         // 1. Cek Kelengkapan SEMUA Data Biodata
         $isProfilLengkap = true;
 
-        // TAMBAHAN PELINDUNG: Cek dulu apakah datanya ada di database
         if (!$siswa) {
             $isProfilLengkap = false;
         } else {
-            // Jika datanya ADA, baru cek kelengkapan kolomnya satu per satu
             if (
                 is_null($siswa->nis) ||
                 is_null($siswa->id_agama) ||
@@ -40,7 +40,37 @@ class DashboardController extends Controller
 
         $agama = Agama::all();
 
-        return view('siswa.dashboard.index', compact('siswa', 'isProfilLengkap', 'agama'));
+        // ==========================================
+        // DATA STATISTIK KEHADIRAN BULAN INI (Berdasarkan CI)
+        // ==========================================
+        $bulanIni = Carbon::now('Asia/Makassar')->month;
+        $tahunIni = Carbon::now('Asia/Makassar')->year;
+
+        // Tarik semua data presensi bulan ini
+        $presensiBulanIni = Presensi::where('id_user', $user->id_user)
+                                    ->whereMonth('tanggal', $bulanIni)
+                                    ->whereYear('tanggal', $tahunIni)
+                                    ->get();
+
+        // 1. Tepat Waktu (Status CI = 1)
+        $tepatWaktu = $presensiBulanIni->where('id_status_ci', 1)->count();
+
+        // 2. Terlambat (Status CI = 2)
+        $telat = $presensiBulanIni->where('id_status_ci', 2)->count();
+
+        // 3. Total Hadir (Tepat Waktu + Terlambat)
+        $hadir = $tepatWaktu + $telat;
+
+        // 4. Alpa (Status CI = 3)
+        $alpa = $presensiBulanIni->where('id_status_ci', 3)->count();
+
+        // Anggap total hari kerja magang 20 hari (Senin-Jumat)
+        $total_hari_kerja = 20;
+
+        return view('siswa.dashboard.index', compact(
+            'siswa', 'isProfilLengkap', 'agama',
+            'hadir', 'tepatWaktu', 'telat', 'alpa', 'total_hari_kerja'
+        ));
     }
 
     public function simpanProfilLengkap(Request $request)

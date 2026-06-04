@@ -110,7 +110,24 @@
                     @forelse($klaimSelesai as $ks)
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-8 py-4">
-                            <span class="text-xs font-bold text-slate-700">{{ $ks->presensi->user->nama_lengkap ?? 'Unknown' }}</span>
+                            @php
+                                $namaRiwayat = 'Unknown';
+                                $userRiwayat = $ks->presensi->user ?? null;
+
+                                if ($userRiwayat) {
+                                    $cekTendik = \App\Models\Tendik::where('id_user', $userRiwayat->id_user)->first();
+                                    $cekSiswa = \App\Models\SiswaMagang::where('id_user', $userRiwayat->id_user)->first();
+
+                                    if ($cekTendik) {
+                                        $namaRiwayat = $cekTendik->nama_lengkap;
+                                    } elseif ($cekSiswa) {
+                                        $namaRiwayat = $cekSiswa->nama_lengkap;
+                                    } else {
+                                        $namaRiwayat = $userRiwayat->name ?? $userRiwayat->email ?? 'User ID: ' . $userRiwayat->id_user;
+                                    }
+                                }
+                            @endphp
+                            <span class="text-xs font-bold text-slate-700">{{ $namaRiwayat }}</span>
                         </td>
                         <td class="px-8 py-4">
                             <span class="text-[10px] font-bold text-slate-500">{{ \Carbon\Carbon::parse($ks->presensi->tanggal)->format('d/m/Y') }}</span>
@@ -123,7 +140,7 @@
                             @endif
                         </td>
                         <td class="px-8 py-4 text-right">
-                            <span class="text-[10px] font-bold text-slate-400">Oleh: Admin</span>
+                            <span class="text-[10px] font-bold text-slate-400">Oleh: {{ $ks->verifikator->name ?? 'Admin' }}</span>
                         </td>
                     </tr>
                     @empty

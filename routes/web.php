@@ -100,6 +100,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/log', [SiswaLog::class, 'index'])->name('log');
         Route::post('/log', [SiswaLog::class, 'store'])->name('log.store');
 
+
         Route::get('/profil', [SiswaProfil::class, 'index'])->name('profil.index');
         Route::put('/profil/update', [SiswaProfil::class, 'update'])->name('profil.update');
         Route::put('/profil/update-foto', [SiswaProfil::class, 'updateFoto'])->name('profil.update-foto');

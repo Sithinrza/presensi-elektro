@@ -86,38 +86,42 @@
         <!-- RIGHT COLUMN -->
         <div class="lg:col-span-5 xl:col-span-4 space-y-8">
 
-            <!-- ATTENDANCE SUMMARY CARD (TERHUBUNG KE DATABASE) -->
             <section class="animate-in" style="animation-delay: 0.4s">
                 <div class="bg-white p-8 rounded-[3rem] border border-maroon-100 shadow-sm space-y-6">
                     <div class="flex items-center justify-between">
                         <h3 class="font-extrabold text-maroon-950 tracking-tight text-lg">Kehadiran Bulan Ini</h3>
                         <span class="text-[10px] font-black bg-gold-light text-gold-dark px-3 py-1 rounded-full uppercase tracking-tighter">
-                            {{ \Carbon\Carbon::now()->translatedFormat('F Y') }}
+                            {{ \Carbon\Carbon::now('Asia/Makassar')->translatedFormat('F Y') }}
                         </span>
                     </div>
 
-                    <div class="flex flex-col items-center justify-center py-6 bg-maroon-50 rounded-[2rem] border border-maroon-100/50">
-                        <div class="flex items-baseline gap-1">
-                            <!-- Menampilkan Total Hadir vs Total Hari (Contoh: 20 hari magang sebulan) -->
-                            <span class="text-6xl font-black text-maroon-950 leading-none">{{ $hadir ?? 0 }}</span>
-                            <span class="text-lg font-bold text-maroon-500/60 uppercase tracking-tighter">/ {{ $total_hari_kerja ?? 20 }}</span>
+                    <div class="bg-emerald-50 rounded-[2rem] p-6 border border-emerald-100">
+                        <div class="flex flex-col items-center justify-center mb-6">
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-6xl font-black text-emerald-700 leading-none">{{ $hadir ?? 0 }}</span>
+                                <span class="text-lg font-bold text-emerald-600/50 uppercase tracking-tighter">/ {{ $total_hari_kerja ?? 20 }}</span>
+                            </div>
+                            <p class="text-[10px] font-bold text-emerald-600/70 mt-2 uppercase tracking-[0.2em]">Total Kehadiran</p>
                         </div>
-                        <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-[0.2em]">Total Kehadiran</p>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-white p-4 rounded-2xl border border-emerald-100/50 flex flex-col items-center shadow-sm">
+                                <span class="text-[9px] font-black text-emerald-600 uppercase tracking-widest leading-none">Tepat Waktu</span>
+                                <span class="text-2xl font-black text-emerald-900 mt-2">{{ $tepatWaktu ?? 0 }}</span>
+                            </div>
+                            <div class="bg-white p-4 rounded-2xl border border-emerald-100/50 flex flex-col items-center shadow-sm">
+                                <span class="text-[9px] font-black text-amber-500 uppercase tracking-widest leading-none">Terlambat</span>
+                                <span class="text-2xl font-black text-amber-600 mt-2">{{ $telat ?? 0 }}</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-3">
-                        <div class="bg-maroon-50/50 p-3 rounded-2xl border border-maroon-100/30 flex flex-col items-center">
-                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none">Hadir</span>
-                            <span class="text-xl font-black text-maroon-900 mt-1">{{ $hadir ?? 0 }}</span>
+                    <div class="bg-rose-50 rounded-[2rem] p-6 border border-rose-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-[12px] font-black text-rose-800 uppercase tracking-widest leading-none">Alfa</p>
+                            <p class="text-[9px] font-bold text-rose-600/70 mt-1.5 uppercase tracking-wider">Tanpa Keterangan</p>
                         </div>
-                        <div class="bg-amber-50 p-3 rounded-2xl border border-amber-100 flex flex-col items-center">
-                            <span class="text-[9px] font-bold text-amber-600/60 uppercase tracking-widest leading-none">Telat</span>
-                            <span class="text-xl font-black text-amber-600 mt-1">{{ $telat ?? 0 }}</span>
-                        </div>
-                        <div class="bg-rose-50 p-3 rounded-2xl border border-rose-100 flex flex-col items-center">
-                            <span class="text-[9px] font-bold text-rose-400 uppercase tracking-widest leading-none">Alpa</span>
-                            <span class="text-xl font-black text-rose-600 mt-1">{{ $alpa ?? 0 }}</span>
-                        </div>
+                        <span class="text-4xl font-black text-rose-600">{{ $alpa ?? 0 }}</span>
                     </div>
                 </div>
             </section>
