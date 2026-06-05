@@ -55,8 +55,7 @@
                 <div class="w-full md:w-44 shrink-0">
                     <div class="group relative aspect-[3/4] rounded-[2rem] overflow-hidden border-4 border-white shadow-lg bg-slate-100">
                         @if($presensi->foto_masuk)
-                            <img src="/uploads/presensi/{{ $presensi->foto_masuk }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                        @else
+                            <img src="{{ asset('storage/presensi/' . $presensi->foto_masuk) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">                        @else
                             <div class="w-full h-full flex items-center justify-center text-slate-300">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                             </div>
@@ -116,7 +115,7 @@
                     <div class="w-full md:w-44 shrink-0">
                         <div class="group relative aspect-[3/4] rounded-[2rem] overflow-hidden border-4 border-white shadow-lg bg-slate-100">
                             @if($presensi->foto_pulang)
-                                <img src="/uploads/presensi/{{ $presensi->foto_pulang }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                                <img src="{{ asset('storage/presensi/' . $presensi->foto_pulang) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-slate-300">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>

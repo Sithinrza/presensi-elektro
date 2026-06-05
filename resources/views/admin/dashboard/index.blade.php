@@ -143,74 +143,86 @@
         </div>
 
         <div class="overflow-x-auto no-scrollbar">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 border-b border-slate-100">
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Identitas User</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Masuk</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Pulang</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status Masuk</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Detail</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-100">
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Identitas User</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Masuk</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Pulang</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status Kehadiran</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
 
-                    @forelse($aktivitasHariIni as $aktivitas)
-                    <tr onclick="window.location.href='{{ route('presensi.detail', $aktivitas->id_presensi) }}'" class="hover:bg-slate-50/80 transition-all duration-200 group cursor-pointer">
-                        <td class="px-8 py-4">
-                            <div class="flex items-center gap-4">
-                                <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center font-black text-maroon-900">
-                                    {{ substr($aktivitas->user->name ?? 'U', 0, 1) }}
+                        @forelse($aktivitasHariIni as $aktivitas)
+                        <tr onclick="window.location.href='{{ route('presensi.detail', $aktivitas->id_presensi) }}'" class="hover:bg-slate-50/80 transition-all duration-200 group cursor-pointer">
+                            <td class="px-8 py-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center font-black text-maroon-900">
+                                        {{ substr($aktivitas->user->name ?? 'U', 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-extrabold text-slate-800 leading-none tracking-tight group-hover:text-maroon-700 transition-colors">
+                                            {{ $aktivitas->user->name ?? 'User Tidak Diketahui' }}
+                                        </p>
+                                        <p class="text-[10px] font-bold text-slate-400 mt-1.5 uppercase tracking-tighter">
+                                            {{ $aktivitas->user->roles->first()->name ?? '-' }}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm font-extrabold text-slate-800 leading-none tracking-tight group-hover:text-maroon-700 transition-colors">
-                                        {{ $aktivitas->user->name ?? 'User Tidak Diketahui' }}
-                                    </p>
-                                    <p class="text-[10px] font-bold text-slate-400 mt-1.5 uppercase tracking-tighter">
-                                        {{ $aktivitas->user->role ?? '-' }}
-                                    </p>
+                            </td>
+                            <td class="px-8 py-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold font-mono border border-slate-200">
+                                    {{ $aktivitas->jam_masuk ?? '--:--' }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold font-mono border border-slate-200">
+                                    {{ $aktivitas->jam_pulang ?? '--:--' }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-4 text-center">
+                                <div class="flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2">
+                                    @php
+                                        // LOGIKA WARNA 7 STATUS (Sama persis kayak Pembimbing)
+                                        $ciName = $aktivitas->statusCi ? $aktivitas->statusCi->name : 'Alfa';
+                                        $colorCi = $ciName === 'Tepat Waktu' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
+                                                  ($ciName === 'Terlambat' ? 'bg-amber-50 text-amber-600 border-amber-200' :
+                                                  ($ciName === 'Libur' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-rose-50 text-rose-600 border-rose-200'));
+
+                                        $coName = $aktivitas->statusCo ? $aktivitas->statusCo->name : 'Belum CO';
+                                        $colorCo = in_array($coName, ['Tepat Waktu', 'Check Out']) ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
+                                                  ($coName === 'Terlambat CO' ? 'bg-amber-50 text-amber-600 border-amber-200' :
+                                                  ($coName === 'Belum CO' ? 'bg-slate-50 text-slate-500 border-slate-200' :
+                                                  ($coName === 'Libur' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-rose-50 text-rose-600 border-rose-200')));
+                                    @endphp
+
+                                    <span class="inline-flex items-center px-2.5 py-1 {{ $colorCi }} border rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-widest w-[85px] justify-center">
+                                        IN: {{ $ciName == 'Tepat Waktu' ? 'Tepat' : $ciName }}
+                                    </span>
+                                    <span class="inline-flex items-center px-2.5 py-1 {{ $colorCo }} border rounded-md text-[8px] sm:text-[9px] font-black uppercase tracking-widest w-[85px] justify-center">
+                                        OUT: {{ in_array($coName, ['Tepat Waktu', 'Check Out']) ? 'Tepat' : ($coName == 'Terlambat CO' ? 'Telat' : ($coName == 'Lupa Check-Out' ? 'Lupa' : $coName)) }}
+                                    </span>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-8 py-4 text-center">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold font-mono border border-slate-200">
-                                {{ $aktivitas->jam_masuk ?? '--:--' }}
-                            </span>
-                        </td>
-                        <td class="px-8 py-4 text-center">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold font-mono border border-slate-200">
-                                {{ $aktivitas->jam_pulang ?? '--:--' }}
-                            </span>
-                        </td>
-                        <td class="px-8 py-4 text-center">
-                            @if($aktivitas->statusCi)
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 border rounded-lg text-[10px] font-black uppercase tracking-widest
-                                {{ $aktivitas->id_status_ci == 1 ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-                                  ($aktivitas->id_status_ci == 2 ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-rose-50 text-rose-600 border border-rose-200') }}">
-                                <span class="w-1.5 h-1.5 rounded-full {{ $aktivitas->id_status_ci == 1 ? 'bg-emerald-500' : ($aktivitas->id_status_ci == 2 ? 'bg-amber-500' : 'bg-rose-500') }}"></span>
-                                {{ $aktivitas->statusCi->name }}
-                            </span>
-                            @else
-                            <span class="text-slate-400 text-xs font-bold">-</span>
-                            @endif
-                        </td>
-                        <td class="px-8 py-4 text-right">
-                            <div class="flex justify-end items-center gap-2">
-                                <span class="text-[10px] font-black text-slate-400 group-hover:text-maroon-700 uppercase tracking-widest transition-colors">Lihat</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0"><path d="m9 18 6-6-6-6"/></svg>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
-                            Belum ada aktivitas presensi hari ini.
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
+                            </td>
+                            <td class="px-8 py-4 text-right">
+                                <div class="flex justify-end items-center gap-2">
+                                    <span class="text-[10px] font-black text-slate-400 group-hover:text-maroon-700 uppercase tracking-widest transition-colors">Lihat</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-8 py-10 text-center text-slate-400 font-bold uppercase tracking-widest text-xs">
+                                Belum ada aktivitas presensi hari ini.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
     </section>
 </main>
 @endsection

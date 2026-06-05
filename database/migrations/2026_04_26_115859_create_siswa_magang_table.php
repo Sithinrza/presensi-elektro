@@ -18,26 +18,24 @@ return new class extends Migration
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
 
             // Data Utama
-            $table->string('nama_lengkap', 100);
-            $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
-
-            // Data Akademik
             $table->string('nis', 50)->nullable();
-            $table->string('sekolah_asal', 100)->nullable();
-            $table->string('jurusan', 100)->nullable();
+            $table->string('nama_lengkap', 100);
 
-            // Relasi Master (Sudah Menggunakan FK Resmi)
-            $table->unsignedBigInteger('id_agama')->nullable();
 
-            $table->unsignedBigInteger('id_pembimbing')->nullable();
-            $table->foreign('id_pembimbing')
-                  ->references('id_pembimbing')->on('pembimbing')
-                  ->onDelete('set null');
-
-            // Biodata Lengkap
             $table->enum('jk', ['L', 'P'])->nullable();
             $table->string('tempat_lahir', 50)->nullable();
             $table->date('tanggal_lahir')->nullable();
+            $table->string('sekolah_asal', 100)->nullable();
+            $table->string('jurusan', 100)->nullable();
+
+
+            $table->unsignedBigInteger('id_agama')->nullable();
+
+            $table->unsignedBigInteger('id_pembimbing')->nullable();
+            $table->foreign('id_pembimbing')->references('id_pembimbing')->on('pembimbing')->onDelete('set null');
+
+
+            $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
             $table->string('no_hp', 20)->nullable();
             $table->text('alamat')->nullable();
             $table->string('foto_profil')->nullable();

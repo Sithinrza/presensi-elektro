@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('log_attachments', function (Blueprint $table) {
-            $table->id('id_attachment'); // Primary Key
-            $table->unsignedBigInteger('id_log'); // Foreign Key ke tabel logs
+            $table->id('id_attachment');
+            $table->unsignedBigInteger('id_log'); 
             $table->string('type', 50);
             $table->string('url_or_path', 255);
             $table->string('filename', 255);

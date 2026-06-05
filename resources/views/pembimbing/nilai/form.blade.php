@@ -71,19 +71,13 @@
                     </div>
                 </div>
             </div>
+            
 
-            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100 grid grid-cols-3 gap-6 text-center">
+            <!-- KOTAK INFO ALFA -->
+            <div class="bg-rose-50 p-6 rounded-2xl border border-rose-100 flex justify-center text-center">
                 <div>
-                    <p class="text-[9px] font-black text-slate-400 uppercase">Sakit</p>
-                    <p class="text-xl font-bold text-maroon-950">{{ $sakit }}</p>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black text-slate-400 uppercase">Izin</p>
-                    <p class="text-xl font-bold text-maroon-950">{{ $izin }}</p>
-                </div>
-                <div>
-                    <p class="text-[9px] font-black text-slate-400 uppercase">Alpa</p>
-                    <p class="text-xl font-bold text-rose-600">{{ $alpa }}</p>
+                    <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest">Total Ketidakhadiran (Alfa)</p>
+                    <p class="text-2xl font-bold text-rose-600 mt-1">{{ $alpa }} <span class="text-sm">Hari</span></p>
                 </div>
             </div>
 

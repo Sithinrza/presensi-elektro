@@ -13,10 +13,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // 1. ZONA WAKTU HARUS SAMA DENGAN PRESENSI (WITA) BIAR NGGAK BEDA HARI
         $hariIni = Carbon::now('Asia/Makassar')->format('Y-m-d');
 
-        // 2. Hitung Status Presensi Hari Ini (Berdasarkan ID Status yang benar)
+        // 2. Hitung Status Presensi Hari Ini (Berdasarkan ID Status Masuk / CI)
         // 1 = Tepat Waktu, 2 = Terlambat, 3 = Alfa
         $hadirHariIni = Presensi::where('tanggal', $hariIni)->where('id_status_ci', 1)->count();
         $terlambatHariIni = Presensi::where('tanggal', $hariIni)->where('id_status_ci', 2)->count();
@@ -30,7 +29,7 @@ class DashboardController extends Controller
         // 4. Ambil 10 Aktivitas Terbaru Hari Ini
         $aktivitasHariIni = Presensi::with(['user.roles', 'statusCi', 'statusCo'])
             ->where('tanggal', $hariIni)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('updated_at', 'desc') // Biar yang baru absen pulang juga naik ke atas
             ->take(10)
             ->get();
 

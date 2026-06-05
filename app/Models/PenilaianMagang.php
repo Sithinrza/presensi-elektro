@@ -14,11 +14,20 @@ class PenilaianMagang extends Model
 
     // Kolom-kolom yang boleh diisi melalui form
     protected $fillable = [
-        'id_siswa', 'id_user',
-        'kecakapan_kerja', 'menerima_perintah', 'sikap_perilaku',
-        'inisiatif_kreatifitas', 'disiplin_kehadiran', 'tanggung_jawab',
-        'pemahaman_teknis', 'persiapan_kerja', 'kerjasama_team', 'mutu_hasil_kerja',
-        'rata_rata'
+        'id_siswa',
+        'id_user',
+        'kecakapan_kerja',
+        'menerima_perintah',
+        'sikap_perilaku',
+        'inisiatif_kreatifitas',
+        'disiplin_kehadiran',
+        'tanggung_jawab',
+        'pemahaman_teknis',
+        'persiapan_kerja',
+        'kerjasama_team',
+        'mutu_hasil_kerja',
+        'rata_rata',
+        'nomor_sertifikat',
     ];
 
     // Relasi ke tabel siswa

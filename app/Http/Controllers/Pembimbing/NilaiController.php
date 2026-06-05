@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Pembimbing;
 use App\Models\SiswaMagang;
 use App\Models\PenilaianMagang;
+use App\Models\Kajur; // Tambahkan ini
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -30,22 +31,20 @@ class NilaiController extends Controller
 
     public function create($id_siswa)
     {
-        $siswa = SiswaMagang::with('presensi')->findOrFail($id_siswa);
+        $siswa = SiswaMagang::with(['presensi.statusCi'])->findOrFail($id_siswa);
 
         if ($siswa->penilaian) {
             return redirect()->route('pembimbing.nilai.edit', $id_siswa);
         }
 
-        $sakit = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 7)->count() : 0;
-        $izin  = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 8)->count() : 0;
-        $alpa  = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 3)->count() : 0;
+        // HANYA HITUNG ALFA
+        $alpa = $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alfa')->count() : 0;
 
-        return view('pembimbing.nilai.form', compact('siswa', 'sakit', 'izin', 'alpa'));
+        return view('pembimbing.nilai.form', compact('siswa', 'alpa'));
     }
 
     public function store(Request $request)
     {
-        // 1. Bersihkan input: Ubah koma (,) menjadi titik (.) SEBELUM divalidasi
         $fields = [
             'kecakapan_kerja', 'menerima_perintah', 'sikap_perilaku', 'inisiatif_kreatifitas',
             'disiplin_kehadiran', 'tanggung_jawab', 'pemahaman_teknis', 'persiapan_kerja',
@@ -58,7 +57,6 @@ class NilaiController extends Controller
             }
         }
 
-        // 2. Validasi (sekarang aman karena formatnya sudah titik / decimal standar database)
         $request->validate([
             'id_siswa'              => 'required|exists:siswa_magang,id_siswa',
             'kecakapan_kerja'       => 'required|numeric|min:0|max:10',
@@ -73,7 +71,6 @@ class NilaiController extends Controller
             'mutu_hasil_kerja'      => 'required|numeric|min:0|max:10',
         ]);
 
-        // 3. Hitung Rata-rata
         $totalNilai = $request->kecakapan_kerja + $request->menerima_perintah +
                       $request->sikap_perilaku + $request->inisiatif_kreatifitas +
                       $request->disiplin_kehadiran + $request->tanggung_jawab +
@@ -82,7 +79,6 @@ class NilaiController extends Controller
 
         $rataRata = round($totalNilai / 10, 2);
 
-        // 4. Simpan ke database
         PenilaianMagang::updateOrCreate(
             ['id_siswa' => $request->id_siswa],
             [
@@ -106,22 +102,20 @@ class NilaiController extends Controller
 
     public function edit($id_siswa)
     {
-        $siswa = SiswaMagang::with(['presensi', 'penilaian'])->findOrFail($id_siswa);
+        $siswa = SiswaMagang::with(['presensi.statusCi', 'penilaian'])->findOrFail($id_siswa);
 
         if (!$siswa->penilaian) {
             return redirect()->route('pembimbing.nilai.create', $id_siswa);
         }
 
-        $sakit = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 7)->count() : 0;
-        $izin  = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 8)->count() : 0;
-        $alpa  = $siswa->presensi ? $siswa->presensi->where('id_status_presensi', 3)->count() : 0;
+        // HANYA HITUNG ALFA
+        $alpa = $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alfa')->count() : 0;
 
-        return view('pembimbing.nilai.form', compact('siswa', 'sakit', 'izin', 'alpa'));
+        return view('pembimbing.nilai.form', compact('siswa', 'alpa'));
     }
 
     public function update(Request $request, $id_siswa)
     {
-        // Panggil fungsi store untuk logika yang sama (menghindari kode berulang)
         return $this->store($request);
     }
 
@@ -132,6 +126,17 @@ class NilaiController extends Controller
 
         if (!$nilai) {
             return redirect()->back()->with('error', 'Siswa ini belum memiliki nilai!');
+        }
+
+        // VALIDASI 1: CEK NOMOR SERTIFIKAT DARI ADMIN
+        if (empty($nilai->nomor_sertifikat)) {
+            return redirect()->back()->with('error', 'Nomor Sertifikat belum diterbitkan oleh Admin!');
+        }
+
+        // VALIDASI 2: AMBIL KAJUR AKTIF
+        $kajurAktif = Kajur::where('status_aktif', true)->first();
+        if (!$kajurAktif) {
+            return redirect()->back()->with('error', 'Admin belum mengatur Data Kajur yang aktif!');
         }
 
         $huruf = 'D';
@@ -154,8 +159,9 @@ class NilaiController extends Controller
             'rataRata' => $nilai->rata_rata,
             'huruf' => $huruf,
             'keterangan' => $keterangan,
-            'kajur_nama' => 'M. HELMY NOOR, S.ST., M.T.',
-            'kajur_nip' => '19750507 200012 1 001'
+            'kajur_nama' => $kajurAktif->nama_lengkap, // Ambil dari database
+            'kajur_nip' => $kajurAktif->nip,           // Ambil dari database
+            'nomor_sertifikat' => $nilai->nomor_sertifikat // Ambil dari inputan admin
         ];
 
         $pdf = Pdf::loadView('pembimbing.nilai.sertifikat', $data)->setPaper('A4', 'landscape');

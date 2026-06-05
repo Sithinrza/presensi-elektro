@@ -46,10 +46,6 @@ class Presensi extends Model
         return $this->belongsTo(StatusPresensi::class, 'id_status_co', 'id_status_presensi');
     }
 
-    // Relasi ke tabel Klaim (opsional buat fitur Lupa CO nanti)
-    public function klaim()
-    {
-        return $this->hasOne(KlaimPresensi::class, 'id_presensi', 'id_presensi');
-    }
+    
 
 }

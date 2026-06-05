@@ -5,12 +5,10 @@
     .modal-backdrop { background: rgba(43, 11, 22, 0.4); backdrop-filter: blur(4px); }
 </style>
 
-<main id="content-area" class="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
+<main id="content-area" class=" mx-auto w-full p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
     <div id="master-view" class="space-y-8">
 
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-
             <div class="flex items-center p-1.5 bg-slate-100/80 rounded-2xl w-full lg:w-fit border border-slate-200/60">
                 <button onclick="switchCategory('siswa')" id="btn-siswa" class="px-6 py-3 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest transition-all duration-300 bg-white text-maroon-900 shadow-sm w-1/2 lg:w-auto text-center">
                     Siswa Magang
@@ -52,12 +50,15 @@
                     <tbody id="list-body" class="divide-y divide-slate-100">
 
                         @foreach($siswa as $s)
-                        <!-- DIUBAH: Klik akan berpindah halaman ke rute detail (Contoh: /admin/riwayat-presensi/detail/{id}) -->
                         <tr onclick="window.location.href='{{ url('/admin/riwayat-presensi/detail/' . $s->id_user) }}'" class="row-item type-siswa hover:bg-slate-50/80 transition-all cursor-pointer group">
                             <td class="px-8 py-4">
                                 <div class="flex items-center gap-4">
                                     <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($s->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
+                                        @if($s->foto_profil)
+                                            <img src="{{ asset('storage/profil/' . $s->foto_profil) }}" class="w-full h-full object-cover">
+                                        @else
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($s->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
+                                        @endif
                                     </div>
                                     <p class="search-name text-sm font-extrabold text-slate-800 tracking-tight group-hover:text-maroon-700 transition-colors">{{ $s->nama_lengkap }}</p>
                                 </div>
@@ -70,12 +71,11 @@
                                 @php
                                     $status = $s->status_hari_ini;
                                     $badgeColor = match($status) {
-                                        'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
-                                        'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                        'Tepat Waktu', 'Check Out' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                                        'Terlambat', 'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
-                                        'Sakit', 'Izin' => 'bg-indigo-50 text-indigo-600 border-indigo-200',
-                                        'Alfa' => 'bg-rose-50 text-rose-600 border-rose-200',
-                                        default => 'bg-slate-50 text-slate-500 border-slate-200' // Belum Hadir
+                                        'Alfa', 'Lupa Check-Out' => 'bg-rose-50 text-rose-600 border-rose-200',
+                                        default => 'bg-slate-50 text-slate-500 border-slate-200'
                                     };
                                 @endphp
                                 <span class="inline-flex items-center px-3 py-1.5 {{ $badgeColor }} border rounded-lg text-[10px] font-black uppercase tracking-tight">{{ $status }}</span>
@@ -90,12 +90,15 @@
                         @endforeach
 
                         @foreach($tendik as $t)
-                        <!-- DIUBAH: Klik akan berpindah halaman ke rute detail -->
                         <tr onclick="window.location.href='{{ url('/admin/riwayat-presensi/detail/' . $t->id_user) }}'" class="row-item type-tendik hover:bg-slate-50/80 transition-all cursor-pointer group" style="display: none;">
                             <td class="px-8 py-4">
                                 <div class="flex items-center gap-4">
                                     <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($t->nama_lengkap) }}&background=0f172a&color=fff" class="w-full h-full object-cover">
+                                        @if($t->foto_profil)
+                                            <img src="{{ asset('storage/profil/' . $t->foto_profil) }}" class="w-full h-full object-cover">
+                                        @else
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($t->nama_lengkap) }}&background=0f172a&color=fff" class="w-full h-full object-cover">
+                                        @endif
                                     </div>
                                     <p class="search-name text-sm font-extrabold text-slate-800 tracking-tight group-hover:text-maroon-700 transition-colors">{{ $t->nama_lengkap }}</p>
                                 </div>
@@ -108,12 +111,11 @@
                                 @php
                                     $status = $t->status_hari_ini;
                                     $badgeColor = match($status) {
-                                        'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
-                                        'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                        'Tepat Waktu', 'Check Out' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                                        'Terlambat', 'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
-                                        'Sakit', 'Izin' => 'bg-indigo-50 text-indigo-600 border-indigo-200',
-                                        'Alfa' => 'bg-rose-50 text-rose-600 border-rose-200',
-                                        default => 'bg-slate-50 text-slate-500 border-slate-200' // Belum Hadir
+                                        'Alfa', 'Lupa Check-Out' => 'bg-rose-50 text-rose-600 border-rose-200',
+                                        default => 'bg-slate-50 text-slate-500 border-slate-200'
                                     };
                                 @endphp
                                 <span class="inline-flex items-center px-3 py-1.5 {{ $badgeColor }} border rounded-lg text-[10px] font-black uppercase tracking-tight">{{ $status }}</span>
@@ -134,6 +136,7 @@
     </div>
 
 </main>
+
 <div id="modal-cetak" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300" id="modal-cetak-content">
         <div class="flex justify-between items-center mb-6">
@@ -231,7 +234,6 @@
         });
     }
 
-    /* Modal Print Kolektif Tetap Dipertahankan (Jika Ada) */
     function openPrintModal() {
         const modal = document.getElementById('modal-cetak');
         const content = document.getElementById('modal-cetak-content');

@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Presensi;
 use App\Models\StatusPresensi;
-use App\Models\KlaimPresensi;
 use App\Models\HariLibur;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage; // Pastikan ini ada
 use Carbon\Carbon;
 
 class PresensiController extends Controller
@@ -38,7 +37,6 @@ class PresensiController extends Controller
         if ($presensiHariIni && !$presensiSelesai) {
             $hariIni = $waktuSekarang->dayOfWeekIso;
 
-            // Atur batas minimal pulang berdasarkan hari (Jumat jam 16:30, Senin-Kamis jam 16:00)
             if ($hariIni == 5) {
                 $batasPulang = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar');
                 $jadwalPulang = '16:30';
@@ -78,43 +76,30 @@ class PresensiController extends Controller
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
 
-        // PROTEKSI SERVER 1: Tolak presensi jika hari libur (dari database)
         $hariLiburIni = HariLibur::where('tanggal_mulai', '<=', $tanggalHariIni)
                                  ->where('tanggal_selesai', '>=', $tanggalHariIni)
                                  ->first();
 
         if ($hariLiburIni) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Sistem ditutup! Hari ini libur: ' . $hariLiburIni->nama_libur
-            ]);
+            return response()->json(['status' => 'error', 'message' => 'Sistem ditutup! Hari ini libur: ' . $hariLiburIni->nama_libur]);
         }
 
-        // PROTEKSI SERVER 2: Tolak presensi jika hari Minggu (otomatis)
         if ($waktuSekarang->isSunday()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Hari Libur! Sistem presensi dinonaktifkan pada hari Minggu.'
-            ]);
+            return response()->json(['status' => 'error', 'message' => 'Hari Libur! Sistem presensi dinonaktifkan pada hari Minggu.']);
         }
 
         $user = Auth::user();
         $role = strtolower($user->roles->first()->name);
         $jamSekarang = $waktuSekarang->format('H:i:s');
 
-        // Memecah dan mendecode gambar base64 dari canvas
         $img = $request->image_base64;
         $image_parts = explode(";base64,", $img);
         $image_base64 = base64_decode($image_parts[1]);
 
         $fileName = $user->id_user . '_' . $tanggalHariIni . '_' . time() . '.jpeg';
 
-        // Simpan fotonya
-        $folderPath = public_path('uploads/presensi');
-        if (!file_exists($folderPath)) {
-            mkdir($folderPath, 0755, true);
-        }
-        file_put_contents($folderPath . '/' . $fileName, $image_base64);
+        // PERUBAHAN STORAGE: Simpan foto langsung ke storage/app/public/presensi
+        Storage::disk('public')->put('presensi/' . $fileName, $image_base64);
 
         $presensiHariIni = Presensi::where('id_user', $user->id_user)
                                    ->where('tanggal', $tanggalHariIni)
@@ -159,27 +144,24 @@ class PresensiController extends Controller
 
             $hariIni = $waktuSekarang->dayOfWeekIso;
 
-            // Tentukan konfigurasi jam kerja berdasarkan hari
-            if ($hariIni == 5) { // Hari Jumat
-                $batasPulang = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar'); // Batas minimal CO
-                $batasTerlambatCo = Carbon::createFromTime(17, 0, 0, 'Asia/Makassar'); // Toleransi CO 30 Menit
-            } else { // Hari Senin - Kamis
+            // Aturan Jam Pulang Tegas (Senin-Kamis 16:00 - 17:00, Jumat 16:30 - 17:30)
+            if ($hariIni == 5) {
+                $batasPulang = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar');
+                $batasTerlambatCo = Carbon::createFromTime(17, 30, 0, 'Asia/Makassar');
+            } else {
                 $batasPulang = Carbon::createFromTime(16, 0, 0, 'Asia/Makassar');
-                $batasTerlambatCo = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar');
+                $batasTerlambatCo = Carbon::createFromTime(17, 0, 0, 'Asia/Makassar');
             }
 
-            // Tolak jika belum waktunya pulang
             if ($waktuSekarang->lessThan($batasPulang)) {
                 return response()->json(['status' => 'error', 'message' => 'Belum waktunya pulang!']);
             }
 
-            // Tentukan status kelulusan check-out
+            // Jika lewat jam 5 sore di hari yang sama, maka Terlambat CO.
+            // Lupa CO tidak dicek di sini, karena kalau sudah ganti hari, logic larinya ke Check-In.
             if ($waktuSekarang->greaterThan($batasTerlambatCo)) {
-                $statusNameCo = 'Lupa Check-Out';
-                $pesan = 'Anda melewati batas toleransi check-out, status tercatat sebagai Lupa Check-Out. Silakan ajukan klaim.';
-            } elseif ($waktuSekarang->greaterThan($batasPulang)) {
                 $statusNameCo = 'Terlambat CO';
-                $pesan = 'Presensi Pulang Berhasil dicatat! Namun Anda terlambat melakukan Check-Out.';
+                $pesan = 'Presensi Pulang Berhasil! Namun Anda terlambat melakukan Check-Out.';
             } else {
                 $statusNameCo = 'Check Out';
                 $pesan = 'Presensi Pulang Berhasil dicatat! Hati-hati di jalan.';
@@ -235,30 +217,5 @@ class PresensiController extends Controller
         }
 
         return view('presensi.show', compact('layout', 'backUrl', 'presensi'));
-    }
-
-    public function ajukanKlaim(Request $request)
-    {
-        $request->validate([
-            'id_presensi' => 'required|exists:presensi,id_presensi',
-            'alasan' => 'required|string',
-            'dokumen_bukti' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-        ]);
-
-        $fileName = null;
-        if ($request->hasFile('dokumen_bukti')) {
-            $file = $request->file('dokumen_bukti');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->storeAs('public/uploads/klaim', $fileName);
-        }
-
-        KlaimPresensi::create([
-            'id_presensi' => $request->id_presensi,
-            'alasan' => $request->alasan,
-            'dokumen_bukti' => $fileName,
-            'status_verifikasi' => 'pending',
-        ]);
-
-        return redirect()->back()->with('success', 'Klaim berhasil diajukan dan menunggu verifikasi admin.');
     }
 }

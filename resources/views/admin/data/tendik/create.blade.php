@@ -73,7 +73,7 @@
                             @endforeach
                         </select>
                     </div>
-                    
+
                     <!-- FITUR SHOW/HIDE PASSWORD DITAMBAHKAN DI SINI -->
                     <div class="space-y-2 md:col-span-2">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Password Default</label>
@@ -120,7 +120,7 @@
                         <select name="id_pend_terakhir" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
                             <option value="" disabled selected>Pilih Pendidikan...</option>
                             @foreach($pendidikan as $pd)
-                                <option value="{{ $pd->id_pend_terakhir }}" {{ old('id_pend_terakhir') == $pd->id_pend_terakhir ? 'selected' : '' }}> {{ $pd->pendidikan }}  </option>                            @endforeach
+                                <option value="{{ $pd->id_pend_terakhir }}" {{ old('id_pend_terakhir') == $pd->id_pend_terakhir ? 'selected' : '' }}> {{ $pd->name }}  </option>                            @endforeach
                         </select>
                     </div>
 
@@ -194,7 +194,7 @@
     function togglePassword() {
         const input = document.getElementById('passwordInput');
         const icon = document.getElementById('eyeIcon');
-        
+
         if (input.type === 'password') {
             input.type = 'text';
             icon.innerHTML = '<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>';

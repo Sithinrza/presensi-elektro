@@ -92,7 +92,8 @@
         <img src="{{ public_path('img/logo-sertif.png') }}" alt="Logo" style="height: 80px; margin-bottom: 5px;">
 
         <h1 class="header-title" style="font-size: 38px; margin-bottom: 5px;">SERTIFIKAT</h1>
-        <p style="font-size: 13px; color: #475569; margin-bottom: 25px;">NOMOR : 004/PL18.3/LL/{{ date('Y') }}</p>
+
+        <p style="font-size: 13px; color: #475569; margin-bottom: 25px;">NOMOR : {{ $nomor_sertifikat }}</p>
 
         <p style="font-size: 15px; margin-bottom: 5px;">Diberikan kepada :</p>
 
@@ -136,10 +137,11 @@
                     <span class="text-bold" style="font-size: 12px;">Asal Sekolah : {{ $siswa->sekolah_asal }}</span>
                 </td>
                 <td style="width: 30%; vertical-align: top; text-align: right;">
-                    <table class="tabel-info" style="float: right; width: 110px;">
-                        <tr><td style="text-align: left;">Sakit</td><td>: {{ $sakit ?? '-' }}</td></tr>
-                        <tr><td style="text-align: left;">Izin</td><td>: {{ $izin ?? '-' }}</td></tr>
-                        <tr><td style="text-align: left;">Alpa</td><td>: {{ $alpa ?? '-' }}</td></tr>
+                    <table class="tabel-info" style="float: right; width: 120px;">
+                        <tr>
+                            <td style="text-align: left; background-color: #f1f5f9; font-weight: bold;">Ketidakhadiran (Alfa)</td>
+                            <td style="font-weight: bold;">: {{ $alpa ?? '0' }} Hari</td>
+                        </tr>
                     </table>
                 </td>
             </tr>

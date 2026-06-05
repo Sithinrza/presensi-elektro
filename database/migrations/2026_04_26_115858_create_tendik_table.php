@@ -13,22 +13,20 @@ return new class extends Migration
     {
        Schema::create('tendik', function (Blueprint $table) {
             $table->id('id_tendik');
-
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
-
-            $table->string('nama_lengkap', 50);
-            $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
-
             $table->string('nip')->nullable()->unique();
+            $table->string('nama_lengkap', 50);
 
-            $table->foreignId('id_unit_kerja')->nullable()->constrained('unit_kerja', 'id_unit_kerja');
+            $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
             $table->foreignId('id_agama')->nullable()->constrained('agama', 'id_agama');
+            $table->enum('jk', ['L', 'P'])->nullable();
+            
             $table->foreignId('id_pend_terakhir')->nullable()->constrained('pendidikan_terakhir', 'id_pend_terakhir');
+            $table->foreignId('id_unit_kerja')->nullable()->constrained('unit_kerja', 'id_unit_kerja');
             $table->foreignId('id_pangkat_golongan')->nullable()->constrained('pangkat_golongan', 'id_pangkat_golongan');
             $table->foreignId('id_jabatan')->nullable()->constrained('jabatan', 'id_jabatan');
 
-        
-            $table->enum('jk', ['L', 'P'])->nullable();
+
             $table->string('tempat_lahir', 40)->nullable();
             $table->date('tanggal_lahir')->nullable();
             $table->string('no_hp')->nullable();
