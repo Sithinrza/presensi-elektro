@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\SiswaMagang;
 use App\Models\Agama;
-use App\Models\Presensi; 
+use App\Models\Presensi;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -17,26 +17,16 @@ class DashboardController extends Controller
         $user = Auth::user();
         $siswa = SiswaMagang::where('id_user', $user->id_user)->first();
 
-        // 1. Cek Kelengkapan SEMUA Data Biodata
-        $isProfilLengkap = true;
-
-        if (!$siswa) {
-            $isProfilLengkap = false;
-        } else {
-            if (
-                is_null($siswa->nis) ||
-                is_null($siswa->id_agama) ||
-                is_null($siswa->sekolah_asal) ||
-                is_null($siswa->jurusan) ||
-                is_null($siswa->jk) ||
-                is_null($siswa->tempat_lahir) ||
-                is_null($siswa->tanggal_lahir) ||
-                is_null($siswa->no_hp) ||
-                is_null($siswa->alamat)
-            ) {
-                $isProfilLengkap = false;
-            }
-        }
+        $isProfilLengkap = $siswa &&
+                           !empty($siswa->nis) &&
+                           !empty($siswa->id_agama) &&
+                           !empty($siswa->sekolah_asal) &&
+                           !empty($siswa->jurusan) &&
+                           !empty($siswa->jk) &&
+                           !empty($siswa->tempat_lahir) &&
+                           !empty($siswa->tanggal_lahir) &&
+                           !empty($siswa->no_hp) &&
+                           !empty($siswa->alamat);
 
         $agama = Agama::all();
 

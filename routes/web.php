@@ -30,6 +30,7 @@ use App\Http\Controllers\Pembimbing\DashboardController as PembimbingDashboard;
 use App\Http\Controllers\Pembimbing\PresensiSiswaController;
 use App\Http\Controllers\Pembimbing\ReportMonitoringController;
 use App\Http\Controllers\Pembimbing\NilaiController;
+use App\Http\Controllers\Pembimbing\ProfilController as PembimbingProfil;
 
 // Import Controller Tendik
 use App\Http\Controllers\Tendik\RiwayatController as TendikRiwayat;
@@ -134,6 +135,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/nilai/edit/{id_siswa}', [NilaiController::class, 'edit'])->name('nilai.edit');
         Route::put('/nilai/update/{id_siswa}', [NilaiController::class, 'update'])->name('nilai.update');
         Route::get('/nilai/cetak/{id_siswa}', [NilaiController::class, 'cetakSertifikat'])->name('nilai.cetak');
+
+
+        Route::get('/profil', [PembimbingProfil::class, 'index'])->name('profil.index');
+        Route::put('/profil/update', [PembimbingProfil::class, 'update'])->name('profil.update');
+        Route::put('/profil/update-foto', [PembimbingProfil::class, 'updateFoto'])->name('profil.update-foto');
+        Route::delete('/profil/hapus-foto', [PembimbingProfil::class, 'deleteFoto'])->name('profil.delete-foto');
         });
 
     // ------------------------------------------

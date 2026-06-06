@@ -34,5 +34,15 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-2 5l9-9l-7 0l2-5l-9 9l7 0"/></svg>
             <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('pembimbing.nilai.*') ? 'opacity-100' : 'opacity-40' }}">Nilai</span>
         </a>
+
+        <a href="{{ route('pembimbing.profil.index') }}" title="Profil Saya"
+        class="group nav-transition flex flex-col items-center justify-center py-4 rounded-[2rem] {{ request()->routeIs('pembimbing.profil.index') ? 'bg-white text-maroon-950 shadow-xl scale-105' : 'text-white/40 hover:bg-white/5 hover:text-white' }}">
+            <div class="relative">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-maroon-950 rounded-full"></span>
+            </div>
+            <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('pembimbing.profil.*') ? 'opacity-100' : 'opacity-40' }}">Profil</span>
+        </a>
+
     </div>
 </aside>

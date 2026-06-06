@@ -1,8 +1,7 @@
-<aside id="sidebar" class="fixed left-0 top-0 h-full w-[260px] bg-maroon-950 flex flex-col py-6 shadow-2xl z-50 transition-all duration-300">
+<aside id="sidebar" class="fixed left-0 top-0 h-full w-[260px] bg-maroon-950 flex flex-col py-6 shadow-2xl z-50 transition-transform duration-300 -translate-x-full md:translate-x-0">
 
     <div class="px-7 mb-8 flex items-center gap-4 overflow-hidden">
         <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png" alt="Logo Poliban" class="w-11 h-11 object-contain shrink-0 drop-shadow-md">
-
         <div class="sidebar-header-text whitespace-nowrap">
             <h2 class="text-white font-black text-sm leading-none tracking-tight uppercase">Admin Panel</h2>
             <p class="text-amber-400 text-[10px] font-bold uppercase mt-1 tracking-widest leading-none">Jurusan Elektro</p>
@@ -10,7 +9,6 @@
     </div>
 
     <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto no-scrollbar pb-4">
-
         <a href="{{ route('admin.dashboard') }}"
            class="nav-item flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 {{ request()->is('admin/dashboard') ? 'bg-white/10 text-amber-400 shadow-inner' : 'text-maroon-200/70 hover:text-white hover:bg-white/5 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 {{ request()->is('admin/dashboard') ? '' : 'group-hover:scale-110 transition-transform' }}">
@@ -75,15 +73,14 @@
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Hari Libur</span>
         </a>
 
-
         <a href="{{ route('admin.sertifikat.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->routeIs('admin.sertifikat.*') ? 'bg-maroon-900 text-white font-bold' : 'text-slate-500 hover:bg-maroon-50 hover:text-maroon-900' }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-            <span class="text-sm">Penerbitan Sertifikat</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            <span class="text-sm whitespace-nowrap">Penerbitan Sertifikat</span>
         </a>
 
         <a href="{{ route('admin.kajur.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl transition-colors {{ request()->routeIs('admin.kajur.*') ? 'bg-maroon-900 text-white font-bold' : 'text-slate-500 hover:bg-maroon-50 hover:text-maroon-900' }}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            <span class="text-sm">Master Kajur</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span class="text-sm whitespace-nowrap">Master Kajur</span>
         </a>
     </nav>
 

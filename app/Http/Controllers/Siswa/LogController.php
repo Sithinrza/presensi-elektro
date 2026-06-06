@@ -39,10 +39,10 @@ class LogController extends Controller
 
     public function store(Request $request)
     {
-       
+
         $request->validate([
             'tanggal' => 'required|date|before_or_equal:today',
-            'uraian'  => 'required|string|min:10',
+            'uraian'  => 'required|string|',
         ]);
 
         $user = Auth::user();

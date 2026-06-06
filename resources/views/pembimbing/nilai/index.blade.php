@@ -19,7 +19,7 @@
             <div class="bg-white rounded-[2.5rem] p-6 border border-maroon-50 shadow-sm flex flex-col md:flex-row items-center gap-6">
                 <div class="w-20 h-20 rounded-3xl bg-slate-100 overflow-hidden border-2 border-white shadow-inner">
                     @if($siswa->foto_profil)
-                        <img src="/uploads/profil/{{ $siswa->foto_profil }}" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/' . $siswa->foto_profil) }}" class="w-full h-full object-cover">
                     @else
                         <img src="https://ui-avatars.com/api/?name={{ urlencode($siswa->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
                     @endif

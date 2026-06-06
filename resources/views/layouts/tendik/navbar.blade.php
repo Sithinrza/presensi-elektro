@@ -25,7 +25,8 @@
             <div x-data="{ open: false }" class="relative">
                 <button @click="open = !open" class="w-10 h-10 rounded-full border-2 border-gold p-0.5 block focus:outline-none active:scale-95 transition-transform shadow-sm overflow-hidden bg-white">
                     @if($profil && $profil->foto_profil)
-                        <img src="{{ asset('storage/' . $profil->foto_profil) }}" alt="Foto Profil" class="w-full h-full rounded-full object-cover">                    @else
+                        <img src="{{ asset('storage/' . $profil->foto_profil) }}" alt="Foto Profil" class="w-full h-full rounded-full object-cover">
+                    @else
                         <img src="https://ui-avatars.com/api/?name={{ urlencode($profil->nama_lengkap ?? Auth::user()->email) }}&background=800000&color=fff&bold=true" alt="Profile" class="w-full h-full rounded-full object-cover">
                     @endif
                 </button>

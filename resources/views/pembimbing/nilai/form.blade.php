@@ -71,17 +71,45 @@
                     </div>
                 </div>
             </div>
-            
 
-            <!-- KOTAK INFO ALFA -->
-            <div class="bg-rose-50 p-6 rounded-2xl border border-rose-100 flex justify-center text-center">
-                <div>
-                    <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest">Total Ketidakhadiran (Alfa)</p>
-                    <p class="text-2xl font-bold text-rose-600 mt-1">{{ $alpa }} <span class="text-sm">Hari</span></p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+
+                <div class="col-span-1 bg-rose-50 p-6 rounded-2xl border border-rose-100 flex flex-col justify-center items-center text-center shadow-inner">
+                    <div class="bg-white p-4 rounded-full shadow-sm mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                    </div>
+                    <p class="text-[10px] font-black text-rose-400 uppercase tracking-widest">Ketidakhadiran (Alfa)</p>
+                    <p class="text-4xl font-black text-rose-600 mt-1">{{ $alpa }} <span class="text-lg font-bold">Hari</span></p>
                 </div>
+
+                <div class="col-span-1 md:col-span-2 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+                        Acuan Skala Penilaian
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                        <div class="flex justify-between items-center bg-white px-4 py-2.5 rounded-xl border border-slate-100 shadow-sm">
+                            <span class="text-xs font-black text-slate-600">8,50 - 10,0</span>
+                            <span class="text-[10px] font-black text-emerald-700 bg-emerald-100 px-2 py-1 rounded-md">A (Lulus Istimewa)</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-white px-4 py-2.5 rounded-xl border border-slate-100 shadow-sm">
+                            <span class="text-xs font-black text-slate-600">7,50 - 8,49</span>
+                            <span class="text-[10px] font-black text-blue-700 bg-blue-100 px-2 py-1 rounded-md">B (Lulus Baik Sekali)</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-white px-4 py-2.5 rounded-xl border border-slate-100 shadow-sm">
+                            <span class="text-xs font-black text-slate-600">6,00 - 7,49</span>
+                            <span class="text-[10px] font-black text-amber-700 bg-amber-100 px-2 py-1 rounded-md">C (Lulus Baik)</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-white px-4 py-2.5 rounded-xl border border-slate-100 shadow-sm">
+                            <span class="text-xs font-black text-slate-600">0,0 - 5,99</span>
+                            <span class="text-[10px] font-black text-rose-700 bg-rose-100 px-2 py-1 rounded-md">D (Belum Lulus)</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
-            <button type="submit" class="w-full bg-maroon-950 text-white py-4 rounded-xl font-black uppercase tracking-widest hover:bg-maroon-900 transition-all shadow-lg">
+            <button type="submit" class="w-full bg-maroon-950 text-white py-4 rounded-xl font-black uppercase tracking-widest hover:bg-maroon-900 transition-all shadow-lg active:scale-[0.99]">
                 {{ $siswa->penilaian ? 'Update Penilaian' : 'Simpan Penilaian' }}
             </button>
         </form>

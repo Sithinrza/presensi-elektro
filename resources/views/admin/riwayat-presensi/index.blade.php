@@ -55,7 +55,7 @@
                                 <div class="flex items-center gap-4">
                                     <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
                                         @if($s->foto_profil)
-                                            <img src="{{ asset('storage/profil/' . $s->foto_profil) }}" class="w-full h-full object-cover">
+                                            <img src="{{ asset('storage/' . $s->foto_profil) }}" class="w-full h-full object-cover">
                                         @else
                                             <img src="https://ui-avatars.com/api/?name={{ urlencode($s->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
                                         @endif

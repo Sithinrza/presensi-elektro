@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Admin Dashboard - E-Presensi Elektro</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <!-- Tambahkan ini di layout utama Anda -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,64 +37,82 @@
 
         <style>
             body {
-            background-color: #fcfaf8;
-            background-image:
-                radial-gradient(at 0% 0%, rgba(188, 90, 117, 0.05) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(216, 185, 139, 0.1) 0px, transparent 50%);
-            overflow-x: hidden;
+                background-color: #fcfaf8;
+                background-image:
+                    radial-gradient(at 0% 0%, rgba(188, 90, 117, 0.05) 0px, transparent 50%),
+                    radial-gradient(at 100% 0%, rgba(216, 185, 139, 0.1) 0px, transparent 50%);
+                overflow-x: hidden;
             }
 
-            #sidebar {
-            width: 260px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
+            /* Transisi dasar */
+            #sidebar { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            #main-container { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 100%; }
 
-            #main-container {
-            margin-left: 260px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            min-width: 1100px;
-            }
+            /* LOGIKA RESPONSIVE DESKTOP */
+            @media (min-width: 768px) {
+                #sidebar { width: 260px; }
+                #main-container { margin-left: 260px; width: calc(100% - 260px); }
 
-            .collapsed #sidebar { width: 85px; }
-            .collapsed #main-container { margin-left: 85px; }
-            .collapsed .sidebar-text, .collapsed .sidebar-header-text, .collapsed .sidebar-section-label { display: none; }
-            .collapsed .nav-item { justify-content: center; padding-left: 0; padding-right: 0; }
+                /* Efek Collapse Desktop */
+                .collapsed #sidebar { width: 85px; }
+                .collapsed #main-container { margin-left: 85px; width: calc(100% - 85px); }
+                .collapsed .sidebar-text,
+                .collapsed .sidebar-header-text,
+                .collapsed .sidebar-section-label { display: none; }
+                .collapsed .nav-item { justify-content: center; padding-left: 0; padding-right: 0; }
+            }
 
             .glass-effect {
-            backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.8);
-            border-bottom: 1px solid rgba(77, 24, 43, 0.05);
+                backdrop-filter: blur(12px);
+                background: rgba(255, 255, 255, 0.8);
+                border-bottom: 1px solid rgba(77, 24, 43, 0.05);
             }
 
             @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
             }
             .animate-in { animation: fadeIn 0.4s ease-out forwards; }
-            .sidebar-item-active { @apply bg-white text-maroon-950 shadow-lg; }
             .no-scrollbar::-webkit-scrollbar { display: none; }
         </style>
     </head>
-    <body class="font-sans text-slate-900">
-        <!-- 1. Memanggil Sidebar -->
+    <body class="font-sans text-slate-900 relative">
+
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-maroon-950/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+
         @include('layouts.admin.sidebar')
 
-        <!-- MAIN CONTENT AREA -->
         <div id="main-container" class="main-content">
-
-            <!-- 2. Memanggil navbar -->
             @include('layouts.admin.navbar')
 
-            <!-- 3. Area untuk Konten Dashboard yang berubah-ubah -->
             @yield('content')
-
         </div>
 
         <script>
+            // Fungsi Pintar Toggle Responsif
             function toggleSidebar() {
-                document.body.classList.toggle('collapsed');
+                if (window.innerWidth >= 768) {
+                    // Desktop: Perkecil (Collapse)
+                    document.body.classList.toggle('collapsed');
+                } else {
+                    // Mobile: Munculkan/Sembunyikan dari kiri
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+
+                    if (sidebar && overlay) {
+                        const isHidden = sidebar.classList.contains('-translate-x-full');
+                        if (isHidden) {
+                            sidebar.classList.remove('-translate-x-full');
+                            overlay.classList.remove('hidden');
+                            setTimeout(() => { overlay.classList.remove('opacity-0'); }, 10);
+                        } else {
+                            sidebar.classList.add('-translate-x-full');
+                            overlay.classList.add('opacity-0');
+                            setTimeout(() => { overlay.classList.add('hidden'); }, 300);
+                        }
+                    }
+                }
             }
         </script>
-
     </body>
-    </html>
+</html>

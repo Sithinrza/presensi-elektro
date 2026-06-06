@@ -31,6 +31,19 @@
         @csrf
         @method('PUT')
 
+        <!-- PERINGATAN WAJIB DIISI -->
+        <div class="bg-rose-50/80 border border-rose-100 p-4 rounded-2xl mx-8 mt-8 flex items-start gap-3">
+            <div class="w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+                <p class="text-xs font-black text-rose-800 uppercase tracking-widest">Peringatan Pengisian Data</p>
+                <p class="text-[11px] font-bold text-rose-600 mt-1">
+                    Semua kolom yang memiliki tanda bintang merah (<span class="text-rose-600 text-sm align-top">*</span>) <span class="underline underline-offset-2">wajib diisi</span>. Jangan biarkan kosong.
+                </p>
+            </div>
+        </div>
+
         <div class="p-8 md:p-10 space-y-10">
 
             <div>
@@ -38,13 +51,18 @@
                     <div class="w-10 h-10 bg-maroon-50 text-maroon-900 rounded-xl flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </div>
-                    <h3 class="text-lg font-black text-maroon-950 tracking-tight uppercase italic">Informasi Akun & Data Diri</h3>
+                    <div>
+                        <h3 class="text-lg font-black text-maroon-950 tracking-tight uppercase italic leading-none">Informasi Akun & Data Diri</h3>
+                        <p class="text-[10px] font-bold text-rose-500 mt-1 uppercase tracking-widest">KOLOM WAJIB DIISI</p>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
 
                     <div class="space-y-2 md:col-span-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Status Kepegawaian</label>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Status Kepegawaian <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
                         <select name="status" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
                             <option value="Aktif" {{ old('status', $pembimbing->status) == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                             <option value="Nonaktif" {{ old('status', $pembimbing->status) == 'Nonaktif' ? 'selected' : '' }}>Nonaktif (Tidak Aktif/Pindah)</option>
@@ -52,7 +70,9 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Lengkap & Gelar</label>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Nama Lengkap & Gelar <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
                         <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $pembimbing->nama_lengkap) }}" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
@@ -62,7 +82,9 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Institusi</label>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Email Institusi <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
                         <input type="email" name="email" value="{{ old('email', $pembimbing->email ?? ($pembimbing->user->email ?? '')) }}" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
@@ -89,6 +111,7 @@
                     </div>
 
                     <div class="space-y-2 md:col-span-2">
+                        <!-- Update Password Opsional, jadi tidak wajib (*) -->
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update Password</label>
                         <input type="password" name="password" minlength="6" placeholder="Biarkan kosong jika tak ingin merubah sandi" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                         <p class="text-[9px] font-bold text-amber-500 ml-1 mt-1 uppercase tracking-widest">* Hanya isi jika ingin mereset password pengguna.</p>

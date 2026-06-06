@@ -22,7 +22,11 @@
 
     <div class="bg-maroon-900 rounded-[2.5rem] p-8 lg:p-10 text-white shadow-xl shadow-maroon-900/20 border border-maroon-800 relative overflow-hidden flex flex-col md:flex-row items-center gap-8">
         <div class="relative z-10 w-24 h-24 lg:w-28 lg:h-28 rounded-2xl bg-white/10 border-2 border-white/20 p-1 shrink-0 shadow-lg">
-            <img src="https://ui-avatars.com/api/?name={{ urlencode($siswa->nama_lengkap) }}&background=fff&color=7f1d1d&size=256&bold=true" class="w-full h-full object-cover rounded-xl">
+            @if($siswa->foto_profil)
+                <img src="{{ asset('storage/' . $siswa->foto_profil) }}" alt="Foto {{ $siswa->nama_lengkap }}" class="w-full h-full object-cover">
+            @else
+                <img src="https://ui-avatars.com/api/?name={{ urlencode($siswa->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
+            @endif
         </div>
 
         <div class="relative z-10 text-center md:text-left flex-1">

@@ -40,7 +40,8 @@
                         <div class="relative w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-2xl sm:rounded-[1.5rem] p-1 shadow-sm">
                             <div class="w-full h-full bg-slate-100 rounded-xl sm:rounded-[1.2rem] flex items-center justify-center font-black text-2xl sm:text-3xl text-maroon-900 overflow-hidden border border-slate-200 group-hover:border-maroon-200 transition-colors">
                                 @if($s->foto_profil)
-                                    <img src="{{ asset('storage/profil/' . $s->foto_profil) }}" class="w-full h-full object-cover">
+                                    <img src="{{ asset('storage/' . $s->foto_profil) }}" class="w-full h-full object-cover">
+
                                 @else
                                     {{ substr($s->nama_lengkap, 0, 1) }}
                                 @endif

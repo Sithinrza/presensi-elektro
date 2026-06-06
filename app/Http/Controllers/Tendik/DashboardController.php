@@ -22,22 +22,18 @@ class DashboardController extends Controller
 
         // Cek apakah data penting sudah diisi semua
         $isProfilLengkap = $tendik &&
-                           $tendik->nip &&
-                           $tendik->jk &&
-                           $tendik->no_hp &&
-                           $tendik->alamat &&
-                           $tendik->id_pend_terakhir;
+                            !empty($tendik->nip) &&
+                            !empty($tendik->jk) &&
+                            !empty($tendik->no_hp) &&
+                            !empty($tendik->alamat) &&
+                            !empty($tendik->tempat_lahir) &&
+                            !empty($tendik->tanggal_lahir) &&
+                            !empty($tendik->id_pend_terakhir);
 
         // Data pendukung untuk form
         $agama = Agama::all();
         $pendidikan = PendidikanTerakhir::all();
 
-        // ==========================================
-        // DATA STATISTIK KEHADIRAN BULAN INI
-        // ==========================================
-        // ==========================================
-        // DATA STATISTIK KEHADIRAN BULAN INI (Berdasarkan CI saja)
-        // ==========================================
         $bulanIni = Carbon::now('Asia/Makassar')->month;
         $tahunIni = Carbon::now('Asia/Makassar')->year;
 
