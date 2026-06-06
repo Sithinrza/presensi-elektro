@@ -19,7 +19,7 @@
             <div class="bg-white rounded-[2.5rem] p-6 border border-maroon-50 shadow-sm flex flex-col md:flex-row items-center gap-6">
                 <div class="w-20 h-20 rounded-3xl bg-slate-100 overflow-hidden border-2 border-white shadow-inner">
                     @if($siswa->foto_profil)
-                        <img src="/uploads/profil/{{ $siswa->foto_profil }}" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/' . $siswa->foto_profil) }}" class="w-full h-full object-cover">
                     @else
                         <img src="https://ui-avatars.com/api/?name={{ urlencode($siswa->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
                     @endif
@@ -34,9 +34,17 @@
                             <a href="{{ route('pembimbing.nilai.edit', $siswa->id_siswa) }}" class="bg-amber-100 text-amber-700 px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-amber-200 transition">
                                 Edit Nilai
                             </a>
-                            <a href="{{ route('pembimbing.nilai.cetak', $siswa->id_siswa) }}" target="_blank" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-700 transition">
-                                Cetak PDF
-                            </a>
+
+                            @if($siswa->penilaian->nomor_sertifikat)
+                                <a href="{{ route('pembimbing.nilai.cetak', $siswa->id_siswa) }}" target="_blank" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-emerald-700 transition">
+                                    Cetak PDF
+                                </a>
+                            @else
+                                <button disabled class="bg-slate-100 text-slate-400 border border-slate-200 px-4 py-2 rounded-xl text-[10px] font-black uppercase cursor-not-allowed transition" title="Menunggu Admin menerbitkan Nomor Sertifikat">
+                                    Menunggu No. Surat
+                                </button>
+                            @endif
+
                         @else
                             <a href="{{ route('pembimbing.nilai.create', $siswa->id_siswa) }}" class="bg-maroon-950 text-white px-6 py-2 rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-maroon-800 transition">
                                 Input Nilai

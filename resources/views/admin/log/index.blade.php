@@ -59,7 +59,11 @@
                         <td class="px-10 py-6">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-lg text-maroon-900 shrink-0 border-2 border-white group-hover:border-maroon-100 transition-all shadow-inner overflow-hidden">
-                                    {{ substr($log->nama_siswa, 0, 1) }}
+                                    @if($log->foto_profil)
+                                        <img src="{{ asset('storage/' . $log->foto_profil) }}" alt="Foto {{ $log->nama_lengkap }}" class="w-full h-full object-cover">
+                                    @else
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($log->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
+                                    @endif
                                 </div>
                                 <div>
                                     <p class="text-sm font-extrabold text-slate-800 leading-tight">{{ $log->nama_siswa }}</p>

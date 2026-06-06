@@ -143,7 +143,7 @@
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const KORDINAT_TARGET = [-3.2760497, 114.5935089];
+    const KORDINAT_TARGET = [-3.2761294, 114.5968002];
     const RADIUS_AMAN = 2000;
 
     let userLat = 0; let userLng = 0;

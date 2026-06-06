@@ -16,7 +16,10 @@ class Pembimbing extends Model
         'nama_lengkap',
         'jabatan',
         'no_telp',
-        'status'
+        'status',
+        'jk',
+        'foto_profil',
+
     ];
 
     // Relasi ke User (Untuk mengambil email/password)
@@ -30,7 +33,7 @@ class Pembimbing extends Model
     {
         return $this->belongsTo(Agama::class, 'id_agama');
     }
-    
+
     // Relasi ke Siswa Magang (1 Pembimbing memiliki banyak Siswa)
     public function siswaMagang()
     {

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Presensi;
 use App\Models\SiswaMagang;
 use App\Models\Tendik;
+use App\Models\StatusPresensi;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
@@ -16,20 +17,19 @@ class RiwayatController extends Controller
     {
         $hariIni = Carbon::now('Asia/Makassar')->format('Y-m-d');
 
-        // 1. Ambil semua data presensi hari ini dalam satu query (Optimasi agar tidak lemot)
-        $presensiHariIni = Presensi::with('statusCi')
+        // 1. Ambil semua data presensi hari ini
+        $presensiHariIni = Presensi::with(['statusCi', 'statusCo'])
                                    ->whereDate('tanggal', $hariIni)
                                    ->get()
                                    ->keyBy('id_user');
 
-        // 2. Cek apakah hari ini bertepatan dengan hari libur nasional atau hari Minggu
         $isMinggu = Carbon::now('Asia/Makassar')->isSunday();
         $liburNasional = \App\Models\HariLibur::whereDate('tanggal_mulai', '<=', $hariIni)
                                               ->whereDate('tanggal_selesai', '>=', $hariIni)
                                               ->exists();
         $isLiburHariIni = $isMinggu || $liburNasional;
 
-        // 3. Map status kehadiran hari ini untuk Siswa
+        // 2. Map status harian Siswa
         $siswa = SiswaMagang::with('user')->get()->map(function ($s) use ($presensiHariIni, $isLiburHariIni) {
             $status = 'Belum Hadir';
             if ($presensiHariIni->has($s->id_user)) {
@@ -42,7 +42,7 @@ class RiwayatController extends Controller
             return $s;
         });
 
-        // 4. Map status kehadiran hari ini untuk Tendik
+        // 3. Map status harian Tendik
         $tendik = Tendik::with(['user', 'unitKerja'])->get()->map(function ($t) use ($presensiHariIni, $isLiburHariIni) {
             $status = 'Belum Hadir';
             if ($presensiHariIni->has($t->id_user)) {
@@ -60,7 +60,6 @@ class RiwayatController extends Controller
 
     public function showDetail(Request $request, $id_user)
     {
-        // 1. Ambil data User beserta relasi profilnya
         $user = \App\Models\User::with(['siswaMagang', 'tendik'])->findOrFail($id_user);
 
         $nama_lengkap = 'User Tidak Diketahui';
@@ -77,7 +76,6 @@ class RiwayatController extends Controller
             $instansi = $user->tendik->unitKerja ? $user->tendik->unitKerja->nama_unit : '-';
         }
 
-        // 2. Filter Bulan & Tahun
         $bulan = $request->bulan ?? date('m');
         $tahun = $request->tahun ?? date('Y');
 
@@ -89,32 +87,38 @@ class RiwayatController extends Controller
         $mulaiLoop = $startOfMonth->max($tanggalBikinAkun);
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->startOfDay() : $endOfMonth;
 
-        // 3. Ambil data Riwayat Presensi ASLI
-        $dbRiwayat = Presensi::with(['statusCi', 'statusCo', 'klaim'])
+        $dbRiwayat = Presensi::with(['statusCi', 'statusCo'])
                     ->where('id_user', $id_user)
                     ->whereMonth('tanggal', $bulan)
                     ->whereYear('tanggal', $tahun)
                     ->get()
                     ->keyBy('tanggal');
 
-        // 4. Ambil kalender Hari Libur
         $hariLibur = \App\Models\HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
         })->get();
 
         $riwayat = collect();
+
+        // STATUS PEMBARUAN: Ditambahkan key 'Telat CO' secara terpisah murni
         $statistik = [
             'Tepat CI' => 0, 'Telat CI' => 0, 'Alfa' => 0,
-            'Tepat CO' => 0, 'Lupa CO' => 0, 'Libur' => 0
+            'Tepat CO' => 0, 'Telat CO' => 0, 'Lupa CO' => 0, 'Libur' => 0
         ];
 
-        // 5. ON-THE-FLY GENERATION
         for ($date = $mulaiLoop->copy(); $date->lte($endOfMonth); $date->addDay()) {
             $dateString = $date->format('Y-m-d');
 
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
+
+                // Otomatis ubah data kemarin yang bolos checkout menjadi Lupa Check-Out
+                if ($dateString != $waktuSekarang->format('Y-m-d') && is_null($p->jam_pulang)) {
+                    $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
+                    $p->setRelation('statusCo', $statusLupa);
+                }
+
                 $riwayat->push($p);
 
                 if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') $statistik['Tepat CI']++;
@@ -123,6 +127,7 @@ class RiwayatController extends Controller
                 if ($p->statusCi && $p->statusCi->name == 'Libur') $statistik['Libur']++;
 
                 if ($p->statusCo && in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $statistik['Tepat CO']++;
+                if ($p->statusCo && $p->statusCo->name == 'Terlambat CO') $statistik['Telat CO']++;
                 if ($p->statusCo && $p->statusCo->name == 'Lupa Check-Out') $statistik['Lupa CO']++;
             } else {
                 if ($date->lte($batasLoop)) {
@@ -135,10 +140,10 @@ class RiwayatController extends Controller
 
                     if ($isLibur) {
                         $statistik['Libur']++;
-                        $statusMock = new \App\Models\StatusPresensi(['name' => 'Libur']);
+                        $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
                         $statistik['Alfa']++;
-                        $statusMock = new \App\Models\StatusPresensi(['name' => 'Alfa']);
+                        $statusMock = new StatusPresensi(['name' => 'Alfa']);
                     }
 
                     $mock = new Presensi(['tanggal' => $dateString, 'jam_masuk' => null, 'jam_pulang' => null]);
@@ -158,21 +163,22 @@ class RiwayatController extends Controller
 
     public function cetakPdf(Request $request, $id_user)
     {
-        // 1. Ambil data User (Support untuk Siswa Magang & Tendik)
         $user = \App\Models\User::with(['siswaMagang', 'tendik'])->findOrFail($id_user);
 
+        $role = 'Tidak Diketahui';
         $nama_lengkap = 'User Tidak Diketahui';
         $instansi = '-';
 
         if ($user->siswaMagang) {
             $nama_lengkap = $user->siswaMagang->nama_lengkap;
+            $role = 'Siswa Magang';
             $instansi = $user->siswaMagang->sekolah_asal;
         } elseif ($user->tendik) {
             $nama_lengkap = $user->tendik->nama_lengkap;
+            $role = 'Tenaga Kependidikan';
             $instansi = $user->tendik->unitKerja ? $user->tendik->unitKerja->nama_unit : '-';
         }
 
-        // 2. Ambil filter bulan & tahun (Default bulan ini)
         $bulan = $request->bulan ?? date('m');
         $tahun = $request->tahun ?? date('Y');
 
@@ -180,11 +186,11 @@ class RiwayatController extends Controller
         $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
+        // Cari tanggal akun dibuat
         $tanggalBikinAkun = Carbon::parse($user->created_at)->startOfDay();
         $mulaiLoop = $startOfMonth->max($tanggalBikinAkun);
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->startOfDay() : $endOfMonth;
 
-        // 3. Ambil data Riwayat ASLI
         $dbRiwayat = Presensi::with(['statusCi', 'statusCo'])
                     ->where('id_user', $id_user)
                     ->whereMonth('tanggal', $bulan)
@@ -192,7 +198,6 @@ class RiwayatController extends Controller
                     ->get()
                     ->keyBy('tanggal');
 
-        // 4. Ambil Kalender Libur
         $hariLibur = \App\Models\HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
@@ -200,12 +205,19 @@ class RiwayatController extends Controller
 
         $riwayat = collect();
 
-        // 5. ON-THE-FLY GENERATION (Sihir Kalender)
+        // Looping persis seperti di tampilan Detail
         for ($date = $mulaiLoop->copy(); $date->lte($endOfMonth); $date->addDay()) {
             $dateString = $date->format('Y-m-d');
 
             if ($dbRiwayat->has($dateString)) {
-                $riwayat->push($dbRiwayat->get($dateString));
+                $p = $dbRiwayat->get($dateString);
+
+                // Lupa CO otomatis
+                if ($dateString != $waktuSekarang->format('Y-m-d') && is_null($p->jam_pulang)) {
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
+                }
+
+                $riwayat->push($p);
             } else {
                 if ($date->lte($batasLoop)) {
                     $isLibur = $date->isSunday();
@@ -215,32 +227,36 @@ class RiwayatController extends Controller
                         }
                     }
 
-                    $statusMock = new \App\Models\StatusPresensi(['name' => $isLibur ? 'Libur' : 'Alfa']);
+                    if ($isLibur) {
+                        $statusMock = new StatusPresensi(['name' => 'Libur']);
+                    } else {
+                        $statusMock = new StatusPresensi(['name' => 'Alfa']);
+                    }
+
                     $mock = new Presensi(['tanggal' => $dateString, 'jam_masuk' => null, 'jam_pulang' => null]);
                     $mock->setRelation('statusCi', $statusMock);
-                    $mock->setRelation('statusCo', $statusMock);
+                    $mock->setRelation('statusCo', $statusMock); // CO juga libur/alfa
                     $riwayat->push($mock);
                 }
             }
         }
 
-        // Urutkan data secara Ascending (Dari tanggal 1 ke 30) agar rapi di kertas
+        // Cetak dari tanggal terawal ke akhir (Ascending) untuk PDF
         $riwayat = $riwayat->sortBy('tanggal')->values();
 
-        // 6. Ciptakan objek profil palsu agar sesuai dengan format View PDF kamu
         $profil = (object)[
             'nama_lengkap' => $nama_lengkap,
-            'sekolah_asal' => $instansi
+            'sekolah_asal' => $instansi,
+            'role' => $role
         ];
 
-        // 7. Cetak PDF
-        $pdf = Pdf::loadView('admin.riwayat-presensi.cetak', [
+        // Gunakan facade PDF bawaan
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.riwayat-presensi.cetak', [
             'siswa' => $profil,
             'riwayat' => $riwayat,
-            'periode' => Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y') // Info Bulan untuk Kop
-        ]);
+            'periode' => Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y')
+        ])->setPaper('A4', 'portrait');
 
-        $pdf->setPaper('A4', 'portrait');
         return $pdf->stream('Laporan-Presensi-'.$nama_lengkap.'.pdf');
     }
 
@@ -255,86 +271,91 @@ class RiwayatController extends Controller
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->startOfDay() : $endOfMonth;
 
-        // Ambil Data Profil Berdasarkan Kategori
-        if ($kategori == 'siswa') {
-            $users = \App\Models\SiswaMagang::with('user')->get();
-        } else {
-            $users = \App\Models\Tendik::with(['user', 'unitKerja'])->get();
-        }
-
-        // Ambil Semua Presensi di bulan tersebut untuk user-user di atas
+        $users = ($kategori == 'siswa') ? \App\Models\SiswaMagang::with('user')->get() : \App\Models\Tendik::with(['user', 'unitKerja'])->get();
         $idUsers = $users->pluck('id_user')->toArray();
-        $presensiAll = Presensi::with('statusCi')
+
+        $presensiAll = Presensi::with(['statusCi', 'statusCo'])
                         ->whereIn('id_user', $idUsers)
                         ->whereMonth('tanggal', $bulan)
                         ->whereYear('tanggal', $tahun)
                         ->get()
                         ->groupBy('id_user');
 
-        // Ambil Hari Libur
         $hariLibur = \App\Models\HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
         })->get();
 
-        // Buat Array Tanggal 1 s.d Akhir Bulan
         $hariInMonth = [];
-        for ($d = $startOfMonth->copy(); $d->lte($endOfMonth); $d->addDay()) {
-            $hariInMonth[] = $d->copy();
-        }
+        for ($d = $startOfMonth->copy(); $d->lte($endOfMonth); $d->addDay()) { $hariInMonth[] = $d->copy(); }
 
         $laporan = [];
 
-        // ON-THE-FLY GENERATION UNTUK EXCEL
         foreach ($users as $u) {
             $presensiUser = $presensiAll->has($u->id_user) ? $presensiAll->get($u->id_user)->keyBy('tanggal') : collect();
-            $tanggalBikinAkun = Carbon::parse($u->user->created_at)->startOfDay();
 
             $row = [
                 'nama' => $u->nama_lengkap,
                 'identitas' => $kategori == 'siswa' ? ($u->nis ?? '-') : ($u->nip ?? '-'),
                 'instansi' => $kategori == 'siswa' ? ($u->sekolah_asal ?? '-') : ($u->unitKerja->nama_unit ?? '-'),
-                'rekap' => [],
-                'hadir' => 0, 'telat' => 0, 'alfa' => 0, 'libur' => 0
+                'rekap_ci' => [],
+                'rekap_co' => [],
+                'ci_tepat' => 0, 'ci_telat' => 0, 'ci_alfa' => 0, 'ci_libur' => 0,
+                'co_tepat' => 0, 'co_telat' => 0, 'co_lupa' => 0,
             ];
 
             foreach ($hariInMonth as $date) {
                 $dateString = $date->format('Y-m-d');
-                $simbol = '';
+                $simbol_ci = '';
+                $simbol_co = '';
 
-                if ($date->lt($tanggalBikinAkun)) {
-                    $simbol = '-'; // Belum bikin akun
-                } elseif ($presensiUser->has($dateString)) {
+                if ($presensiUser->has($dateString)) {
                     $p = $presensiUser->get($dateString);
-                    if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') { $simbol = 'H'; $row['hadir']++; }
-                    elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') { $simbol = 'T'; $row['telat']++; }
-                    elseif ($p->statusCi && $p->statusCi->name == 'Libur') { $simbol = 'L'; $row['libur']++; }
-                    else { $simbol = 'A'; $row['alfa']++; }
+
+                    // 1. PENENTUAN SIMBOL CHECK-IN (CI)
+                    if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') { $simbol_ci = 'TW'; $row['ci_tepat']++; }
+                    elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') { $simbol_ci = 'T'; $row['ci_telat']++; }
+                    elseif ($p->statusCi && $p->statusCi->name == 'Libur') { $simbol_ci = 'L'; $row['ci_libur']++; }
+                    else { $simbol_ci = 'A'; $row['ci_alfa']++; }
+
+                    // 2. PENENTUAN SIMBOL CHECK-OUT (CO)
+                    if ($dateString != $waktuSekarang->format('Y-m-d') && is_null($p->jam_pulang)) {
+                        $simbol_co = 'LC'; $row['co_lupa']++;
+                    } elseif ($p->statusCo) {
+                        if (in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) { $simbol_co = 'CO'; $row['co_tepat']++; }
+                        elseif ($p->statusCo->name == 'Terlambat CO') { $simbol_co = 'TC'; $row['co_telat']++; }
+                        elseif ($p->statusCo->name == 'Lupa Check-Out') { $simbol_co = 'LC'; $row['co_lupa']++; }
+                        elseif ($p->statusCo->name == 'Libur') { $simbol_co = 'L'; } // Otomatis disamakan
+                        else { $simbol_co = '-'; }
+                    } else {
+                        $simbol_co = '-';
+                    }
+
                 } else {
+                    // PERBAIKAN: Jika hari kosong, set Libur/Alfa untuk CI dan CO sekaligus
                     if ($date->lte($batasLoop)) {
                         $isLibur = $date->isSunday();
                         foreach ($hariLibur as $hl) {
-                            if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) {
-                                $isLibur = true; break;
-                            }
+                            if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) { $isLibur = true; break; }
                         }
-                        if ($isLibur) { $simbol = 'L'; $row['libur']++; }
-                        else { $simbol = 'A'; $row['alfa']++; }
-                    } else {
-                        $simbol = ''; // Hari belum terlewati (kosong)
+
+                        if ($isLibur) {
+                            $simbol_ci = 'L'; $row['ci_libur']++;
+                            $simbol_co = 'L'; // <--- CO juga jadi Libur
+                        } else {
+                            $simbol_ci = 'A'; $row['ci_alfa']++;
+                            $simbol_co = 'A'; // <--- CO juga jadi Alfa (karena gak turun dari pagi)
+                        }
                     }
                 }
-                $row['rekap'][$dateString] = $simbol;
+
+                $row['rekap_ci'][$dateString] = $simbol_ci;
+                $row['rekap_co'][$dateString] = $simbol_co;
             }
             $laporan[] = $row;
         }
 
-        // Return sebagai File Excel (xls)
-        $namaKategori = ucfirst($kategori);
-        $namaFile = "Rekap_Presensi_{$namaKategori}_{$bulan}_{$tahun}.xls";
-
-        return response(view('admin.riwayat-presensi.excel', compact('laporan', 'hariInMonth', 'bulan', 'tahun', 'kategori')))
-            ->header('Content-Type', 'application/vnd.ms-excel')
-            ->header('Content-Disposition', 'attachment; filename="'.$namaFile.'"');
+        // Tampilkan view aja dulu biar bisa dicek (jangan langsung download)
+        return view('admin.riwayat-presensi.excel', compact('laporan', 'hariInMonth', 'bulan', 'tahun', 'kategori'));
     }
 }

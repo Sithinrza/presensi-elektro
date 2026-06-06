@@ -16,9 +16,10 @@ return new class extends Migration
 
             // Relasi ke Siswa dan Pembimbing
             $table->unsignedBigInteger('id_siswa');
-            $table->unsignedBigInteger('id_user'); // ID pembimbing/tendik yang menilai (sesuaikan jika namanya id_tendik)
+            $table->unsignedBigInteger('id_user');
 
-            // --- 6 ASPEK SIKAP DAN PERILAKU ---
+            $table->string('nomor_sertifikat')->nullable();
+
             // Tipe decimal(5,2) berarti bisa menampung angka seperti 10.00 atau 8.50
             $table->decimal('kecakapan_kerja', 5, 2)->default(0);
             $table->decimal('menerima_perintah', 5, 2)->default(0);
@@ -36,12 +37,13 @@ return new class extends Migration
             // --- REKAPITULASI ---
             $table->decimal('rata_rata', 5, 2)->default(0); // Nilai rata-rata keseluruhan
             $table->timestamps();
+            
             $table->foreign('id_siswa')->references('id_siswa')->on('siswa_magang')->onDelete('cascade');
             $table->foreign('id_user')->references('id_user')->on('users')->onDelete('cascade');
         });
     }
 
-   
+
     public function down(): void
     {
         Schema::dropIfExists('penilaian_magang');

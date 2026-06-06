@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('hari_libur', function (Blueprint $table) {
         $table->id('id_libur');
 
-        $table->string('nama_libur');
+        $table->string('nama_libur', 50);
         $table->date('tanggal_mulai');
         $table->date('tanggal_selesai');
 
@@ -22,7 +22,7 @@ return new class extends Migration
 
         $table->text('keterangan')->nullable();
 
-        $table->timestamps(); // Otomatis membuat created_at dan updated_at
+        $table->timestamps(); 
     });
 }
 

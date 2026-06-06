@@ -75,7 +75,11 @@
                         <td class="px-8 py-4">
                             <div class="flex items-center gap-4">
                                 <div class="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($p->nama_lengkap) }}&background=4c1d2e&color=fff" class="w-full h-full object-cover">
+                                    @if($p->foto_profil)
+                                        <img src="{{ asset('storage/' . $p->foto_profil) }}" alt="Foto {{ $p->nama_lengkap }}" class="w-full h-full object-cover">
+                                    @else
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($p->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
+                                    @endif
                                 </div>
                                 <div>
                                     <p class="text-sm font-extrabold text-slate-800 leading-none tracking-tight group-hover:text-maroon-700 transition-colors">{{ $p->nama_lengkap }}</p>

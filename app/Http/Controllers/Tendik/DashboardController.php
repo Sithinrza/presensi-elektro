@@ -21,34 +21,41 @@ class DashboardController extends Controller
         $tendik = Tendik::where('id_user', $user->id_user)->first();
 
         // Cek apakah data penting sudah diisi semua
-        // (Sesuaikan field apa saja yang menurutmu wajib diisi sebelum bisa absen)
         $isProfilLengkap = $tendik &&
-                           $tendik->nip &&
-                           $tendik->jk &&
-                           $tendik->no_hp &&
-                           $tendik->alamat &&
-                           $tendik->id_pend_terakhir;
+                            !empty($tendik->nip) &&
+                            !empty($tendik->jk) &&
+                            !empty($tendik->no_hp) &&
+                            !empty($tendik->alamat) &&
+                            !empty($tendik->tempat_lahir) &&
+                            !empty($tendik->tanggal_lahir) &&
+                            !empty($tendik->id_pend_terakhir);
 
         // Data pendukung untuk form
         $agama = Agama::all();
         $pendidikan = PendidikanTerakhir::all();
 
-        // Data Statistik Kehadiran Bulan Ini
         $bulanIni = Carbon::now('Asia/Makassar')->month;
         $tahunIni = Carbon::now('Asia/Makassar')->year;
 
-        $hadir = Presensi::where('id_user', $user->id_user)
-                         ->whereMonth('tanggal', $bulanIni)
-                         ->whereYear('tanggal', $tahunIni)
-                         ->count();
+        $presensiBulanIni = Presensi::where('id_user', $user->id_user)
+                                    ->whereMonth('tanggal', $bulanIni)
+                                    ->whereYear('tanggal', $tahunIni)
+                                    ->get();
 
-        // Anggap total hari kerja 22 hari, sesuaikan dengan aturan instansi
-        $total_hari_kerja = 22;
-        $telat = 0; // Bisa dikembangkan dengan logika jam masuk > 08:00
-        $alpa = $total_hari_kerja - $hadir;
+        // 1. Tepat Waktu (Status CI = 1)
+        $tepatWaktu = $presensiBulanIni->where('id_status_ci', 1)->count();
+
+        // 2. Terlambat (Status CI = 2)
+        $telat = $presensiBulanIni->where('id_status_ci', 2)->count();
+
+        // 3. Total Hadir (Tepat Waktu + Terlambat)
+        $hadir = $tepatWaktu + $telat;
+
+        // 4. Alpa (Status CI = 3)
+        $alpa = $presensiBulanIni->where('id_status_ci', 3)->count();
 
         return view('tendik.dashboard.index', compact(
-            'tendik', 'isProfilLengkap', 'agama', 'pendidikan', 'hadir', 'total_hari_kerja', 'telat', 'alpa'
+            'tendik', 'isProfilLengkap', 'agama', 'pendidikan', 'hadir', 'tepatWaktu', 'telat', 'alpa'
         ));
     }
 

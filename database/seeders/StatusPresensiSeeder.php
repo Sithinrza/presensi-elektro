@@ -25,10 +25,13 @@ class StatusPresensiSeeder extends Seeder
         DB::table('status_presensi')->insert([
             ['id_status_presensi' => 1, 'name' => 'Tepat Waktu', 'created_at' => $now, 'updated_at' => $now],
             ['id_status_presensi' => 2, 'name' => 'Terlambat', 'created_at' => $now, 'updated_at' => $now],
-            ['id_status_presensi' => 3, 'name' => 'Alfa', 'created_at' => $now, 'updated_at' => $now],
-            ['id_status_presensi' => 4, 'name' => 'Check Out', 'created_at' => $now, 'updated_at' => $now],
+            ['id_status_presensi' => 3, 'name' => 'Check Out', 'created_at' => $now, 'updated_at' => $now],
+            ['id_status_presensi' => 4, 'name' => 'Terlambat CO', 'created_at' => $now, 'updated_at' => $now],
             ['id_status_presensi' => 5, 'name' => 'Lupa Check-Out', 'created_at' => $now, 'updated_at' => $now],
-            ['id_status_presensi' => 6, 'name' => 'Libur', 'created_at' => $now, 'updated_at' => $now], // Pakai ID 11 sesuai screenshot kamu
+            ['id_status_presensi' => 6, 'name' => 'Alfa', 'created_at' => $now, 'updated_at' => $now],
+            ['id_status_presensi' => 7, 'name' => 'Libur', 'created_at' => $now, 'updated_at' => $now],
+
+
         ]);
     }
 }

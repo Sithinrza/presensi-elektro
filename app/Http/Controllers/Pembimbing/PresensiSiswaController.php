@@ -18,24 +18,81 @@ class PresensiSiswaController extends Controller
     {
         $pembimbing = Pembimbing::where('id_user', Auth::id())->first();
 
-        // Ambil siswa dengan relasi presensi
-        $query = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing)
-                            ->with(['presensi.statusCi', 'presensi.statusCo']);
-
-        // Filter pencarian nama siswa
+        // 1. Ambil data siswa
+        $query = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing)->with('user');
         if ($request->has('search')) {
             $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
         }
-
         $anakBimbingan = $query->get();
+        $idUsers = $anakBimbingan->pluck('id_user')->toArray();
 
-        // Menghitung statistik agar siap tampil di view index (kartu-kartu siswa)
+        // 2. Setup Waktu Bulan Ini
+        $bulan = date('m');
+        $tahun = date('Y');
+        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+        $waktuSekarang = Carbon::now('Asia/Makassar');
+        $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->startOfDay() : $endOfMonth;
+
+        // 3. Ambil semua presensi siswa asuhan bulan ini sekaligus (Biar ngebut)
+        $presensiBulanIni = Presensi::with(['statusCi', 'statusCo'])
+            ->whereIn('id_user', $idUsers)
+            ->whereMonth('tanggal', $bulan)
+            ->whereYear('tanggal', $tahun)
+            ->get()
+            ->groupBy('id_user');
+
+        $hariLibur = HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
+            $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
+                  ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
+        })->get();
+
+        // 4. Hitung Statistik Real-time Akurat untuk Setiap Siswa
         foreach ($anakBimbingan as $s) {
-            $s->stat_hadir = $s->presensi->where('statusCi.name', 'Tepat Waktu')->count();
-            $s->stat_telat = $s->presensi->where('statusCi.name', 'Terlambat')->count();
-            $s->stat_alfa  = $s->presensi->where('statusCi.name', 'Alfa')->count();
-            $s->stat_tepat_co = $s->presensi->where('statusCo.name', 'Tepat Waktu')->count();
-            $s->stat_lupa_co  = $s->presensi->where('statusCo.name', 'Lupa Check-Out')->count();
+            $s->stat_tepat_ci = 0; $s->stat_telat_ci = 0; $s->stat_alfa = 0;
+            $s->stat_tepat_co = 0; $s->stat_telat_co = 0; $s->stat_lupa_co = 0;
+
+            $presensiSiswa = $presensiBulanIni->has($s->id_user) ? $presensiBulanIni->get($s->id_user)->keyBy('tanggal') : collect();
+
+            // Ambil tanggal mulai absen (Tanggal 1 atau tanggal akun dibuat)
+            $tanggalBikinAkun = Carbon::parse($s->user->created_at ?? $s->created_at)->startOfDay();
+            $mulaiLoop = $startOfMonth->max($tanggalBikinAkun);
+
+            for ($date = $mulaiLoop->copy(); $date->lte($batasLoop); $date->addDay()) {
+                $dateString = $date->format('Y-m-d');
+
+                // Jika ada data presensi (Siswa Hadir)
+                if ($presensiSiswa->has($dateString)) {
+                    $p = $presensiSiswa->get($dateString);
+
+                    // Status CI (Masuk)
+                    if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') $s->stat_tepat_ci++;
+                    elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') $s->stat_telat_ci++;
+                    elseif ($p->statusCi && $p->statusCi->name == 'Alfa') $s->stat_alfa++;
+
+                    // Status CO (Pulang)
+                    if ($dateString != $waktuSekarang->format('Y-m-d') && is_null($p->jam_pulang)) {
+                        $s->stat_lupa_co++;
+                    } elseif ($p->statusCo) {
+                        if (in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $s->stat_tepat_co++;
+                        elseif ($p->statusCo->name == 'Terlambat CO') $s->stat_telat_co++;
+                        elseif ($p->statusCo->name == 'Lupa Check-Out') $s->stat_lupa_co++;
+                    }
+                }
+                // Jika TIDAK ADA data presensi (Alfa / Libur)
+                else {
+                    $isLibur = $date->isSunday();
+                    foreach ($hariLibur as $hl) {
+                        if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) {
+                            $isLibur = true; break;
+                        }
+                    }
+
+                    if (!$isLibur) {
+                        $s->stat_alfa++;
+                    }
+                }
+            }
         }
 
         return view('pembimbing.presensi-siswa.index', compact('anakBimbingan'));
@@ -45,7 +102,6 @@ class PresensiSiswaController extends Controller
     {
         $siswa = SiswaMagang::where('id_user', $id_user)->firstOrFail();
 
-        // Ambil filter bulan dan tahun, default bulan/tahun saat ini
         $bulan = $request->bulan ?? date('m');
         $tahun = $request->tahun ?? date('Y');
 
@@ -53,12 +109,10 @@ class PresensiSiswaController extends Controller
         $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
-        // Mulai looping dari tanggal dia bikin akun (agar tidak ada Alfa palsu di bulan pertama dia masuk)
         $tanggalBikinAkun = Carbon::parse($siswa->created_at)->startOfDay();
         $mulaiLoop = $startOfMonth->max($tanggalBikinAkun);
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->startOfDay() : $endOfMonth;
 
-        // 1. Ambil Data Presensi ASLI dari database bulan ini
         $dbRiwayat = Presensi::with(['statusCi', 'statusCo'])
                              ->where('id_user', $id_user)
                              ->whereMonth('tanggal', $bulan)
@@ -66,7 +120,6 @@ class PresensiSiswaController extends Controller
                              ->get()
                              ->keyBy('tanggal');
 
-        // 2. Ambil kalender Hari Libur dari Admin
         $hariLibur = HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
@@ -74,30 +127,36 @@ class PresensiSiswaController extends Controller
 
         $riwayatPresensi = collect();
 
-        // Siapkan array statistik untuk halaman detail
+        // TAMBAH KEY 'Telat CO' DI SINI
         $statistik = [
             'Tepat CI' => 0, 'Telat CI' => 0, 'Alfa' => 0,
-            'Tepat CO' => 0, 'Lupa CO' => 0, 'Libur' => 0
+            'Tepat CO' => 0, 'Telat CO' => 0, 'Lupa CO' => 0, 'Libur' => 0
         ];
 
-        // 3. ON-THE-FLY GENERATION: Looping kalender
         for ($date = $mulaiLoop->copy(); $date->lte($endOfMonth); $date->addDay()) {
             $dateString = $date->format('Y-m-d');
 
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
+
+                // Otomatis Lupa CO jika hari sudah lewat dan jam_pulang masih kosong
+                if ($dateString != $waktuSekarang->format('Y-m-d') && is_null($p->jam_pulang)) {
+                    $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
+                    $p->setRelation('statusCo', $statusLupa);
+                }
+
                 $riwayatPresensi->push($p);
 
-                // Hitung Statistik jika data ada di DB
                 if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') $statistik['Tepat CI']++;
                 if ($p->statusCi && $p->statusCi->name == 'Terlambat') $statistik['Telat CI']++;
                 if ($p->statusCi && $p->statusCi->name == 'Alfa') $statistik['Alfa']++;
                 if ($p->statusCi && $p->statusCi->name == 'Libur') $statistik['Libur']++;
 
-                if ($p->statusCo && $p->statusCo->name == 'Tepat Waktu') $statistik['Tepat CO']++;
+                // PILAHAAN STATISTIKNYA:
+                if ($p->statusCo && in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $statistik['Tepat CO']++;
+                if ($p->statusCo && $p->statusCo->name == 'Terlambat CO') $statistik['Telat CO']++;
                 if ($p->statusCo && $p->statusCo->name == 'Lupa Check-Out') $statistik['Lupa CO']++;
             } else {
-                // Proses hari yang kosong (hanya sampai batas hari ini)
                 if ($date->lte($batasLoop)) {
                     $isLibur = $date->isSunday();
 
@@ -115,7 +174,6 @@ class PresensiSiswaController extends Controller
                         $statusMock = new StatusPresensi(['name' => 'Alfa']);
                     }
 
-                    // Buat data presensi bayangan untuk dikirim ke view
                     $mock = new Presensi([
                         'tanggal' => $dateString,
                         'jam_masuk' => null,
@@ -129,7 +187,6 @@ class PresensiSiswaController extends Controller
             }
         }
 
-        // Urutkan dari yang terbaru ke terlama
         $riwayatPresensi = $riwayatPresensi->sortByDesc('tanggal')->values();
 
         return view('pembimbing.presensi-siswa.show', compact('siswa', 'riwayatPresensi', 'statistik', 'bulan', 'tahun'));

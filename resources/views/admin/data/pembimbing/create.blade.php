@@ -30,6 +30,19 @@
     <form action="{{ route('admin.data.pembimbing.store') }}" method="POST" class="bg-white rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
 
+        <!-- PERINGATAN WAJIB DIISI -->
+        <div class="bg-rose-50/80 border border-rose-100 p-4 rounded-2xl mx-8 mt-8 flex items-start gap-3">
+            <div class="w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+                <p class="text-xs font-black text-rose-800 uppercase tracking-widest">Peringatan Pengisian Data</p>
+                <p class="text-[11px] font-bold text-rose-600 mt-1">
+                    Semua kolom yang memiliki tanda bintang merah (<span class="text-rose-600 text-sm align-top">*</span>) <span class="underline underline-offset-2">wajib diisi</span>. Jangan biarkan kosong sebelum menyimpan.
+                </p>
+            </div>
+        </div>
+
         <div class="p-8 md:p-10 space-y-10">
 
             <div>
@@ -39,13 +52,15 @@
                     </div>
                     <div>
                         <h3 class="text-lg font-black text-maroon-950 tracking-tight uppercase italic leading-none">Informasi Akun & Data Diri</h3>
-                        <p class="text-[10px] font-bold text-maroon-400 mt-1 uppercase tracking-widest">Kolom Wajib Diisi</p>
+                        <p class="text-[10px] font-bold text-maroon-400 mt-1 uppercase tracking-widest">Lengkapi Data Personel</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50/50 p-6 rounded-3xl border border-slate-100">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nama Lengkap & Gelar</label>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Nama Lengkap & Gelar <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
                         <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap') }}" required placeholder="Contoh: Budi, M.T." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
@@ -55,7 +70,9 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Institusi</label>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Email Institusi <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
                         <input type="email" name="email" value="{{ old('email') }}" required placeholder="pembimbing@poliban.ac.id" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
@@ -82,7 +99,9 @@
                     </div>
 
                     <div class="space-y-2 md:col-span-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Password Default</label>
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Password Default <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
                         <div class="relative group">
                             <input id="passwordInput" type="password" name="password" required minlength="6" placeholder="Masukkan password awal (min 6 karakter)" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 pr-12 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                             <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-maroon-600 transition-colors focus:outline-none">

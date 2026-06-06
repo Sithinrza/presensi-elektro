@@ -15,10 +15,10 @@ use App\Http\Controllers\Admin\SiswaMagangController;
 use App\Http\Controllers\Admin\PembimbingController;
 use App\Http\Controllers\Admin\UnitKerjaController;
 use App\Http\Controllers\Admin\HariLiburController;
+use App\Http\Controllers\Admin\KajurController;
 use App\Http\Controllers\Admin\LogController as AdminLog;
 use App\Http\Controllers\Admin\RiwayatController as AdminRiwayat;
-use App\Http\Controllers\Admin\KlaimController as AdminKlaim;
-
+use App\Http\Controllers\Admin\SertifikatController;
 // Import Controller Siswa
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
 use App\Http\Controllers\Siswa\LogController as SiswaLog;
@@ -30,6 +30,7 @@ use App\Http\Controllers\Pembimbing\DashboardController as PembimbingDashboard;
 use App\Http\Controllers\Pembimbing\PresensiSiswaController;
 use App\Http\Controllers\Pembimbing\ReportMonitoringController;
 use App\Http\Controllers\Pembimbing\NilaiController;
+use App\Http\Controllers\Pembimbing\ProfilController as PembimbingProfil;
 
 // Import Controller Tendik
 use App\Http\Controllers\Tendik\RiwayatController as TendikRiwayat;
@@ -59,7 +60,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/presensi-submit', [PresensiController::class, 'store'])->name('presensi.store');
 
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('presensi.riwayat-presensi');
-    Route::post('/presensi/ajukan-klaim', [PresensiController::class, 'ajukanKlaim'])->name('presensi.ajukan-klaim');
 
 
     Route::get('/presensi/{id}/detail', [PresensiController::class, 'show'])->name('presensi.detail');
@@ -81,14 +81,21 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/riwayat-presensi', [AdminRiwayat::class, 'index'])->name('riwayat.index');
         Route::get('/riwayat-presensi/detail/{id_user}', [AdminRiwayat::class, 'showDetail'])->name('riwayat.detail');
 
-        // Rute untuk mengelola Klaim Lupa CO (Khusus Admin)
-        Route::get('/klaim', [AdminKlaim::class, 'index'])->name('klaim.index');
-        Route::post('/klaim/{id_klaim}', [AdminKlaim::class, 'verifikasi'])->name('klaim.verifikasi');
 
         Route::get('/log', [AdminLog::class, 'index'])->name('log');
 
         Route::get('/riwayat-presensi/cetak/{id_user}', [AdminRiwayat::class, 'cetakPdf'])->name('riwayat.cetak');
         Route::get('/riwayat-presensi/export-excel', [AdminRiwayat::class, 'exportExcel'])->name('riwayat.excel');
+
+        Route::get('/sertifikat', [SertifikatController::class, 'index'])->name('sertifikat.index');
+        Route::put('/sertifikat/{id}', [SertifikatController::class, 'updateNomor'])->name('sertifikat.update');
+        Route::get('/sertifikat/{id}/cetak', [SertifikatController::class, 'cetakSertifikat'])->name('sertifikat.cetak');
+
+        // Fitur Master Kajur
+        Route::get('/kajur', [KajurController::class, 'index'])->name('kajur.index');
+        Route::post('/kajur', [KajurController::class, 'store'])->name('kajur.store');
+        Route::put('/kajur/{id}/aktif', [KajurController::class, 'setAktif'])->name('kajur.aktif');
+        Route::put('/kajur/{id}', [KajurController::class, 'update'])->name('kajur.update');
     });
 
     // ------------------------------------------
@@ -99,6 +106,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/lengkapi-profil', [SiswaDashboard::class, 'simpanProfilLengkap'])->name('lengkapi.profil');
         Route::get('/log', [SiswaLog::class, 'index'])->name('log');
         Route::post('/log', [SiswaLog::class, 'store'])->name('log.store');
+
 
         Route::get('/profil', [SiswaProfil::class, 'index'])->name('profil.index');
         Route::put('/profil/update', [SiswaProfil::class, 'update'])->name('profil.update');
@@ -127,6 +135,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/nilai/edit/{id_siswa}', [NilaiController::class, 'edit'])->name('nilai.edit');
         Route::put('/nilai/update/{id_siswa}', [NilaiController::class, 'update'])->name('nilai.update');
         Route::get('/nilai/cetak/{id_siswa}', [NilaiController::class, 'cetakSertifikat'])->name('nilai.cetak');
+
+
+        Route::get('/profil', [PembimbingProfil::class, 'index'])->name('profil.index');
+        Route::put('/profil/update', [PembimbingProfil::class, 'update'])->name('profil.update');
+        Route::put('/profil/update-foto', [PembimbingProfil::class, 'updateFoto'])->name('profil.update-foto');
+        Route::delete('/profil/hapus-foto', [PembimbingProfil::class, 'deleteFoto'])->name('profil.delete-foto');
         });
 
     // ------------------------------------------

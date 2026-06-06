@@ -1,4 +1,4 @@
-@extends('layouts.siswa')
+@extends('layouts.pembimbing')
 
 @section('content')
 <style>
@@ -23,6 +23,17 @@
             <span>{{ session('error') }}</span>
         </div>
     @endif
+    @if(session('error'))
+        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-2xl text-sm font-bold shadow-sm flex items-center justify-between">
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-2xl text-sm font-bold shadow-sm flex items-center justify-between">
+            <span>{{ $errors->first() }}</span>
+        </div>
+    @endif
 
     <div class="flex items-center justify-between mb-4 lg:hidden">
         <h1 class="text-xl font-extrabold text-maroon-950 tracking-tight">Profil Pengguna</h1>
@@ -42,11 +53,10 @@
 
                 <button type="button" @click="openPhotoMenu = !openPhotoMenu" class="relative w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-gold p-1 shadow-2xl bg-white focus:outline-none transition-transform active:scale-95 group block">
                     <div class="w-full h-full rounded-full overflow-hidden relative">
-
-                        @if($siswa->foto_profil)
-                            <img src="{{ asset('storage/' . $siswa->foto_profil) }}" alt="Foto Profil" class="w-full h-full object-cover">
+                        @if($pembimbing->foto_profil)
+                            <img src="{{ asset('storage/' . $pembimbing->foto_profil) }}" alt="Foto Profil" class="w-full h-full object-cover">
                         @else
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($siswa->nama_lengkap) }}&background=bc5a75&color=fff" alt="Foto Profil" class="w-full h-full object-cover">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($pembimbing->nama_lengkap) }}&background=bc5a75&color=fff" alt="Foto Profil" class="w-full h-full object-cover">
                         @endif
 
                         <div class="absolute inset-0 bg-maroon-950/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm">
@@ -75,12 +85,12 @@
                         Unggah Foto Baru
                     </button>
 
-                    @if($siswa->foto_profil)
+                    @if($pembimbing->foto_profil)
                         <div class="h-px bg-slate-100 my-1 mx-4"></div>
-                        <form action="{{ route('siswa.profil.delete-foto') }}" method="POST" class="m-0">
+                        <form action="{{ route('pembimbing.profil.delete-foto') }}" method="POST" class="m-0">
                             @csrf
                             @method('DELETE')
-                            <button type="button" onclick="confirmDeleteFoto(event)" class="w-full text-left px-5 py-3 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-3 transition-colors rounded-b-2xl">
+                            <button type="button" onclick="confirmDeleteFoto(event)" class="w-full text-left px-5 py-3 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-3 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                 Hapus Foto
                             </button>
@@ -88,7 +98,7 @@
                     @endif
                 </div>
 
-                <form id="form-foto" action="{{ route('siswa.profil.update-foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
+                <form id="form-foto" action="{{ route('pembimbing.profil.update-foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
                     @csrf
                     @method('PUT')
                     <input type="file" id="input-foto" name="foto" accept="image/png, image/jpeg, image/jpg" onchange="document.getElementById('form-foto').submit()">
@@ -96,14 +106,14 @@
             </div>
 
             <div class="text-center md:text-left space-y-2">
-                <h2 class="text-3xl md:text-4xl font-black tracking-tight leading-none italic">{{ $siswa->nama_lengkap }}</h2>
+                <h2 class="text-3xl md:text-4xl font-black tracking-tight leading-none italic">{{ $pembimbing->nama_lengkap }}</h2>
                 <div class="flex flex-col md:flex-row items-center gap-3">
-                    <span class="text-gold font-bold text-sm tracking-[0.2em] uppercase">Siswa Magang</span>
-                    <span class="hidden md:block w-1.5 h-1.5 bg-white/30 rounded-full"></span>
-                    <span class="text-maroon-100/70 text-sm font-medium">{{ $siswa->sekolah_asal ?? 'Instansi Belum Diisi' }}</span>
+                    <span class="text-gold font-bold text-sm tracking-[0.2em] uppercase">
+                        {{ $pembimbing->jabatan ?? 'Pembimbing Lapangan' }}
+                    </span>
                 </div>
                 <p class="text-[10px] text-maroon-200/50 font-bold uppercase tracking-widest pt-2">
-                    Bergabung Sejak {{ \Carbon\Carbon::parse($user->created_at)->translatedFormat('F Y') }}
+                    Bergabung Sejak {{ \Carbon\Carbon::parse($pembimbing->user->created_at)->translatedFormat('F Y') }}
                 </p>
             </div>
         </div>
@@ -112,7 +122,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
 
         <section id="personal-info-card" class="bg-white rounded-[2.5rem] p-8 border border-maroon-100 shadow-sm transition-all duration-300">
-            <form action="{{ route('siswa.profil.update') }}" method="POST">
+            <form action="{{ route('pembimbing.profil.update') }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -132,19 +142,19 @@
 
                 <div class="space-y-5">
                     <div>
-                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Nomor Induk Siswa (NIM/NIS)</p>
-                        <div id="nis-view" class="text-sm font-bold text-maroon-950">{{ $siswa->nis ?? '-' }}</div>
-                        <input id="nis-input" type="text" name="nis" value="{{ $siswa->nis }}" required class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Nomor Induk / NIK</p>
+                        <div id="no_induk-view" class="text-sm font-bold text-maroon-950">{{ $pembimbing->no_induk ?? '-' }}</div>
+                        <input id="no_induk-input" type="text" name="no_induk" value="{{ $pembimbing->no_induk }}" required class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
                     </div>
                     <div>
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Email Terdaftar</p>
-                        <div id="email-view" class="text-sm font-bold text-maroon-950">{{ $user->email }}</div>
-                        <input id="email-input" type="email" name="email" value="{{ $user->email }}" required class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
+                        <div id="email-view" class="text-sm font-bold text-maroon-950">{{ $pembimbing->user->email }}</div>
+                        <input id="email-input" type="email" name="email" value="{{ $pembimbing->user->email }}" required class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
                     </div>
                     <div>
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Nomor Telepon</p>
-                        <div id="phone-view" class="text-sm font-bold text-maroon-950">{{ $siswa->no_hp ?? '-' }}</div>
-                        <input id="phone-input" type="text" name="no_hp" value="{{ $siswa->no_hp }}" class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
+                        <div id="phone-view" class="text-sm font-bold text-maroon-950">{{ $pembimbing->no_telp ?? '-' }}</div>
+                        <input id="phone-input" type="tel" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="no_telp" value="{{ $pembimbing->no_telp }}" class="hidden w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-bold text-maroon-950 focus:ring-2 focus:ring-maroon-500 outline-none">
                     </div>
                 </div>
 
@@ -201,8 +211,9 @@
     function toggleEditMode() {
         isEditMode = !isEditMode;
 
-        const views = ['nis-view', 'email-view', 'phone-view'];
-        const inputs = ['nis-input', 'email-input', 'phone-input'];
+        // Disesuaikan ID-nya sesuai pembimbing
+        const views = ['no_induk-view', 'email-view', 'phone-view'];
+        const inputs = ['no_induk-input', 'email-input', 'phone-input'];
         const editBtn = document.getElementById('edit-btn');
         const actions = document.getElementById('edit-actions');
         const card = document.getElementById('personal-info-card');
@@ -222,27 +233,31 @@
 
     // Fungsi konfirmasi Hapus Foto menggunakan SweetAlert
     function confirmDeleteFoto(event) {
-        event.preventDefault();
+        event.preventDefault(); // Mencegah submit form secara otomatis
 
-        Swal.fire({
-            title: 'Hapus Foto Profil?',
-            text: "Foto profil Anda akan dihapus secara permanen.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#e11d48', // Tailwind rose-600
-            cancelButtonColor: '#94a3b8',  // Tailwind slate-400
-            confirmButtonText: 'Ya, Hapus!',
-            cancelButtonText: 'Batal',
-            customClass: {
-                popup: 'rounded-3xl',
-                confirmButton: 'rounded-xl font-bold px-6 py-2.5',
-                cancelButton: 'rounded-xl font-bold px-6 py-2.5'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
+        // Cek apakah library SweetAlert sudah dimuat di layout utama
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Hapus Foto Profil?',
+                text: "Foto profil Anda akan dihapus dan kembali ke inisial nama.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48', // Tailwind rose-600
+                cancelButtonColor: '#94a3b8',  // Tailwind slate-400
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Cari form induk dari tombol yang ditekan, lalu submit
+                    event.target.closest('form').submit();
+                }
+            });
+        } else {
+            // Fallback (cadangan) jika SweetAlert tidak ter-load
+            if (confirm('Apakah Anda yakin ingin menghapus foto profil?')) {
                 event.target.closest('form').submit();
             }
-        });
+        }
     }
 </script>
 @endsection

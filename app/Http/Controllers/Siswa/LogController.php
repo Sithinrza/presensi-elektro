@@ -39,32 +39,38 @@ class LogController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi deskripsi uraian pekerjaan dari textarea FE
+
         $request->validate([
-            'kegiatan' => 'required|string|min:10',
+            'tanggal' => 'required|date|before_or_equal:today',
+            'uraian'  => 'required|string|',
         ]);
 
         $user = Auth::user();
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
 
-        // Keamanan ganda: Tolak simpan log via backend jika hari ini belum presensi masuk
-        $cekPresensi = Presensi::where('id_user', $user->id_user)->where('tanggal', $tanggalHariIni)->first();
+        // Keamanan ganda: Tolak simpan log via backend jika HARI INI belum presensi masuk
+        $cekPresensi = Presensi::where('id_user', $user->id_user)
+                               ->where('tanggal', $tanggalHariIni)
+                               ->first();
+
         if (!$cekPresensi) {
-            return redirect()->back()->with('error', 'Anda harus melakukan presensi masuk terlebih dahulu sebelum mengisi logbook!');
+            return redirect()->back()->with('error', 'Anda harus melakukan presensi masuk hari ini terlebih dahulu sebelum mengisi logbook!');
         }
+
+
+        $tanggalPilih = Carbon::parse($request->tanggal);
 
         // Simpan data log baru
         Log::create([
             'id_user'            => $user->id_user,
-            // Judul otomatis diset sistem berdasarkan tanggal hari ini biar ga ngerubah form FE
-            'title'              => 'Log Kegiatan - ' . $waktuSekarang->translatedFormat('d F Y'),
-            'description'        => $request->kegiatan,
-            'report_date'        => $waktuSekarang,
+            'title'              => 'Log Kegiatan - ' . $tanggalPilih->translatedFormat('d F Y'),
+            'description'        => $request->uraian,
+            'report_date'        => $request->tanggal,
             'status'             => 'pending',
             'catatan_pembimbing' => null
         ]);
 
-        return redirect()->back()->with('success', 'Logbook kegiatan hari ini berhasil disimpan dan menunggu pemeriksaan pembimbing.');
+        return redirect()->back()->with('success', 'Logbook kegiatan berhasil disimpan dan menunggu pemeriksaan pembimbing.');
     }
 }

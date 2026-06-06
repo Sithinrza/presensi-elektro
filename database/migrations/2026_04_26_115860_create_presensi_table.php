@@ -11,19 +11,17 @@ return new class extends Migration
         Schema::create('presensi', function (Blueprint $table) {
             $table->id('id_presensi');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
-
-            $table->foreignId('id_status_ci')->constrained('status_presensi', 'id_status_presensi');
-            $table->foreignId('id_status_co')->nullable()->constrained('status_presensi', 'id_status_presensi'); // Nullable karena pas CI, CO belum ada status
-
             $table->date('tanggal');
 
             // Check-In
+            $table->foreignId('id_status_ci')->constrained('status_presensi', 'id_status_presensi');
             $table->time('jam_masuk')->nullable();
             $table->string('foto_masuk')->nullable();
             $table->decimal('latitude_masuk', 10, 8)->nullable();
             $table->decimal('longitude_masuk', 11, 8)->nullable();
 
             // Check-Out
+            $table->foreignId('id_status_co')->nullable()->constrained('status_presensi', 'id_status_presensi'); // Nullable karena pas CI, CO belum ada status
             $table->time('jam_pulang')->nullable();
             $table->string('foto_pulang')->nullable();
             $table->decimal('latitude_pulang', 10, 8)->nullable();

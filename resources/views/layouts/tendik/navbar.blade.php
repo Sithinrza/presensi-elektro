@@ -21,17 +21,17 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
                 <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
             </button>
-            
+
             <div x-data="{ open: false }" class="relative">
                 <button @click="open = !open" class="w-10 h-10 rounded-full border-2 border-gold p-0.5 block focus:outline-none active:scale-95 transition-transform shadow-sm overflow-hidden bg-white">
                     @if($profil && $profil->foto_profil)
-                        <img src="{{ asset('uploads/profil/' . $profil->foto_profil) }}" alt="Foto Profil" class="w-full h-full rounded-full object-cover">
+                        <img src="{{ asset('storage/' . $profil->foto_profil) }}" alt="Foto Profil" class="w-full h-full rounded-full object-cover">
                     @else
                         <img src="https://ui-avatars.com/api/?name={{ urlencode($profil->nama_lengkap ?? Auth::user()->email) }}&background=800000&color=fff&bold=true" alt="Profile" class="w-full h-full rounded-full object-cover">
                     @endif
                 </button>
 
-                <div x-show="open" 
+                <div x-show="open"
                      @click.outside="open = false"
                      x-transition:enter="transition ease-out duration-200"
                      x-transition:enter-start="opacity-0 scale-95 translate-y-2"
@@ -41,7 +41,7 @@
                      x-transition:leave-end="opacity-0 scale-95 translate-y-2"
                      class="absolute right-0 mt-3 w-48 bg-white rounded-2xl shadow-xl border border-maroon-50 py-2 z-50"
                      style="display: none;">
-                    
+
                     <form method="POST" action="{{ url('/logout') }}">
                         @csrf
                         <button type="submit" class="w-full text-left px-5 py-3 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-3 transition-colors">

@@ -19,22 +19,16 @@ class RiwayatController extends Controller
         $bulan = $request->bulan ?? date('m');
         $tahun = $request->tahun ?? date('Y');
 
-       // Waktu saat ini untuk batas loop (jangan hitung Alfa untuk hari esok)
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
-        // Ambil tanggal kapan user ini pertama kali dibuat di database
         $tanggalBikinAkun = Carbon::parse($user->created_at)->startOfDay();
-
-        // Tentukan titik mulai: Pilih tanggal 1 awal bulan, ATAU tanggal bikin akun (pilih yang paling akhir/baru)
         $mulaiLoop = $startOfMonth->max($tanggalBikinAkun);
-
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->startOfDay() : $endOfMonth;
-        // ------------------------------------
 
         // 1. Ambil Data Presensi ASLI dari database bulan ini
-        $dbRiwayat = Presensi::with(['statusCi', 'statusCo', 'klaim'])
+        $dbRiwayat = Presensi::with(['statusCi', 'statusCo'])
                            ->where('id_user', $user->id_user)
                            ->whereMonth('tanggal', $bulan)
                            ->whereYear('tanggal', $tahun)
@@ -48,31 +42,43 @@ class RiwayatController extends Controller
         })->get();
 
         $riwayatFinal = collect();
-        $hadir = 0; $telat = 0; $alfa = 0; $libur = 0;
 
-        // 3. ON-THE-FLY GENERATION: Looping setiap hari di bulan tersebut
-        // Ubah variabel $startOfMonth menjadi $mulaiLoop
+        // DEKLARASI 7 VARIABEL STATISTIK
+        $hadir = 0; $telat = 0; $alfa = 0; $libur = 0;
+        $tepat_co = 0; $telat_co = 0; $lupa_co = 0;
+
+        // 3. ON-THE-FLY GENERATION
         for ($date = $mulaiLoop->copy(); $date->lte($endOfMonth); $date->addDay()) {
             $dateString = $date->format('Y-m-d');
 
-            // Skenario A: User melakukan presensi di hari tersebut
+            // Skenario A: User melakukan presensi
             if ($dbRiwayat->has($dateString)) {
                 $presensi = $dbRiwayat->get($dateString);
+
+                // LOGIKA LUPA CO OTOMATIS: Jika hari sudah lewat dan jam pulang kosong
+                if ($dateString != $waktuSekarang->format('Y-m-d') && is_null($presensi->jam_pulang)) {
+                    $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
+                    $presensi->setRelation('statusCo', $statusLupa);
+                }
+
                 $riwayatFinal->push($presensi);
 
-                if ($presensi->id_status_ci == 1) $hadir++;
-                elseif ($presensi->id_status_ci == 2) $telat++;
-                elseif ($presensi->id_status_ci == 3) $alfa++;
-                elseif ($presensi->id_status_ci == 6) $libur++;
+                // Hitung statistik Check-In
+                if ($presensi->statusCi && $presensi->statusCi->name == 'Tepat Waktu') $hadir++;
+                elseif ($presensi->statusCi && $presensi->statusCi->name == 'Terlambat') $telat++;
+                elseif ($presensi->statusCi && $presensi->statusCi->name == 'Alfa') $alfa++;
+                elseif ($presensi->statusCi && $presensi->statusCi->name == 'Libur') $libur++;
+
+                // Hitung statistik Check-Out
+                if ($presensi->statusCo && in_array($presensi->statusCo->name, ['Tepat Waktu', 'Check Out'])) $tepat_co++;
+                elseif ($presensi->statusCo && $presensi->statusCo->name == 'Terlambat CO') $telat_co++;
+                elseif ($presensi->statusCo && $presensi->statusCo->name == 'Lupa Check-Out') $lupa_co++;
             }
-            // Skenario B: User KOSONG (Tidak ada data presensi)
+            // Skenario B: User KOSONG (Tidak ada data)
             else {
-                // Hanya proses jika tanggal tersebut bukan tanggal di masa depan
                 if ($date->lte($batasLoop)) {
+                    $isLibur = $date->isSunday();
 
-                    $isLibur = $date->isSunday(); // Deteksi otomatis Hari Minggu
-
-                    // Deteksi tanggal merah dari tabel Admin
                     foreach ($hariLibur as $hl) {
                         if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) {
                             $isLibur = true; break;
@@ -87,7 +93,6 @@ class RiwayatController extends Controller
                         $statusMock = new StatusPresensi(['name' => 'Alfa']);
                     }
 
-                    // Ciptakan data bayangan agar muncul di tabel
                     $mockPresensi = new Presensi([
                         'tanggal' => $dateString,
                         'jam_masuk' => null,
@@ -101,7 +106,6 @@ class RiwayatController extends Controller
             }
         }
 
-        // Urutkan dari tanggal terbaru ke terlama
         $riwayat = $riwayatFinal->sortByDesc('tanggal')->values();
 
         if ($role == 'tendik') {
@@ -112,6 +116,6 @@ class RiwayatController extends Controller
             abort(403, 'Akses tidak diizinkan.');
         }
 
-        return view('presensi.riwayat-presensi', compact('layout', 'riwayat', 'bulan', 'tahun', 'hadir', 'telat', 'alfa', 'libur'));
+        return view('presensi.riwayat-presensi', compact('layout', 'riwayat', 'bulan', 'tahun', 'hadir', 'telat', 'alfa', 'libur', 'tepat_co', 'telat_co', 'lupa_co'));
     }
 }
