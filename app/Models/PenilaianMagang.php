@@ -25,6 +25,7 @@ class PenilaianMagang extends Model
         'pemahaman_teknis',
         'persiapan_kerja',
         'kerjasama_team',
+        'id_kajur',
         'mutu_hasil_kerja',
         'rata_rata',
         'nomor_sertifikat',
@@ -40,5 +41,10 @@ class PenilaianMagang extends Model
     public function pembimbing()
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+        public function kajur()
+    {
+        return $this->belongsTo(Kajur::class, 'id_kajur', 'id_kajur');
     }
 }

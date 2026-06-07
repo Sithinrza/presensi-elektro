@@ -208,7 +208,7 @@ class SiswaMagangController extends Controller
     public function show($id)
     {
         // Cari data siswa berdasarkan ID, beserta data user/akun-nya
-        $siswa = SiswaMagang::with('user')->where('id_siswa', $id)->firstOrFail();
+        $siswa = SiswaMagang::with(['user', 'agama', 'pembimbing'])->where('id_siswa', $id)->firstOrFail();
         return view('admin.data.siswa.show', compact('siswa'));
     }
 }

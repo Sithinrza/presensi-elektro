@@ -29,11 +29,9 @@ return new class extends Migration
             $table->string('jurusan', 100)->nullable();
 
 
-            $table->unsignedBigInteger('id_agama')->nullable();
+            $table->foreignId('id_agama')->nullable()->constrained('agama', 'id_agama');
 
-            $table->unsignedBigInteger('id_pembimbing')->nullable();
-            $table->foreign('id_pembimbing')->references('id_pembimbing')->on('pembimbing')->onDelete('set null');
-
+            $table->foreignId('id_pembimbing')->nullable()->constrained('pembimbing', 'id_pembimbing')->onDelete('set null');
 
             $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
             $table->string('no_hp', 20)->nullable();

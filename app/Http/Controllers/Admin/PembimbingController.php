@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\Pembimbing;
 use App\Models\Agama;
 use App\Models\SiswaMagang;
+use App\Models\PendidikanTerakhir; // <-- TAMBAHAN BARU
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
@@ -16,14 +17,12 @@ class PembimbingController extends Controller
 {
     public function index()
     {
-        // 1. Tambahkan withCount('siswaMagang') untuk menghitung jumlah siswa per pembimbing
-        $pembimbing = Pembimbing::with(['user', 'agama'])
+        // Tambahkan pendidikanTerakhir di Eager Loading
+        $pembimbing = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir'])
             ->withCount('siswaMagang')
             ->get();
 
         $totalPembimbing = $pembimbing->count();
-
-        // 2. Hitung total siswa yang sedang dibimbing (tidak null id_pembimbing-nya)
         $totalBimbingan = SiswaMagang::whereNotNull('id_pembimbing')->count();
 
         return view('admin.data.pembimbing.index', compact('pembimbing', 'totalPembimbing', 'totalBimbingan'));
@@ -32,19 +31,22 @@ class PembimbingController extends Controller
     public function create()
     {
         $agama = Agama::all();
-        return view('admin.data.pembimbing.create', compact('agama'));
+        $pendidikan = PendidikanTerakhir::all(); // <-- TAMBAHAN BARU
+
+        return view('admin.data.pembimbing.create', compact('agama', 'pendidikan'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'nama_lengkap' => 'required|string|max:100',
-            'email'        => 'required|email|unique:users,email',
-            'password'     => 'required|min:6',
-            'no_induk'     => 'nullable|string|max:50',
-            'jabatan'      => 'nullable|string|max:100',
-            'no_telp'      => 'nullable|string|max:20',
-            'id_agama'     => 'nullable|integer',
+            'nama_lengkap'     => 'required|string|max:100',
+            'email'            => 'required|email|unique:users,email',
+            'password'         => 'required|min:6',
+            'no_induk'         => 'nullable|string|max:50',
+            'jabatan'          => 'nullable|string|max:100',
+            'no_telp'          => 'nullable|string|max:20',
+            'id_agama'         => 'nullable|integer',
+            'id_pend_terakhir' => 'nullable|integer', // <-- TAMBAHAN BARU
         ]);
 
         DB::beginTransaction();
@@ -58,13 +60,14 @@ class PembimbingController extends Controller
             $user->roles()->attach($rolePembimbing->getKey());
 
             Pembimbing::create([
-                'id_user'      => $user->id_user,
-                'nama_lengkap' => $request->nama_lengkap,
-                'status'       => 'Aktif',
-                'no_induk'     => $request->no_induk,
-                'jabatan'      => $request->jabatan,
-                'no_telp'      => $request->no_telp,
-                'id_agama'     => $request->id_agama,
+                'id_user'          => $user->id_user,
+                'nama_lengkap'     => $request->nama_lengkap,
+                'status'           => 'Aktif',
+                'no_induk'         => $request->no_induk,
+                'jabatan'          => $request->jabatan,
+                'no_telp'          => $request->no_telp,
+                'id_agama'         => $request->id_agama,
+                'id_pend_terakhir' => $request->id_pend_terakhir, // <-- TAMBAHAN BARU
             ]);
 
             DB::commit();
@@ -80,7 +83,9 @@ class PembimbingController extends Controller
     {
         $pembimbing = Pembimbing::with('user')->findOrFail($id);
         $agama = Agama::all();
-        return view('admin.data.pembimbing.edit', compact('pembimbing', 'agama'));
+        $pendidikan = PendidikanTerakhir::all(); 
+
+        return view('admin.data.pembimbing.edit', compact('pembimbing', 'agama', 'pendidikan'));
     }
 
     public function update(Request $request, $id)
@@ -89,14 +94,15 @@ class PembimbingController extends Controller
         $user = User::findOrFail($pembimbing->id_user);
 
         $request->validate([
-            'nama_lengkap' => 'required|string|max:100',
-            'email'        => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
-            'password'     => 'nullable|min:6',
-            'status'       => 'required|in:Aktif,Nonaktif',
-            'no_induk'     => 'nullable|string|max:50',
-            'jabatan'      => 'nullable|string|max:100',
-            'no_telp'      => 'nullable|string|max:20',
-            'id_agama'     => 'nullable|integer',
+            'nama_lengkap'     => 'required|string|max:100',
+            'email'            => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
+            'password'         => 'nullable|min:6',
+            'status'           => 'required|in:Aktif,Nonaktif',
+            'no_induk'         => 'nullable|string|max:50',
+            'jabatan'          => 'nullable|string|max:100',
+            'no_telp'          => 'nullable|string|max:20',
+            'id_agama'         => 'nullable|integer',
+            'id_pend_terakhir' => 'nullable|integer',
         ]);
 
         DB::beginTransaction();
@@ -108,12 +114,13 @@ class PembimbingController extends Controller
             $user->save();
 
             $pembimbing->update([
-                'nama_lengkap' => $request->nama_lengkap,
-                'status'       => $request->status,
-                'no_induk'     => $request->no_induk,
-                'jabatan'      => $request->jabatan,
-                'no_telp'      => $request->no_telp,
-                'id_agama'     => $request->id_agama,
+                'nama_lengkap'     => $request->nama_lengkap,
+                'status'           => $request->status,
+                'no_induk'         => $request->no_induk,
+                'jabatan'          => $request->jabatan,
+                'no_telp'          => $request->no_telp,
+                'id_agama'         => $request->id_agama,
+                'id_pend_terakhir' => $request->id_pend_terakhir,
             ]);
 
             // Jika pembimbing diubah jadi "Nonaktif", lepaskan siswa bimbingannya
@@ -152,8 +159,7 @@ class PembimbingController extends Controller
 
     public function show($id)
     {
-        // 3. Tambahkan withCount('siswaMagang') juga di sini
-        $pembimbing = Pembimbing::with(['user', 'agama'])
+        $pembimbing = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir']) // <-- TAMBAHAN BARU
             ->withCount('siswaMagang')
             ->where('id_pembimbing', $id)
             ->firstOrFail();

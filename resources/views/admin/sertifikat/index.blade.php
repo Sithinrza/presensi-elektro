@@ -17,16 +17,19 @@
         </div>
     @endif
 
-    <!-- HEADER SECTION -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-white border border-maroon-100 rounded-xl flex items-center justify-center text-maroon-900 shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-            </div>
-            <div>
-                <h2 class="text-2xl sm:text-3xl font-black text-maroon-950 tracking-tight italic">Penerbitan Sertifikat</h2>
-                <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Kelola dan cetak sertifikat kelulusan siswa magang.</p>
-            </div>
+    @if(session('error') || $errors->any())
+        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-5 py-4 rounded-2xl text-sm font-bold shadow-sm flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>{{ session('error') ?? $errors->first() }}</span>
+        </div>
+    @endif
+
+    
+
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h2 class="text-2xl sm:text-3xl font-black text-maroon-950 tracking-tight italic">Penerbitan Sertifikat</h2>
+            <p class="text-sm font-bold text-slate-500 mt-1">Kelola dan terbitkan nomor sertifikat resmi untuk siswa magang.</p>
         </div>
     </div>
 
