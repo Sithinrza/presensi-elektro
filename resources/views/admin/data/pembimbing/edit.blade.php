@@ -31,7 +31,6 @@
         @csrf
         @method('PUT')
 
-        <!-- PERINGATAN WAJIB DIISI -->
         <div class="bg-rose-50/80 border border-rose-100 p-4 rounded-2xl mx-8 mt-8 flex items-start gap-3">
             <div class="w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -99,6 +98,18 @@
                     </div>
 
                     <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pendidikan Terakhir</label>
+                        <select name="id_pend_terakhir" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                            <option value="" disabled {{ empty(old('id_pend_terakhir', $pembimbing->id_pend_terakhir ?? '')) ? 'selected' : '' }}>Pilih Pendidikan...</option>
+                            @foreach($pendidikan ?? [] as $item)
+                                <option value="{{ $item->id_pend_terakhir }}" {{ (old('id_pend_terakhir', $pembimbing->id_pend_terakhir ?? '') == $item->id_pend_terakhir) ? 'selected' : '' }}>
+                                    {{ $item->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Agama</label>
                         <select name="id_agama" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
                             <option value="" disabled {{ empty(old('id_agama', $pembimbing->id_agama ?? '')) ? 'selected' : '' }}>Pilih Agama...</option>
@@ -111,7 +122,6 @@
                     </div>
 
                     <div class="space-y-2 md:col-span-2">
-                        <!-- Update Password Opsional, jadi tidak wajib (*) -->
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update Password</label>
                         <input type="password" name="password" minlength="6" placeholder="Biarkan kosong jika tak ingin merubah sandi" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                         <p class="text-[9px] font-bold text-amber-500 ml-1 mt-1 uppercase tracking-widest">* Hanya isi jika ingin mereset password pengguna.</p>

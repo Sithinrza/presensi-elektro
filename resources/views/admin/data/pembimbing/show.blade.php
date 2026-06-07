@@ -76,6 +76,11 @@
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Jabatan Fungsional</p>
                     <p class="text-base font-black text-maroon-900 uppercase tracking-tight">{{ $pembimbing->jabatan ?? 'Belum ditentukan' }}</p>
                 </div>
+                <div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pendidikan Terakhir</p>
+                    <p class="text-sm font-bold text-slate-800 font-mono">{{ $pembimbing->pendidikanTerakhir->name ?? 'Belum Diatur' }}</p>
+                </div>
+
             </div>
         </div>
 

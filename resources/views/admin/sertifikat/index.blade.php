@@ -2,13 +2,21 @@
 
 @section('content')
 <main class="max-w-7xl mx-auto p-5 lg:p-10 space-y-8 animate-in">
-
     @if(session('success'))
         <div class="bg-emerald-50 border border-emerald-200 text-emerald-600 px-5 py-4 rounded-2xl text-sm font-bold shadow-sm flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
             {{ session('success') }}
         </div>
     @endif
+
+    @if(session('error') || $errors->any())
+        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-5 py-4 rounded-2xl text-sm font-bold shadow-sm flex items-center gap-3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>{{ session('error') ?? $errors->first() }}</span>
+        </div>
+    @endif
+
+    
 
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>

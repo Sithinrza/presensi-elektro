@@ -30,7 +30,6 @@
     <form action="{{ route('admin.data.pembimbing.store') }}" method="POST" class="bg-white rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
 
-        <!-- PERINGATAN WAJIB DIISI -->
         <div class="bg-rose-50/80 border border-rose-100 p-4 rounded-2xl mx-8 mt-8 flex items-start gap-3">
             <div class="w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -87,6 +86,18 @@
                     </div>
 
                     <div class="space-y-2">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pendidikan Terakhir</label>
+                        <select name="id_pend_terakhir" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                            <option value="" disabled {{ empty(old('id_pend_terakhir')) ? 'selected' : '' }}>Pilih Pendidikan...</option>
+                            @foreach($pendidikan ?? [] as $item)
+                                <option value="{{ $item->id_pend_terakhir }}" {{ old('id_pend_terakhir') == $item->id_pend_terakhir ? 'selected' : '' }}>
+                                    {{ $item->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Agama</label>
                         <select name="id_agama" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
                             <option value="" disabled {{ empty(old('id_agama')) ? 'selected' : '' }}>Pilih Agama...</option>
@@ -98,12 +109,12 @@
                         </select>
                     </div>
 
-                    <div class="space-y-2 md:col-span-2">
+                    <div class="space-y-2">
                         <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Password Default <span class="text-rose-500 text-sm leading-none align-top">*</span>
                         </label>
                         <div class="relative group">
-                            <input id="passwordInput" type="password" name="password" required minlength="6" placeholder="Masukkan password awal (min 6 karakter)" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 pr-12 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                            <input id="passwordInput" type="password" name="password" required minlength="6" placeholder="Masukkan password (min 6 char)" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 pr-12 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                             <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-maroon-600 transition-colors focus:outline-none">
                                 <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>

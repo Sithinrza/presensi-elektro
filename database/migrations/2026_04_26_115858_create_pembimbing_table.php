@@ -21,6 +21,8 @@ return new class extends Migration
             $table->enum('jk', ['L', 'P'])->nullable();
 
             $table->foreignId('id_agama')->nullable()->constrained('agama', 'id_agama');
+            $table->foreignId('id_pend_terakhir')->nullable()->constrained('pendidikan_terakhir', 'id_pend_terakhir');
+
             $table->string('jabatan', 100)->nullable();
             $table->string('no_telp', 20)->nullable();
             $table->string('foto_profil')->nullable();

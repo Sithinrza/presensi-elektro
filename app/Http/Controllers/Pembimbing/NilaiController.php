@@ -121,7 +121,8 @@ class NilaiController extends Controller
 
     public function cetakSertifikat($id_siswa)
     {
-        $siswa = SiswaMagang::with('penilaian')->findOrFail($id_siswa);
+        // Panggil relasi kajur sekaligus untuk menghemat query database
+        $siswa = SiswaMagang::with(['penilaian.kajur'])->findOrFail($id_siswa);
         $nilai = $siswa->penilaian;
 
         if (!$nilai) {
@@ -133,10 +134,15 @@ class NilaiController extends Controller
             return redirect()->back()->with('error', 'Nomor Sertifikat belum diterbitkan oleh Admin!');
         }
 
-        // VALIDASI 2: AMBIL KAJUR AKTIF
-        $kajurAktif = Kajur::where('status_aktif', true)->first();
-        if (!$kajurAktif) {
-            return redirect()->back()->with('error', 'Admin belum mengatur Data Kajur yang aktif!');
+        // VALIDASI 2: AMBIL KAJUR YANG TERKUNCI DARI TABEL PENILAIAN
+        $kajur = $nilai->kajur;
+
+        // Fallback: Jika id_kajur di penilaian kosong (misal data lama), ambil kajur aktif saat ini
+        if (!$kajur) {
+            $kajur = Kajur::where('status_aktif', true)->first();
+            if (!$kajur) {
+                return redirect()->back()->with('error', 'Data Kajur tidak ditemukan di sistem!');
+            }
         }
 
         $huruf = 'D';
@@ -159,9 +165,9 @@ class NilaiController extends Controller
             'rataRata' => $nilai->rata_rata,
             'huruf' => $huruf,
             'keterangan' => $keterangan,
-            'kajur_nama' => $kajurAktif->nama_lengkap, // Ambil dari database
-            'kajur_nip' => $kajurAktif->nip,           // Ambil dari database
-            'nomor_sertifikat' => $nilai->nomor_sertifikat // Ambil dari inputan admin
+            'kajur_nama' => $kajur->nama_lengkap,
+            'kajur_nip' => $kajur->nip,           
+            'nomor_sertifikat' => $nilai->nomor_sertifikat
         ];
 
         $pdf = Pdf::loadView('pembimbing.nilai.sertifikat', $data)->setPaper('A4', 'landscape');

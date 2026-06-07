@@ -12,15 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('penilaian_magang', function (Blueprint $table) {
-            $table->id('id_penilaian'); // Primary Key
+            $table->id('id_penilaian');
 
-            // Relasi ke Siswa dan Pembimbing
-            $table->unsignedBigInteger('id_siswa');
-            $table->unsignedBigInteger('id_user');
+            $table->foreignId('id_siswa')->constrained('siswa_magang', 'id_siswa')->onDelete('cascade');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
+            $table->foreignId('id_kajur')->nullable()->constrained('kajur', 'id_kajur')->onDelete('set null');
 
-            $table->string('nomor_sertifikat')->nullable();
+            $table->string('nomor_sertifikat', 20)->nullable();
 
-            // Tipe decimal(5,2) berarti bisa menampung angka seperti 10.00 atau 8.50
             $table->decimal('kecakapan_kerja', 5, 2)->default(0);
             $table->decimal('menerima_perintah', 5, 2)->default(0);
             $table->decimal('sikap_perilaku', 5, 2)->default(0);
@@ -28,22 +27,19 @@ return new class extends Migration
             $table->decimal('disiplin_kehadiran', 5, 2)->default(0);
             $table->decimal('tanggung_jawab', 5, 2)->default(0);
 
-            // --- 4 ASPEK KETERAMPILAN ---
             $table->decimal('pemahaman_teknis', 5, 2)->default(0);
             $table->decimal('persiapan_kerja', 5, 2)->default(0);
             $table->decimal('kerjasama_team', 5, 2)->default(0);
             $table->decimal('mutu_hasil_kerja', 5, 2)->default(0);
 
-            // --- REKAPITULASI ---
-            $table->decimal('rata_rata', 5, 2)->default(0); // Nilai rata-rata keseluruhan
+            $table->decimal('rata_rata', 5, 2)->default(0);
             $table->timestamps();
-            
-            $table->foreign('id_siswa')->references('id_siswa')->on('siswa_magang')->onDelete('cascade');
-            $table->foreign('id_user')->references('id_user')->on('users')->onDelete('cascade');
         });
     }
 
-
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('penilaian_magang');

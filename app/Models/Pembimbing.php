@@ -14,7 +14,9 @@ class Pembimbing extends Model
         'id_agama',
         'no_induk',
         'nama_lengkap',
+        'id_pend_terakhir',
         'jabatan',
+
         'no_telp',
         'status',
         'jk',
@@ -28,7 +30,6 @@ class Pembimbing extends Model
         return $this->belongsTo(User::class, 'id_user');
     }
 
-    // Relasi ke Agama
     public function agama()
     {
         return $this->belongsTo(Agama::class, 'id_agama');
@@ -38,5 +39,10 @@ class Pembimbing extends Model
     public function siswaMagang()
     {
         return $this->hasMany(SiswaMagang::class, 'id_pembimbing', 'id_pembimbing');
+    }
+
+    public function pendidikanTerakhir()
+    {
+        return $this->belongsTo(PendidikanTerakhir::class, 'id_pend_terakhir', 'id_pend_terakhir');
     }
 }

@@ -27,6 +27,8 @@ return new class extends Migration
             $table->decimal('latitude_pulang', 10, 8)->nullable();
             $table->decimal('longitude_pulang', 11, 8)->nullable();
 
+            $table->text('alasan')->nullable();
+
             $table->timestamps();
         });
     }
