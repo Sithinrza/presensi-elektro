@@ -26,15 +26,17 @@ class PresensiSiswaController extends Controller
         $anakBimbingan = $query->get();
         $idUsers = $anakBimbingan->pluck('id_user')->toArray();
 
-        // 2. Setup Waktu Bulan Ini
+        // 2. Setup Waktu Bulan Ini (Wajib Asia/Makassar)
         $bulan = date('m');
         $tahun = date('Y');
-        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
+        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1, 'Asia/Makassar')->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
         $waktuSekarang = Carbon::now('Asia/Makassar');
-        $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->startOfDay() : $endOfMonth;
+        $todayString = $waktuSekarang->format('Y-m-d');
 
-        // 3. Ambil semua presensi siswa asuhan bulan ini sekaligus (Biar ngebut)
+        $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->copy()->startOfDay() : $endOfMonth->copy();
+
+        // 3. Ambil semua presensi siswa asuhan bulan ini sekaligus
         $presensiBulanIni = Presensi::with(['statusCi', 'statusCo'])
             ->whereIn('id_user', $idUsers)
             ->whereMonth('tanggal', $bulan)
@@ -52,26 +54,28 @@ class PresensiSiswaController extends Controller
             $s->stat_tepat_ci = 0; $s->stat_telat_ci = 0; $s->stat_alfa = 0;
             $s->stat_tepat_co = 0; $s->stat_telat_co = 0; $s->stat_lupa_co = 0;
 
-            $presensiSiswa = $presensiBulanIni->has($s->id_user) ? $presensiBulanIni->get($s->id_user)->keyBy('tanggal') : collect();
+            // PERBAIKAN 1: Pengambilan Collection anti-mismatch
+            $presensiSiswa = isset($presensiBulanIni[$s->id_user])
+                ? collect($presensiBulanIni[$s->id_user])->keyBy(function($item) {
+                    return Carbon::parse($item->tanggal)->format('Y-m-d');
+                })
+                : collect();
 
-            // Ambil tanggal mulai absen (Tanggal 1 atau tanggal akun dibuat)
-            $tanggalBikinAkun = Carbon::parse($s->user->created_at ?? $s->created_at)->startOfDay();
-            $mulaiLoop = $startOfMonth->max($tanggalBikinAkun);
+            $tanggalBikinAkun = Carbon::parse($s->user->created_at ?? $s->created_at)->timezone('Asia/Makassar')->startOfDay();
+            $mulaiLoop = $startOfMonth->copy()->max($tanggalBikinAkun);
 
             for ($date = $mulaiLoop->copy(); $date->lte($batasLoop); $date->addDay()) {
                 $dateString = $date->format('Y-m-d');
 
-                // Jika ada data presensi (Siswa Hadir)
+                // Jika ADA data presensi
                 if ($presensiSiswa->has($dateString)) {
                     $p = $presensiSiswa->get($dateString);
 
-                    // Status CI (Masuk)
                     if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') $s->stat_tepat_ci++;
                     elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') $s->stat_telat_ci++;
                     elseif ($p->statusCi && $p->statusCi->name == 'Alfa') $s->stat_alfa++;
 
-                    // Status CO (Pulang)
-                    if ($dateString != $waktuSekarang->format('Y-m-d') && is_null($p->jam_pulang)) {
+                    if ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                         $s->stat_lupa_co++;
                     } elseif ($p->statusCo) {
                         if (in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $s->stat_tepat_co++;
@@ -79,9 +83,11 @@ class PresensiSiswaController extends Controller
                         elseif ($p->statusCo->name == 'Lupa Check-Out') $s->stat_lupa_co++;
                     }
                 }
-                // Jika TIDAK ADA data presensi (Alfa / Libur)
+                // Jika KOSONG (Cek Akhir Pekan & Hari Libur)
                 else {
-                    $isLibur = $date->isSunday();
+                    // PERBAIKAN 2: 6 = Sabtu, 7 = Minggu
+                    $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
+
                     foreach ($hariLibur as $hl) {
                         if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) {
                             $isLibur = true; break;
@@ -106,19 +112,22 @@ class PresensiSiswaController extends Controller
         $tahun = $request->tahun ?? date('Y');
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
-        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
+        $todayString = $waktuSekarang->format('Y-m-d');
+        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1, 'Asia/Makassar')->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
-        $tanggalBikinAkun = Carbon::parse($siswa->created_at)->startOfDay();
-        $mulaiLoop = $startOfMonth->max($tanggalBikinAkun);
-        $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->startOfDay() : $endOfMonth;
+        $tanggalBikinAkun = Carbon::parse($siswa->created_at)->timezone('Asia/Makassar')->startOfDay();
+        $mulaiLoop = $startOfMonth->copy()->max($tanggalBikinAkun);
+        $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->copy()->startOfDay() : $endOfMonth->copy();
 
         $dbRiwayat = Presensi::with(['statusCi', 'statusCo'])
                              ->where('id_user', $id_user)
                              ->whereMonth('tanggal', $bulan)
                              ->whereYear('tanggal', $tahun)
                              ->get()
-                             ->keyBy('tanggal');
+                             ->keyBy(function($item) {
+                                 return Carbon::parse($item->tanggal)->format('Y-m-d');
+                             });
 
         $hariLibur = HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
@@ -126,8 +135,6 @@ class PresensiSiswaController extends Controller
         })->get();
 
         $riwayatPresensi = collect();
-
-        // TAMBAH KEY 'Telat CO' DI SINI
         $statistik = [
             'Tepat CI' => 0, 'Telat CI' => 0, 'Alfa' => 0,
             'Tepat CO' => 0, 'Telat CO' => 0, 'Lupa CO' => 0, 'Libur' => 0
@@ -139,8 +146,7 @@ class PresensiSiswaController extends Controller
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
 
-                // Otomatis Lupa CO jika hari sudah lewat dan jam_pulang masih kosong
-                if ($dateString != $waktuSekarang->format('Y-m-d') && is_null($p->jam_pulang)) {
+                if ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                     $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
                     $p->setRelation('statusCo', $statusLupa);
                 }
@@ -152,13 +158,13 @@ class PresensiSiswaController extends Controller
                 if ($p->statusCi && $p->statusCi->name == 'Alfa') $statistik['Alfa']++;
                 if ($p->statusCi && $p->statusCi->name == 'Libur') $statistik['Libur']++;
 
-                // PILAHAAN STATISTIKNYA:
                 if ($p->statusCo && in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $statistik['Tepat CO']++;
                 if ($p->statusCo && $p->statusCo->name == 'Terlambat CO') $statistik['Telat CO']++;
                 if ($p->statusCo && $p->statusCo->name == 'Lupa Check-Out') $statistik['Lupa CO']++;
             } else {
                 if ($date->lte($batasLoop)) {
-                    $isLibur = $date->isSunday();
+                    // PERBAIKAN 2: 6 = Sabtu, 7 = Minggu
+                    $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
 
                     foreach ($hariLibur as $hl) {
                         if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) {

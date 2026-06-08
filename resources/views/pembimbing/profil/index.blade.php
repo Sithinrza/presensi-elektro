@@ -175,13 +175,15 @@
                 </div>
 
                 <div class="space-y-4">
-                    <button class="w-full flex items-center justify-between p-4 bg-maroon-50 hover:bg-maroon-100 rounded-2xl transition-all group">
-                        <div class="flex items-center gap-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-maroon-700"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                            <span class="text-sm font-bold text-maroon-950">Ubah Kata Sandi</span>
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-maroon-300 group-hover:translate-x-1 transition-transform"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
+                    <a href="{{ route('password.request') }}" class="block">
+                        <button class="w-full flex items-center justify-between p-4 bg-maroon-50 hover:bg-maroon-100 rounded-2xl transition-all group">
+                            <div class="flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-maroon-700"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                <span class="text-sm font-bold text-maroon-950">Ubah Kata Sandi</span>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-maroon-300 group-hover:translate-x-1 transition-transform"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </a>
 
                     <button class="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl transition-all group">
                         <div class="flex items-center gap-3">

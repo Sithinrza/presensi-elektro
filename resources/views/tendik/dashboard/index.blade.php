@@ -39,24 +39,54 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-                            <a href="{{ route('presensi.index') }}" class="group bg-white rounded-2xl sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 sm:gap-5 shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300">
-                                <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-emerald-50 text-emerald-600 rounded-[14px] sm:rounded-2xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+
+                            @if(!$presensiHariIni)
+                                <a href="{{ route('presensi.index') }}" class="sm:col-span-2 group bg-white rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 sm:gap-5 shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300">
+                                    <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-emerald-50 text-emerald-600 rounded-[14px] sm:rounded-2xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                                    </div>
+                                    <div class="text-left flex-1">
+                                        <span class="block text-maroon-950 font-black text-base sm:text-lg uppercase tracking-wide leading-none">Presensi Masuk</span>
+                                        <span class="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">Check-In Pagi</span>
+                                    </div>
+                                    <div class="hidden sm:block text-slate-300 group-hover:text-emerald-500 group-hover:translate-x-2 transition-all">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                    </div>
+                                </a>
+
+                            @elseif($presensiHariIni && is_null($presensiHariIni->jam_pulang))
+                                <div class="bg-white/10 border border-white/20 rounded-[2rem] p-5 sm:p-6 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
+                                    <span class="text-[9px] sm:text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1.5 sm:mb-2">Jam Masuk Anda</span>
+                                    <span class="text-2xl sm:text-3xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_masuk }}</span>
                                 </div>
-                                <div class="text-left">
-                                    <span class="block text-maroon-950 font-black text-base sm:text-lg uppercase tracking-wide leading-none">Presensi Masuk</span>
-                                    <span class="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">Check-In Pagi</span>
+
+                                <a href="{{ route('presensi.index') }}" class="group bg-maroon-800 border border-white/10 rounded-[2rem] p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3 sm:gap-4 active:scale-95 transition-all duration-300 hover:bg-rose-900/40 hover:border-rose-500/30">
+                                    <div class="w-10 h-10 sm:w-12 sm:h-12 shrink-0 bg-white/10 text-maroon-100 rounded-[14px] sm:rounded-2xl flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-all duration-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" class="sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                    </div>
+                                    <div class="text-center sm:text-left">
+                                        <span class="block text-white font-black text-sm sm:text-base uppercase tracking-wide leading-none">Presensi Pulang</span>
+                                        <span class="text-[8px] sm:text-[9px] text-maroon-200/50 font-bold uppercase tracking-widest mt-1 block">Check-Out Sore</span>
+                                    </div>
+                                </a>
+
+                            @else
+                                <div class="bg-white/10 border border-white/20 rounded-[2rem] p-4 sm:p-5 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
+                                    <span class="text-[9px] sm:text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1 sm:mb-1.5">Jam Masuk</span>
+                                    <span class="text-xl sm:text-2xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_masuk }}</span>
                                 </div>
-                            </a>
-                            <a href="{{ route('presensi.index') }}" class="group bg-maroon-800 border border-white/10 rounded-2xl sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 sm:gap-5 active:scale-95 transition-all duration-300 hover:bg-rose-900/40">
-                                <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-white/10 text-maroon-100 rounded-[14px] sm:rounded-2xl flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-all duration-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                <div class="bg-white/10 border border-white/20 rounded-[2rem] p-4 sm:p-5 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
+                                    <span class="text-[9px] sm:text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1 sm:mb-1.5">Jam Pulang</span>
+                                    <span class="text-xl sm:text-2xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_pulang }}</span>
                                 </div>
-                                <div class="text-left">
-                                    <span class="block text-white font-black text-base sm:text-lg uppercase tracking-wide leading-none">Presensi Pulang</span>
-                                    <span class="text-[9px] sm:text-[10px] text-maroon-200/50 font-bold uppercase tracking-widest mt-1 block">Check-Out Sore</span>
+                                <div class="sm:col-span-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
+                                    <span class="text-[10px] sm:text-xs font-black text-emerald-300 uppercase tracking-widest flex items-center justify-center gap-1.5 sm:gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                        Presensi Hari Ini Selesai
+                                    </span>
                                 </div>
-                            </a>
+                            @endif
+
                         </div>
                     </div>
                 </div>

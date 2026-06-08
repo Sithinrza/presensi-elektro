@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->foreignId('id_kajur')->nullable()->constrained('kajur', 'id_kajur')->onDelete('set null');
 
-            $table->string('nomor_sertifikat', 20)->nullable();
+            $table->string('nomor_sertifikat', 50)->nullable();
 
             $table->decimal('kecakapan_kerja', 5, 2)->default(0);
             $table->decimal('menerima_perintah', 5, 2)->default(0);

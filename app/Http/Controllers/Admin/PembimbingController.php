@@ -9,7 +9,7 @@ use App\Models\Role;
 use App\Models\Pembimbing;
 use App\Models\Agama;
 use App\Models\SiswaMagang;
-use App\Models\PendidikanTerakhir; // <-- TAMBAHAN BARU
+use App\Models\PendidikanTerakhir;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +17,6 @@ class PembimbingController extends Controller
 {
     public function index()
     {
-        // Tambahkan pendidikanTerakhir di Eager Loading
         $pembimbing = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir'])
             ->withCount('siswaMagang')
             ->get();
@@ -31,22 +30,23 @@ class PembimbingController extends Controller
     public function create()
     {
         $agama = Agama::all();
-        $pendidikan = PendidikanTerakhir::all(); // <-- TAMBAHAN BARU
+        $pendidikan = PendidikanTerakhir::all();
 
         return view('admin.data.pembimbing.create', compact('agama', 'pendidikan'));
     }
 
     public function store(Request $request)
     {
+        // SEMUA DIBUAT REQUIRED
         $request->validate([
             'nama_lengkap'     => 'required|string|max:100',
             'email'            => 'required|email|unique:users,email',
             'password'         => 'required|min:6',
-            'no_induk'         => 'nullable|string|max:50',
-            'jabatan'          => 'nullable|string|max:100',
-            'no_telp'          => 'nullable|string|max:20',
-            'id_agama'         => 'nullable|integer',
-            'id_pend_terakhir' => 'nullable|integer', // <-- TAMBAHAN BARU
+            'no_induk'         => 'required|string|max:50',
+            'jabatan'          => 'required|string|max:100',
+            'no_telp'          => 'required|string|max:20',
+            'id_agama'         => 'required|integer',
+            'id_pend_terakhir' => 'required|integer',
         ]);
 
         DB::beginTransaction();
@@ -67,7 +67,7 @@ class PembimbingController extends Controller
                 'jabatan'          => $request->jabatan,
                 'no_telp'          => $request->no_telp,
                 'id_agama'         => $request->id_agama,
-                'id_pend_terakhir' => $request->id_pend_terakhir, // <-- TAMBAHAN BARU
+                'id_pend_terakhir' => $request->id_pend_terakhir,
             ]);
 
             DB::commit();
@@ -83,7 +83,7 @@ class PembimbingController extends Controller
     {
         $pembimbing = Pembimbing::with('user')->findOrFail($id);
         $agama = Agama::all();
-        $pendidikan = PendidikanTerakhir::all(); 
+        $pendidikan = PendidikanTerakhir::all();
 
         return view('admin.data.pembimbing.edit', compact('pembimbing', 'agama', 'pendidikan'));
     }
@@ -93,16 +93,17 @@ class PembimbingController extends Controller
         $pembimbing = Pembimbing::findOrFail($id);
         $user = User::findOrFail($pembimbing->id_user);
 
+        // SEMUA DIBUAT REQUIRED KECUALI PASSWORD
         $request->validate([
             'nama_lengkap'     => 'required|string|max:100',
             'email'            => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
             'password'         => 'nullable|min:6',
             'status'           => 'required|in:Aktif,Nonaktif',
-            'no_induk'         => 'nullable|string|max:50',
-            'jabatan'          => 'nullable|string|max:100',
-            'no_telp'          => 'nullable|string|max:20',
-            'id_agama'         => 'nullable|integer',
-            'id_pend_terakhir' => 'nullable|integer',
+            'no_induk'         => 'required|string|max:50',
+            'jabatan'          => 'required|string|max:100',
+            'no_telp'          => 'required|string|max:20',
+            'id_agama'         => 'required|integer',
+            'id_pend_terakhir' => 'required|integer',
         ]);
 
         DB::beginTransaction();
@@ -123,7 +124,6 @@ class PembimbingController extends Controller
                 'id_pend_terakhir' => $request->id_pend_terakhir,
             ]);
 
-            // Jika pembimbing diubah jadi "Nonaktif", lepaskan siswa bimbingannya
             if ($request->status === 'Nonaktif') {
                 SiswaMagang::where('id_pembimbing', $id)->update([
                     'id_pembimbing' => null
@@ -159,7 +159,7 @@ class PembimbingController extends Controller
 
     public function show($id)
     {
-        $pembimbing = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir']) // <-- TAMBAHAN BARU
+        $pembimbing = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir'])
             ->withCount('siswaMagang')
             ->where('id_pembimbing', $id)
             ->firstOrFail();

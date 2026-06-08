@@ -107,15 +107,15 @@
             Yang Telah Melakukan Praktik Kerja Industri (Prakerin)<br>
             Di<br>
             Jurusan Teknik Elektro Politeknik Negeri Banjarmasin<br>
-            Tanggal {{ \Carbon\Carbon::parse($siswa->tanggal_mulai)->translatedFormat('d F Y') }} s/d {{ \Carbon\Carbon::parse($siswa->tanggal_selesai)->translatedFormat('d F Y') }}
+            Tanggal {{ \Carbon\Carbon::parse($siswa->tanggal_mulai)->locale('id')->translatedFormat('d F Y') }} s/d {{ \Carbon\Carbon::parse($siswa->tanggal_selesai)->locale('id')->translatedFormat('d F Y') }}
         </p>
 
         <!-- TTD KAJUR DITENGAH (Aman di Halaman 1) -->
         <table style="width: 100%; margin-top: 15px; font-size: 14px;">
             <tr>
                 <td style="text-align: center;">
-                    <p style="margin-bottom: 5px;">Banjarmasin, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}<br>Ketua Jurusan Teknik Elektro</p>
-                    <div style="height: 80px;"></div>
+                <p style="margin-bottom: 5px;">Banjarmasin, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}<br>Ketua Jurusan Teknik Elektro</p>
+                <div style="height: 80px;"></div>
                     <p class="text-bold" style="text-decoration: underline;">{{ $kajur_nama }}</p>
                     <p>NIP {{ $kajur_nip }}</p>
                 </td>

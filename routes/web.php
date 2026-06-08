@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\KajurController;
 use App\Http\Controllers\Admin\LogController as AdminLog;
 use App\Http\Controllers\Admin\RiwayatController as AdminRiwayat;
 use App\Http\Controllers\Admin\SertifikatController;
+use App\Http\Controllers\Auth\ResetPasswordOtpController;
 // Import Controller Siswa
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
 use App\Http\Controllers\Siswa\LogController as SiswaLog;
@@ -56,8 +57,20 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------------
     // PRESENSI GLOBAL
     // ------------------------------------------
+
+    Route::get('/forgot-password', [ResetPasswordOtpController::class, 'showRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [ResetPasswordOtpController::class, 'sendOtp'])->name('password.email');
+
+    Route::get('/verify-otp', [ResetPasswordOtpController::class, 'showVerifyForm'])->name('password.otp.verify');
+    Route::post('/verify-otp', [ResetPasswordOtpController::class, 'verifyOtp'])->name('password.otp.submit');
+
+    Route::get('/reset-password', [ResetPasswordOtpController::class, 'showResetForm'])->name('password.otp.reset');
+    Route::post('/reset-password', [ResetPasswordOtpController::class, 'resetPassword'])->name('password.update');
+
+
     Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi.index');
     Route::post('/presensi-submit', [PresensiController::class, 'store'])->name('presensi.store');
+    Route::post('/presensi/simpan-alasan', [PresensiController::class, 'simpanAlasan'])->name('presensi.simpan_alasan');
 
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('presensi.riwayat-presensi');
 

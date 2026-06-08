@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PenilaianMagang;
-use App\Models\Kajur; // Pastikan Model Kajur dipanggil
+use App\Models\Kajur;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class SertifikatController extends Controller
@@ -13,44 +14,47 @@ class SertifikatController extends Controller
     // Menampilkan daftar siswa yang SUDAH dinilai pembimbing
     public function index()
     {
-        // Hanya ambil data dari tabel penilaian, bawa relasi siswa-nya
         $penilaian = PenilaianMagang::with('siswa')->latest()->get();
-
         return view('admin.sertifikat.index', compact('penilaian'));
     }
 
     // Menyimpan nomor sertifikat dari form Admin (SEKALIGUS MENGUNCI KAJUR)
     public function updateNomor(Request $request, $id_penilaian)
     {
-        $request->validate([
-            'nomor_sertifikat' => 'required|string|max:255'
+        // 1. Menggunakan Validator manual agar tidak nyasar ke route GET jika terjadi error (misal kepanjangan)
+        $validator = Validator::make($request->all(), [
+            'nomor_sertifikat' => 'required|string|max:100' // Pastikan max diset ke 50 atau 100 sesuai database barumu
         ]);
 
-        // 1. Cek dulu apakah ada Kajur yang aktif
+        if ($validator->fails()) {
+            // PERBAIKAN: Gunakan redirect()->route(...) secara eksplisit, BUKAN back()
+            return redirect()->route('admin.sertifikat.index')->with('error', 'Gagal menyimpan! Format nomor sertifikat tidak valid atau terlalu panjang.');
+        }
+
+        // 2. Cek dulu apakah ada Kajur yang aktif
         $kajurAktif = Kajur::where('status_aktif', true)->first();
         if (!$kajurAktif) {
-            return back()->with('error', 'Gagal menerbitkan sertifikat! Data Kajur Aktif belum diatur oleh sistem.');
+            return redirect()->route('admin.sertifikat.index')->with('error', 'Gagal menerbitkan sertifikat! Data Kajur Aktif belum diatur oleh sistem.');
         }
 
         $nilai = PenilaianMagang::findOrFail($id_penilaian);
 
-        // 2. Simpan Nomor Sertifikat DAN Kunci ID Kajur saat ini
+        // 3. Simpan Nomor Sertifikat DAN Kunci ID Kajur saat ini
         $nilai->update([
             'nomor_sertifikat' => $request->nomor_sertifikat,
             'id_kajur'         => $kajurAktif->id_kajur // Mengunci sejarah Kajur
         ]);
 
-        return back()->with('success', 'Nomor Sertifikat resmi diterbitkan dan Tanda Tangan Kajur telah dikunci!');
+        return redirect()->route('admin.sertifikat.index')->with('success', 'Nomor Sertifikat resmi diterbitkan');
     }
 
     public function cetakSertifikat($id_penilaian)
     {
-        // Tambahkan relasi 'kajur' di dalam with()
         $nilai = PenilaianMagang::with(['siswa', 'siswa.presensi.statusCi', 'kajur'])->findOrFail($id_penilaian);
         $siswa = $nilai->siswa;
 
         if (empty($nilai->nomor_sertifikat)) {
-            return redirect()->back()->with('error', 'Nomor Sertifikat belum diisi oleh Admin!');
+            return redirect()->route('admin.sertifikat.index')->with('error', 'Nomor Sertifikat belum diisi oleh Admin!');
         }
 
         // AMBIL KAJUR DARI DATA PENILAIAN YANG SUDAH TERKUNCI
@@ -60,7 +64,7 @@ class SertifikatController extends Controller
         if (!$kajur) {
             $kajur = Kajur::where('status_aktif', true)->first();
             if (!$kajur) {
-                return redirect()->back()->with('error', 'Data Kajur tidak ditemukan di sistem!');
+                return redirect()->route('admin.sertifikat.index')->with('error', 'Data Kajur tidak ditemukan di sistem!');
             }
         }
 
@@ -75,7 +79,7 @@ class SertifikatController extends Controller
             'rataRata' => $nilai->rata_rata,
             'huruf' => $huruf,
             'keterangan' => $keterangan,
-            'kajur_nama' => $kajur->nama_lengkap, 
+            'kajur_nama' => $kajur->nama_lengkap,
             'kajur_nip' => $kajur->nip,
             'nomor_sertifikat' => $nilai->nomor_sertifikat,
             'alpa' => $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alfa')->count() : 0

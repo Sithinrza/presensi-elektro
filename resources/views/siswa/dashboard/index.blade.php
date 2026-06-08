@@ -4,13 +4,10 @@
 <main class="max-w-7xl mx-auto p-5 lg:p-10">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        <!-- LEFT COLUMN -->
         <div class="lg:col-span-7 xl:col-span-8 space-y-8">
 
-            <!-- GREETING & CLOCK -->
             <section class="animate-in flex flex-col md:flex-row md:items-end justify-between gap-4" style="animation-delay: 0.1s">
                 <div>
-                    <!-- Greeting dinamis berdasarkan waktu bisa diatur di controller, ini contoh static -->
                     <h2 id="liveDate" class="text-sm font-bold text-slate-400 mt-1 uppercase tracking-wider italic">Memuat Tanggal...</h2>
                 </div>
                 <div class="md:text-right text-left">
@@ -19,7 +16,6 @@
                 </div>
             </section>
 
-            <!-- PRESENSI CARD -->
             <section class="animate-in" style="animation-delay: 0.2s">
                 <div class="relative bg-maroon-900 rounded-[3rem] p-8 md:p-10 text-white shadow-premium overflow-hidden border border-maroon-800">
                     <div class="absolute -top-12 -right-12 w-64 h-64 bg-gold/20 rounded-full blur-[80px]"></div>
@@ -38,32 +34,59 @@
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <!-- TOMBOL MENUJU PRESENSI GLOBAL -->
-                            <a href="{{ route('presensi.index') }}" class="group bg-white rounded-[2rem] p-6 flex items-center gap-5 shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300">
-                                <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+
+                            @if(!$presensiHariIni)
+                                <a href="{{ route('presensi.index') }}" class="sm:col-span-2 group bg-white rounded-[2rem] p-6 flex items-center gap-5 shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300">
+                                    <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                                    </div>
+                                    <div class="text-left flex-1">
+                                        <span class="block text-maroon-950 font-black text-lg uppercase tracking-wide leading-none">Presensi Masuk</span>
+                                        <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Sistem Telah Dibuka</span>
+                                    </div>
+                                    <div class="hidden sm:block text-slate-300 group-hover:text-emerald-500 group-hover:translate-x-2 transition-all">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                    </div>
+                                </a>
+
+                            @elseif($presensiHariIni && is_null($presensiHariIni->jam_pulang))
+                                <div class="bg-white/10 border border-white/20 rounded-[2rem] p-6 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
+                                    <span class="text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-2">Jam Masuk Anda</span>
+                                    <span class="text-3xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_masuk }}</span>
                                 </div>
-                                <div class="text-left">
-                                    <span class="block text-maroon-950 font-black text-lg uppercase tracking-wide leading-none">Presensi Masuk</span>
-                                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Start Working</span>
+
+                                <a href="{{ route('presensi.index') }}" class="group bg-maroon-800 border border-white/10 rounded-[2rem] p-6 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4 active:scale-95 transition-all duration-300 hover:bg-rose-900/40 hover:border-rose-500/30">
+                                    <div class="w-12 h-12 bg-white/10 text-maroon-100 rounded-2xl flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-all duration-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                    </div>
+                                    <div class="text-center sm:text-left">
+                                        <span class="block text-white font-black text-lg uppercase tracking-wide leading-none">Presensi Pulang</span>
+                                        <span class="text-[10px] text-maroon-200/50 font-bold uppercase tracking-widest mt-1">End Session</span>
+                                    </div>
+                                </a>
+
+                            @else
+                                <div class="bg-white/10 border border-white/20 rounded-[2rem] p-5 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
+                                    <span class="text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1.5">Jam Masuk</span>
+                                    <span class="text-2xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_masuk }}</span>
                                 </div>
-                            </a>
-                            <!-- TOMBOL MENUJU PRESENSI GLOBAL JUGA (Sistem di Controller yang menentukan ini masuk/pulang) -->
-                            <a href="{{ route('presensi.index') }}" class="group bg-maroon-800 border border-white/10 rounded-[2rem] p-6 flex items-center gap-5 active:scale-95 transition-all duration-300 hover:bg-rose-900/40">
-                                <div class="w-14 h-14 bg-white/10 text-maroon-100 rounded-2xl flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-all duration-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                                <div class="bg-white/10 border border-white/20 rounded-[2rem] p-5 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
+                                    <span class="text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1.5">Jam Pulang</span>
+                                    <span class="text-2xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_pulang }}</span>
                                 </div>
-                                <div class="text-left">
-                                    <span class="block text-white font-black text-lg uppercase tracking-wide leading-none">Presensi Pulang</span>
-                                    <span class="text-[10px] text-maroon-200/50 font-bold uppercase tracking-widest mt-1">End Session</span>
+                                <div class="sm:col-span-2 bg-emerald-500/20 border border-emerald-500/30 rounded-2xl p-4 text-center">
+                                    <span class="text-xs font-black text-emerald-300 uppercase tracking-widest flex items-center justify-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                        Presensi Hari Ini Selesai
+                                    </span>
                                 </div>
-                            </a>
+                            @endif
+
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- LOG HARIAN QUICK ACCESS -->
             <section class="animate-in" style="animation-delay: 0.3s">
                 <div class="bg-white rounded-[2.5rem] p-8 border border-maroon-100 shadow-sm flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
                     <div class="w-20 h-20 bg-gold-light text-gold-dark rounded-3xl flex items-center justify-center shrink-0 shadow-inner mx-auto md:mx-0">
@@ -75,7 +98,6 @@
                             Jangan lupa isi laporan kegiatan magang kamu hari ini agar terekap oleh pembimbing.
                         </p>
                     </div>
-                    <!-- Arahkan ke URL form tambah logbook -->
                     <a href="{{ route('siswa.log') }}" class="bg-maroon-950 text-white px-8 py-4 rounded-2xl font-bold hover:bg-maroon-800 transition-all shadow-lg active:scale-95 whitespace-nowrap w-full md:w-auto inline-block text-center">
                         Isi Log Hari Ini
                     </a>
@@ -83,7 +105,6 @@
             </section>
         </div>
 
-        <!-- RIGHT COLUMN -->
         <div class="lg:col-span-5 xl:col-span-4 space-y-8">
 
             <section class="animate-in" style="animation-delay: 0.4s">
@@ -126,7 +147,6 @@
                 </div>
             </section>
 
-            <!-- INFO BANNER -->
             <section class="animate-in" style="animation-delay: 0.5s">
                 <div class="bg-gradient-to-br from-gold/20 to-maroon-50 border border-gold/30 rounded-[2.5rem] p-6 flex items-start gap-5 backdrop-blur-sm">
                     <div class="w-12 h-12 bg-gold rounded-2xl shrink-0 flex items-center justify-center text-white shadow-lg">
@@ -144,24 +164,17 @@
     </div>
 </main>
 
-<!-- ============================================================== -->
-<!-- POPUP WAJIB ISI PROFIL (Muncul jika isProfilLengkap = false) -->
-<!-- ============================================================== -->
 @if(isset($isProfilLengkap) && !$isProfilLengkap)
 <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-    <!-- Background Blur -->
     <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-md"></div>
 
-    <!-- Modal Container -->
     <div class="relative w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 max-h-[90vh] flex flex-col">
 
-        <!-- Header Popup -->
         <div class="bg-maroon-950 px-8 py-6 text-white text-center shrink-0">
             <h3 class="text-xl font-black tracking-tight italic">Selamat Datang, {{ $siswa->nama_lengkap ?? Auth::user()->name }}!</h3>
             <p class="text-xs font-bold text-maroon-300 uppercase tracking-widest mt-2">Lengkapi Data Biodata Diri Anda</p>
         </div>
 
-        <!-- Body Form -->
         <form action="{{ route('siswa.lengkapi.profil') }}" method="POST" class="p-8 space-y-6 overflow-y-auto no-scrollbar">
             @csrf
 
@@ -171,28 +184,23 @@
                 </p>
             </div>
 
-            <!-- GRID FORM -->
             <div class="grid grid-cols-2 gap-5">
 
-                <!-- NIS -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">NIS / Nomor Induk</label>
                     <input type="text" name="nis" required value="{{ $siswa->nis ?? '' }}" placeholder="Masukkan NIS..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
                 </div>
 
-                <!-- Sekolah Asal -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Sekolah Asal</label>
                     <input type="text" name="sekolah_asal" required value="{{ $siswa->sekolah_asal ?? '' }}" placeholder="Nama sekolah..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
                 </div>
 
-                <!-- Jurusan -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jurusan / Kelas</label>
                     <input type="text" name="jurusan" required value="{{ $siswa->jurusan ?? '' }}" placeholder="Contoh: TKJ / XII" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
                 </div>
 
-                <!-- Agama -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Agama</label>
                     <select name="id_agama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
@@ -207,7 +215,6 @@
                     </select>
                 </div>
 
-                <!-- Jenis Kelamin -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jenis Kelamin</label>
                     <select name="jk" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
@@ -217,25 +224,21 @@
                     </select>
                 </div>
 
-                <!-- No Handphone -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">No. Handphone / WA</label>
                     <input type="text" name="no_hp" required value="{{ $siswa->no_hp ?? '' }}" placeholder="08..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
                 </div>
 
-                <!-- Tempat Lahir -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tempat Lahir</label>
                     <input type="text" name="tempat_lahir" required value="{{ $siswa->tempat_lahir ?? '' }}" placeholder="Kota kelahiran..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
                 </div>
 
-                <!-- Tanggal Lahir -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Lahir</label>
                     <input type="date" name="tanggal_lahir" required value="{{ $siswa->tanggal_lahir ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
                 </div>
 
-                <!-- Alamat -->
                 <div class="space-y-2 col-span-2">
                     <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Alamat Domisili Lengkap</label>
                     <textarea name="alamat" required rows="2" placeholder="Jl. Raya..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">{{ $siswa->alamat ?? '' }}</textarea>
@@ -250,13 +253,11 @@
     </div>
 </div>
 
-<!-- Mencegah scroll di background jika popup muncul -->
 <style>
     body { overflow: hidden; }
 </style>
 @endif
 
-<!-- JAVASCRIPT UNTUK JAM REALTIME -->
 <script>
     function updateClock() {
         const now = new Date();

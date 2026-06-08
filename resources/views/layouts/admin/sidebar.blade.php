@@ -12,7 +12,7 @@
 
     <!-- Main Navigation Menus -->
     <nav class="flex-1 px-4 space-y-1.5 overflow-y-auto no-scrollbar pb-4">
-        
+
         <!-- 1. BERANDA -->
         <a href="{{ route('admin.dashboard') }}"
            class="nav-item flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 {{ request()->is('admin/dashboard') ? 'bg-white/10 text-amber-400 shadow-inner' : 'text-white/75 hover:text-white hover:bg-white/10 group' }}">
@@ -83,7 +83,7 @@
         </div>
 
         <!-- 7. PENERBITAN SERTIFIKAT -->
-        <a href="{{ route('admin.sertifikat.index') }}" 
+        <a href="{{ route('admin.sertifikat.index') }}"
            class="nav-item flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.sertifikat.*') ? 'bg-white/10 text-amber-400 shadow-inner' : 'text-white/75 hover:text-white hover:bg-white/10 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 {{ request()->routeIs('admin.sertifikat.*') ? '' : 'group-hover:scale-110 transition-transform' }}">
                 <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
@@ -92,12 +92,20 @@
         </a>
 
         <!-- 8. MASTER KAJUR -->
-        <a href="{{ route('admin.kajur.index') }}" 
+        <a href="{{ route('admin.kajur.index') }}"
            class="nav-item flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.kajur.*') ? 'bg-white/10 text-amber-400 shadow-inner' : 'text-white/75 hover:text-white hover:bg-white/10 group' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 {{ request()->routeIs('admin.kajur.*') ? '' : 'group-hover:scale-110 transition-transform' }}">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
             </svg>
             <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Master Kajur</span>
+        </a>
+
+        <a href="{{ route('admin.hari-libur.index') }}"
+           class="nav-item flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.hari-libur.*') ? 'bg-white/10 text-amber-400 shadow-inner' : 'text-white/75 hover:text-white hover:bg-white/10 group' }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 {{ request()->routeIs('admin.sertifikat.*') ? '' : 'group-hover:scale-110 transition-transform' }}">
+                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>
+            </svg>
+            <span class="sidebar-text text-xs font-bold uppercase tracking-wide whitespace-nowrap">Hari Libur</span>
         </a>
 
     </nav>

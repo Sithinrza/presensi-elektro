@@ -64,8 +64,10 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">NIP / Nomor Induk</label>
-                        <input type="text" name="no_induk" value="{{ old('no_induk') }}" placeholder="18 digit NIP..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            NIP / Nomor Induk <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
+                        <input type="text" name="no_induk" value="{{ old('no_induk') }}" required placeholder="18 digit NIP..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
                     <div class="space-y-2">
@@ -76,18 +78,24 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nomor Telepon / WA</label>
-                        <input type="text" name="no_telp" value="{{ old('no_telp') }}" placeholder="08..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Nomor Telepon / WA <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
+                        <input type="text" name="no_telp" value="{{ old('no_telp') }}" required placeholder="08..." class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jabatan Fungsional</label>
-                        <input type="text" name="jabatan" value="{{ old('jabatan') }}" placeholder="Contoh: Dosen Elektro" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Jabatan Fungsional <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
+                        <input type="text" name="jabatan" value="{{ old('jabatan') }}" required placeholder="Contoh: Dosen Elektro" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pendidikan Terakhir</label>
-                        <select name="id_pend_terakhir" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Pendidikan Terakhir <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
+                        <select name="id_pend_terakhir" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
                             <option value="" disabled {{ empty(old('id_pend_terakhir')) ? 'selected' : '' }}>Pilih Pendidikan...</option>
                             @foreach($pendidikan ?? [] as $item)
                                 <option value="{{ $item->id_pend_terakhir }}" {{ old('id_pend_terakhir') == $item->id_pend_terakhir ? 'selected' : '' }}>
@@ -98,8 +106,10 @@
                     </div>
 
                     <div class="space-y-2">
-                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Agama</label>
-                        <select name="id_agama" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                        <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Agama <span class="text-rose-500 text-sm leading-none align-top">*</span>
+                        </label>
+                        <select name="id_agama" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
                             <option value="" disabled {{ empty(old('id_agama')) ? 'selected' : '' }}>Pilih Agama...</option>
                             @foreach($agama ?? [] as $item)
                                 <option value="{{ $item->id_agama }}" {{ old('id_agama') == $item->id_agama ? 'selected' : '' }}>
