@@ -40,7 +40,7 @@ class DashboardController extends Controller
         // Ambil ID secara dinamis dari database agar tidak pernah salah
         $idTepatWaktu = StatusPresensi::where('name', 'Tepat Waktu')->value('id_status_presensi');
         $idTerlambat  = StatusPresensi::where('name', 'Terlambat')->value('id_status_presensi');
-        $idAlfa       = StatusPresensi::where('name', 'Alfa')->value('id_status_presensi');
+        $idAlpa       = StatusPresensi::where('name', 'Alpa')->value('id_status_presensi');
 
         // Tarik semua data presensi bulan ini
         $presensiBulanIni = Presensi::where('id_user', $user->id_user)
@@ -58,7 +58,7 @@ class DashboardController extends Controller
         $hadir = $tepatWaktu + $telat;
 
         // 4. Alfa
-        $alpa = $presensiBulanIni->where('id_status_ci', $idAlfa)->count();
+        $alpa = $presensiBulanIni->where('id_status_ci', $idAlpa)->count();
 
         // Anggap total hari kerja magang 20 hari (Senin-Jumat)
         $total_hari_kerja = 20;

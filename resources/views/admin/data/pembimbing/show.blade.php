@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('page_title', 'Data Pembimbing')
 
 @section('content')
 <main class="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -10,16 +11,15 @@
             </a>
             <div>
                 <h1 class="text-2xl font-black text-slate-800 tracking-tight leading-none">Detail Profil Pembimbing</h1>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5">Informasi Lengkap Dosen / Pembimbing Lapangan</p>
             </div>
         </div>
 
-        <div class="flex items-center gap-3">
+        {{-- <div class="flex items-center gap-3">
             <a href="{{ route('admin.data.pembimbing.edit', $pembimbing->id_pembimbing) }}" class="bg-amber-50 text-amber-700 border border-amber-200 px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-sm hover:bg-amber-100 hover:scale-105 transition-all flex items-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                 Edit Profil
             </a>
-        </div>
+        </div> --}}
     </div>
 
     <div class="bg-maroon-900 rounded-[2.5rem] p-8 lg:p-10 text-white shadow-xl shadow-maroon-900/20 border border-maroon-800 relative overflow-hidden flex flex-col md:flex-row items-center gap-8">
@@ -35,13 +35,13 @@
         </div>
 
         <div class="relative z-10 text-center md:text-left flex-1 w-full">
-            <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.25em] mb-2 leading-none">Pembimbing Akademik / Lapangan</p>
+            <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.25em] mb-2 leading-none">Pembimbing</p>
             <h2 class="text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight mb-4">{{ $pembimbing->nama_lengkap }}</h2>
 
             <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
                 @if($pembimbing->status == 'Aktif')
                     <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest backdrop-blur-sm">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span> Aktif Mengajar
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span> Aktif
                     </span>
                 @else
                     <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-rose-500/20 text-rose-300 border border-rose-500/30 rounded-xl text-[10px] font-black uppercase tracking-widest backdrop-blur-sm">

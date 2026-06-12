@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-
+@section('page_title', 'Sertifikat')
 @section('content')
 <main class="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 

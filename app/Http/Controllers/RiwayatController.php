@@ -43,7 +43,7 @@ class RiwayatController extends Controller
         })->get();
 
         $riwayatFinal = collect();
-        $hadir = 0; $telat = 0; $alfa = 0; $libur = 0;
+        $hadir = 0; $telat = 0; $alpa = 0; $libur = 0;
         $tepat_co = 0; $telat_co = 0; $lupa_co = 0;
 
         for ($date = $mulaiLoop->copy(); $date->lte($endOfMonth); $date->addDay()) {
@@ -61,7 +61,7 @@ class RiwayatController extends Controller
 
                 if ($presensi->statusCi && $presensi->statusCi->name == 'Tepat Waktu') $hadir++;
                 elseif ($presensi->statusCi && $presensi->statusCi->name == 'Terlambat') $telat++;
-                elseif ($presensi->statusCi && $presensi->statusCi->name == 'Alfa') $alfa++;
+                elseif ($presensi->statusCi && $presensi->statusCi->name == 'Alpa') $alpa++;
                 elseif ($presensi->statusCi && $presensi->statusCi->name == 'Libur') $libur++;
 
                 if ($presensi->statusCo && in_array($presensi->statusCo->name, ['Tepat Waktu', 'Check Out'])) $tepat_co++;
@@ -82,8 +82,8 @@ class RiwayatController extends Controller
                         $libur++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $alfa++;
-                        $statusMock = new StatusPresensi(['name' => 'Alfa']);
+                        $alpa++;
+                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
                     }
 
                     $mockPresensi = new Presensi([
@@ -109,6 +109,6 @@ class RiwayatController extends Controller
             abort(403, 'Akses tidak diizinkan.');
         }
 
-        return view('presensi.riwayat-presensi', compact('layout', 'riwayat', 'bulan', 'tahun', 'hadir', 'telat', 'alfa', 'libur', 'tepat_co', 'telat_co', 'lupa_co'));
+        return view('presensi.riwayat-presensi', compact('layout', 'riwayat', 'bulan', 'tahun', 'hadir', 'telat', 'alpa', 'libur', 'tepat_co', 'telat_co', 'lupa_co'));
     }
 }

@@ -19,12 +19,12 @@ class DashboardController extends Controller
         // 1. Ambil ID Status secara dinamis dari tabel status_presensi
         $idTepatWaktu = StatusPresensi::where('name', 'Tepat Waktu')->value('id_status_presensi');
         $idTerlambat  = StatusPresensi::where('name', 'Terlambat')->value('id_status_presensi');
-        $idAlfa       = StatusPresensi::where('name', 'Alfa')->value('id_status_presensi');
+        $idAlpa       = StatusPresensi::where('name', 'Alpa')->value('id_status_presensi');
 
         // 2. Hitung Status Presensi Hari Ini (Menggunakan ID Dinamis)
         $hadirHariIni     = Presensi::where('tanggal', $hariIni)->where('id_status_ci', $idTepatWaktu)->count();
         $terlambatHariIni = Presensi::where('tanggal', $hariIni)->where('id_status_ci', $idTerlambat)->count();
-        $alpaHariIni      = Presensi::where('tanggal', $hariIni)->where('id_status_ci', $idAlfa)->count();
+        $alpaHariIni      = Presensi::where('tanggal', $hariIni)->where('id_status_ci', $idAlpa)->count();
 
         // 3. Hitung Total Data Master
         $totalSiswa      = SiswaMagang::count();

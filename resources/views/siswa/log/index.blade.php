@@ -1,4 +1,5 @@
 @extends('layouts.siswa')
+@section('page_title', 'Logbook')
 
 @section('content')
 <!-- CSS KHUSUS HALAMAN LOGBOOK -->
@@ -20,7 +21,7 @@
         background: #bc5a75;
         border-radius: 10px;
     }
-    
+
     /* Styling input date agar senada dengan tema */
     input[type="date"]::-webkit-calendar-picker-indicator {
         background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23bc5a75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>');
@@ -48,7 +49,7 @@
     @endif
 
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-start">
-        
+
         <!-- BAGIAN FORM INPUT (COL 5) -->
         <div class="lg:col-span-5 space-y-6 sm:space-y-8 animate-in" style="animation-delay: 0.1s">
             <div class="bg-white rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-8 border border-maroon-100 shadow-premium">
@@ -93,8 +94,8 @@
                         <div class="space-y-1.5 sm:space-y-2">
                             <label for="log_date" class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Pilih Tanggal Kegiatan</label>
                             <div class="relative">
-                                <input 
-                                    type="date" 
+                                <input
+                                    type="date"
                                     id="log_date"
                                     name="tanggal"
                                     max="{{ date('Y-m-d') }}"
@@ -109,11 +110,11 @@
                         <!-- DESKRIPSI KEGIATAN -->
                         <div class="space-y-1.5 sm:space-y-2">
                             <label for="description" class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Uraian Pekerjaan</label>
-                            <textarea 
+                            <textarea
                                 id="description"
                                 name="uraian"
-                                placeholder="Contoh: Maintenance jaringan di Gedung Elektro lantai 2..." 
-                                rows="6" 
+                                placeholder="Contoh: Maintenance jaringan di Gedung Elektro lantai 2..."
+                                rows="6"
                                 class="w-full bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl px-4 py-3 sm:px-5 sm:py-4 text-xs sm:text-sm font-medium text-slate-700 placeholder:text-slate-300 focus:ring-2 focus:ring-maroon-500 focus:bg-white transition-all outline-none resize-none"
                                 required
                             ></textarea>
@@ -128,30 +129,19 @@
                 @endif
             </div>
 
-            <!-- INFO CARD -->
-            <div class="bg-gold-light border border-gold/30 rounded-3xl sm:rounded-[2.5rem] p-5 sm:p-6 flex items-start gap-4 sm:gap-5">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gold rounded-xl sm:rounded-2xl shrink-0 flex items-center justify-center text-white shadow-lg shadow-gold/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                </div>
-                <div>
-                    <h4 class="text-xs sm:text-sm font-extrabold text-gold-dark uppercase tracking-wider leading-none mb-1">Petunjuk Logbook</h4>
-                    <p class="text-[10px] sm:text-[11px] text-gold-dark/80 mt-1 leading-relaxed font-semibold italic">
-                        Pengisian diperbolehkan untuk hari ini dan hari-hari sebelumnya. Anda tidak diperkenankan melakukan pengisian mendahului tanggal hari ini.
-                    </p>
-                </div>
-            </div>
+
         </div>
 
         <!-- BAGIAN RIWAYAT (COL 7) -->
         <div class="lg:col-span-7 space-y-4 sm:space-y-6 animate-in" style="animation-delay: 0.2s">
-            
+
             <!-- HEADER & FILTER -->
             <div class="flex flex-col xl:flex-row xl:items-end justify-between gap-3 sm:gap-4">
                 <div>
                     <h2 class="text-lg sm:text-xl font-black text-maroon-950 tracking-tight leading-none">Riwayat Jurnal</h2>
                     <p class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-widest mt-1 sm:mt-2">Daftar Aktivitas & Status Validasi</p>
                 </div>
-                
+
                 <!-- FILTER BAR (Diubah menjadi div agar menghindari reload halaman) -->
                 <div class="flex flex-wrap items-center gap-2 mt-2 xl:mt-0">
                     <!-- Dropdown Status -->
@@ -201,16 +191,16 @@
                     </div>
 
                     <!-- Tombol Cari -->
-                    <button type="button" onclick="applyFilter()" class="w-full sm:w-auto bg-maroon-950 text-white p-2.5 rounded-xl shadow-md hover:bg-maroon-800 active:scale-95 transition-all flex items-center justify-center gap-2">
+                    {{-- <button type="button" onclick="applyFilter()" class="w-full sm:w-auto bg-maroon-950 text-white p-2.5 rounded-xl shadow-md hover:bg-maroon-800 active:scale-95 transition-all flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hidden sm:block"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                         <span class="text-[10px] font-black uppercase tracking-widest sm:hidden">Terapkan Filter</span>
-                    </button>
+                    </button> --}}
                 </div>
             </div>
 
             <!-- LOG LIST WITH DYNAMIC STATUS -->
             <div id="logbook-container" class="space-y-4 sm:space-y-6 max-h-[700px] overflow-y-auto no-scrollbar pr-1 custom-scrollbar">
-                
+
                 @forelse($riwayatLog as $log)
                     @php
                         // Persiapan data untuk JS Filter (Menggunakan tanggal atau created_at sebagai default fallback)
@@ -221,8 +211,8 @@
 
                     <!-- CARD LOGBOOK DENGAN DATA ATRIBUT -->
                     <div class="log-card group bg-white p-5 sm:p-6 rounded-3xl sm:rounded-[2.5rem] border border-maroon-50 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
-                         data-status="{{ strtolower($log->status ?? 'pending') }}" 
-                         data-bulan="{{ $logMonth }}" 
+                         data-status="{{ strtolower($log->status ?? 'pending') }}"
+                         data-bulan="{{ $logMonth }}"
                          data-tahun="{{ $logYear }}">
 
                         <!-- Side Border Indicator -->
@@ -304,10 +294,10 @@
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');
             const localToday = `${year}-${month}-${day}`;
-            
+
             // Set max date pada input kalender
             dateInput.max = localToday;
-            
+
             dateInput.addEventListener("change", function() {
                 if(this.value > localToday) {
                     alert("Maaf, Anda tidak dapat mengisi logbook untuk tanggal masa depan!");
@@ -322,20 +312,20 @@
         const statusVal = document.getElementById('filterStatus').value.toLowerCase();
         const bulanVal = document.getElementById('filterBulan').value;
         const tahunVal = document.getElementById('filterTahun').value;
-        
+
         const cards = document.querySelectorAll('.log-card');
         const emptyState = document.getElementById('js-empty-state');
         let visibleCount = 0;
-        
+
         cards.forEach(card => {
             const cardStatus = (card.getAttribute('data-status') || '').toLowerCase();
             const cardBulan = card.getAttribute('data-bulan') || '';
             const cardTahun = card.getAttribute('data-tahun') || '';
-            
+
             let matchStatus = (statusVal === 'all') || (cardStatus === statusVal);
             let matchBulan = (bulanVal === 'all') || (cardBulan === bulanVal);
             let matchTahun = (tahunVal === 'all') || (cardTahun === tahunVal);
-            
+
             if(matchStatus && matchBulan && matchTahun) {
                 card.style.display = 'block';
                 visibleCount++;
@@ -343,7 +333,7 @@
                 card.style.display = 'none';
             }
         });
-        
+
         // Menampilkan UI kosong jika tidak ada yang cocok
         if(visibleCount === 0 && cards.length > 0) {
             emptyState.style.display = 'flex';

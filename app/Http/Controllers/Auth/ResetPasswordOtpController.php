@@ -16,7 +16,7 @@ class ResetPasswordOtpController extends Controller
     // 1. Tampilkan Halaman Input Email
     public function showRequestForm()
     {
-        return view('auth.forgot-password');
+        return view('auth.forgot-password.forgot-password');
     }
 
     // 2. Proses Kirim OTP ke Email
@@ -55,7 +55,7 @@ class ResetPasswordOtpController extends Controller
         if (!session('reset_email')) {
             return redirect()->route('password.request');
         }
-        return view('auth.verify-otp');
+        return view('auth.forgot-password.verify-otp');
     }
 
     // 4. Proses Validasi Kode OTP
@@ -94,7 +94,7 @@ class ResetPasswordOtpController extends Controller
         if (!session('reset_email') || !session('otp_verified')) {
             return redirect()->route('password.request');
         }
-        return view('auth.reset-password');
+        return view('auth.forgot-password.reset-password');
     }
 
     // 6. Eksekusi Update Password Baru

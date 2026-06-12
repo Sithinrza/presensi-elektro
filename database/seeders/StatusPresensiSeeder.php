@@ -28,7 +28,7 @@ class StatusPresensiSeeder extends Seeder
             ['id_status_presensi' => 3, 'name' => 'Check Out', 'created_at' => $now, 'updated_at' => $now],
             ['id_status_presensi' => 4, 'name' => 'Terlambat CO', 'created_at' => $now, 'updated_at' => $now],
             ['id_status_presensi' => 5, 'name' => 'Lupa Check-Out', 'created_at' => $now, 'updated_at' => $now],
-            ['id_status_presensi' => 6, 'name' => 'Alfa', 'created_at' => $now, 'updated_at' => $now],
+            ['id_status_presensi' => 6, 'name' => 'Alpa', 'created_at' => $now, 'updated_at' => $now],
             ['id_status_presensi' => 7, 'name' => 'Libur', 'created_at' => $now, 'updated_at' => $now],
 
 

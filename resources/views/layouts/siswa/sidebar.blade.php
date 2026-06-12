@@ -18,7 +18,7 @@
             <a href="{{ route('presensi.index') }}" title="Presensi"
                class="group nav-transition flex flex-col items-center justify-center py-4 rounded-[2rem] {{ request()->routeIs('presensi.index') || request()->is('siswa/presensi') ? 'bg-white text-maroon-950 shadow-xl scale-105' : 'text-white/40 hover:bg-white/5 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('presensi.index') || request()->is('siswa/presensi') ? 'opacity-100' : 'opacity-40' }}">Absen</span>
+                <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('presensi.index') || request()->is('siswa/presensi') ? 'opacity-100' : 'opacity-40' }}">Presensi</span>
             </a>
 
             <!-- 3. Riwayat Presensi -->

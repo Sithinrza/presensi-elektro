@@ -174,7 +174,7 @@ class PresensiController extends Controller
             if ($jamSekarang > $batasBatasCo) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Waktu presensi hari ini telah berakhir. Anda tidak dapat melakukan absen masuk lagi dan tercatat Alfa.'
+                    'message' => 'Waktu presensi hari ini telah berakhir. Anda tidak dapat melakukan absen masuk lagi dan tercatat Alpa.'
                 ]);
             }
 
@@ -182,7 +182,7 @@ class PresensiController extends Controller
             $batasTelat = Carbon::createFromTime(8, 30, 0, 'Asia/Makassar');
 
             if ($waktuSekarang->greaterThan($batasTelat)) {
-                $statusNameCi = 'Alfa';
+                $statusNameCi = 'Alpa';
             } elseif ($waktuSekarang->greaterThan($batasHadir)) {
                 $statusNameCi = 'Terlambat';
             } else {
@@ -202,7 +202,7 @@ class PresensiController extends Controller
                 'longitude_masuk'    => $request->longitude,
             ]);
 
-            $pesan = ($statusNameCi == 'Alfa') ? 'Anda absen terlalu siang, status dicatat sebagai Alfa.' : 'Presensi Masuk Berhasil dicatat!';
+            $pesan = ($statusNameCi == 'Alpa') ? 'Anda absen terlalu siang, status dicatat sebagai Alpa.' : 'Presensi Masuk Berhasil dicatat!';
 
         // ================= LOGIKA AMBIL ABSEN PULANG (CHECK-OUT) =================
         } else {
@@ -222,9 +222,9 @@ class PresensiController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'Belum waktunya pulang!']);
             }
 
-            if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alfa') {
-                $statusNameCo = 'Alfa';
-                $pesan = 'Presensi Pulang dicatat. Status tetap Alfa karena absen masuk Anda terlambat parah.';
+            if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alpa') {
+                $statusNameCo = 'Alpa';
+                $pesan = 'Presensi Pulang dicatat. Status tetap Alpa karena absen masuk Anda terlambat parah.';
             } else {
                 if ($waktuSekarang->greaterThan($batasTerlambatCo)) {
                     $statusNameCo = 'Terlambat CO';
@@ -302,6 +302,14 @@ class PresensiController extends Controller
             'alasan' => $request->alasan
         ]);
 
-        return redirect()->back();
+        // PERBAIKAN: Setelah simpan, lempar ke dashboard masing-masing!
+        // Biar bisa melek dan lihat status kameranya apakah sudah bisa dibuka.
+        $role = strtolower(Auth::user()->roles->first()->name);
+
+        if ($role == 'tendik') {
+            return redirect()->route('tendik.dashboard')->with('success', 'Alasan lupa Check-Out berhasil disimpan!');
+        } else {
+            return redirect()->route('siswa.dashboard')->with('success', 'Alasan lupa Check-Out berhasil disimpan!');
+        }
     }
 }

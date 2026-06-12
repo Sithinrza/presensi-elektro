@@ -15,12 +15,26 @@ class ProfilController extends Controller
     {
         $user = Auth::user();
 
-        // Ambil data pembimbing yang sedang login beserta relasi user
-        $pembimbing = Pembimbing::with(['user', 'agama'])
+        // Ambil data pembimbing yang sedang login beserta relasinya
+        $pembimbing = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir'])
             ->where('id_user', $user->id_user)
             ->firstOrFail();
 
         return view('pembimbing.profil.index', compact('pembimbing', 'user'));
+    }
+
+    public function edit()
+    {
+        $user = Auth::user();
+
+        $pembimbing = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir'])
+            ->where('id_user', $user->id_user)
+            ->firstOrFail();
+
+        // Jika nanti di form edit kamu mau menambahkan dropdown Agama / Pendidikan Terakhir
+        $agama = \App\Models\Agama::all();
+
+        return view('pembimbing.profil.edit', compact('pembimbing', 'user', 'agama'));
     }
 
     public function update(Request $request)
@@ -28,49 +42,49 @@ class ProfilController extends Controller
         $user = Auth::user();
         $pembimbing = Pembimbing::where('id_user', $user->id_user)->firstOrFail();
 
+        // Validasi form (no_induk TIDAK DIVALIDASI karena formnya disabled/terkunci)
         $request->validate([
-            'email'    => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
-            'no_induk' => 'required|string|max:50',
-            'no_telp'  => 'nullable|string|max:20',
+            'email'   => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
+            'no_telp' => 'nullable|string|max:20',
         ]);
 
-        // 1. Update data di tabel users
+        // 1. Update email di tabel users
         $userObj = User::find($user->id_user);
         $userObj->update(['email' => $request->email]);
 
-        // 2. Update data di tabel pembimbing
+        // 2. Update kelengkapan data di tabel pembimbing
         $pembimbing->update([
-            'no_induk' => $request->no_induk,
-            'no_telp'  => $request->no_telp,
+            'no_telp' => $request->no_telp,
+            // Jika nanti kamu menambahkan form input lain di HTML (misal Agama/JK), cukup tambahkan di sini:
+            // 'jk'       => $request->jk,
+            // 'id_agama' => $request->id_agama,
         ]);
 
-        return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
+        // Redirect kembali ke halaman profil utama setelah simpan
+        return redirect()->route('pembimbing.profil')->with('success', 'Biodata berhasil diperbarui!');
     }
 
     public function updateFoto(Request $request)
     {
-        // Naikkan max file jadi 5120 KB (5MB) agar aman untuk foto dari HP
+        // Maksimal file 5MB (5120 KB)
         $request->validate([
             'foto' => 'required|image|mimes:jpeg,png,jpg|max:5120',
         ], [
-            'foto.max' => 'Ukuran foto terlalu besar! Maksimal 5MB.',
-            'foto.image' => 'File yang diunggah harus berupa gambar.'
+            'foto.max' => 'Ukuran foto maksimal 5MB.',
+            'foto.image' => 'File harus berupa gambar.'
         ]);
 
         $user = Auth::user();
-        // Gunakan $user->id_user agar konsisten dengan method index()
         $pembimbing = Pembimbing::where('id_user', $user->id_user)->firstOrFail();
 
         if ($request->hasFile('foto')) {
-            // 1. Hapus foto lama JIKA ADA
+            // Hapus foto lama jika ada
             if ($pembimbing->foto_profil && Storage::disk('public')->exists($pembimbing->foto_profil)) {
                 Storage::disk('public')->delete($pembimbing->foto_profil);
             }
 
-            // 2. Simpan file baru ke folder storage/app/public/profil
+            // Simpan file baru
             $path = $request->file('foto')->store('profil', 'public');
-
-            // 3. Simpan path tersebut ke database
             $pembimbing->update(['foto_profil' => $path]);
 
             return redirect()->back()->with('success', 'Foto profil berhasil diperbarui!');
@@ -85,14 +99,13 @@ class ProfilController extends Controller
         $pembimbing = Pembimbing::where('id_user', $user->id_user)->first();
 
         if ($pembimbing && $pembimbing->foto_profil) {
-            // 1. Hapus file fisik dari storage
+            // Hapus file fisik dari storage
             if (Storage::disk('public')->exists($pembimbing->foto_profil)) {
                 Storage::disk('public')->delete($pembimbing->foto_profil);
             }
 
-            // 2. Kosongkan data di database
+            // Kosongkan nama file dari database
             $pembimbing->update(['foto_profil' => null]);
-
             return redirect()->back()->with('success', 'Foto profil berhasil dihapus.');
         }
 

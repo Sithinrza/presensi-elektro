@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('page_title', 'Data Tendik')
 
 @section('content')
 <main class="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -25,12 +26,12 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Database</p>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Tendik</p>
                     <p class="text-2xl font-black text-slate-800 tracking-tight">{{ $totalTendik ?? 0 }} <span class="text-sm font-bold text-slate-400">Tendik</span></p>
                 </div>
             </div>
 
-            <div class="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex items-center gap-4 min-w-[220px]">
+            {{-- <div class="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex items-center gap-4 min-w-[220px]">
                 <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 </div>
@@ -38,7 +39,7 @@
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Staf Aktif</p>
                     <p class="text-2xl font-black text-emerald-600 tracking-tight">{{ $tendikAktif ?? 0 }} <span class="text-sm font-bold text-emerald-400/80">Orang</span></p>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <a href="{{ route('admin.data.tendik.create') }}" class="group bg-maroon-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-maroon-900/20 hover:bg-maroon-950 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3 w-full lg:w-fit">

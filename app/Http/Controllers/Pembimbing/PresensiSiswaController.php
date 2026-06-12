@@ -51,7 +51,7 @@ class PresensiSiswaController extends Controller
 
         // 4. Hitung Statistik Real-time Akurat untuk Setiap Siswa
         foreach ($anakBimbingan as $s) {
-            $s->stat_tepat_ci = 0; $s->stat_telat_ci = 0; $s->stat_alfa = 0;
+            $s->stat_tepat_ci = 0; $s->stat_telat_ci = 0; $s->stat_alpa = 0;
             $s->stat_tepat_co = 0; $s->stat_telat_co = 0; $s->stat_lupa_co = 0;
 
             // PERBAIKAN 1: Pengambilan Collection anti-mismatch
@@ -73,7 +73,7 @@ class PresensiSiswaController extends Controller
 
                     if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') $s->stat_tepat_ci++;
                     elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') $s->stat_telat_ci++;
-                    elseif ($p->statusCi && $p->statusCi->name == 'Alfa') $s->stat_alfa++;
+                    elseif ($p->statusCi && $p->statusCi->name == 'Alpa') $s->stat_alpa++;
 
                     if ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                         $s->stat_lupa_co++;
@@ -95,7 +95,7 @@ class PresensiSiswaController extends Controller
                     }
 
                     if (!$isLibur) {
-                        $s->stat_alfa++;
+                        $s->stat_alpa++;
                     }
                 }
             }
@@ -136,7 +136,7 @@ class PresensiSiswaController extends Controller
 
         $riwayatPresensi = collect();
         $statistik = [
-            'Tepat CI' => 0, 'Telat CI' => 0, 'Alfa' => 0,
+            'Tepat CI' => 0, 'Telat CI' => 0, 'Alpa' => 0,
             'Tepat CO' => 0, 'Telat CO' => 0, 'Lupa CO' => 0, 'Libur' => 0
         ];
 
@@ -155,7 +155,7 @@ class PresensiSiswaController extends Controller
 
                 if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') $statistik['Tepat CI']++;
                 if ($p->statusCi && $p->statusCi->name == 'Terlambat') $statistik['Telat CI']++;
-                if ($p->statusCi && $p->statusCi->name == 'Alfa') $statistik['Alfa']++;
+                if ($p->statusCi && $p->statusCi->name == 'Alpa') $statistik['Alpa']++;
                 if ($p->statusCi && $p->statusCi->name == 'Libur') $statistik['Libur']++;
 
                 if ($p->statusCo && in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $statistik['Tepat CO']++;
@@ -176,8 +176,8 @@ class PresensiSiswaController extends Controller
                         $statistik['Libur']++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $statistik['Alfa']++;
-                        $statusMock = new StatusPresensi(['name' => 'Alfa']);
+                        $statistik['Alpa']++;
+                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
                     }
 
                     $mock = new Presensi([

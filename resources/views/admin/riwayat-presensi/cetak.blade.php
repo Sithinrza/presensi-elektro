@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -77,7 +78,7 @@
                     <td>{{ $r->jam_pulang ?? '-' }}</td>
                     <td>
                         <div class="status-container">
-                            <strong>IN :</strong> {{ $r->statusCi->name ?? 'Alfa' }} <br>
+                            <strong>IN :</strong> {{ $r->statusCi->name ?? 'Alpa' }} <br>
                             <strong>OUT:</strong> {{ $r->statusCo ? $r->statusCo->name : 'Belum CO' }}
                         </div>
                     </td>

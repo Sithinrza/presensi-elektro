@@ -1,4 +1,5 @@
 @extends($layout)
+@section('page_title', 'Presensi')
 
 @section('content')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -188,7 +189,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                 </div>
                 <h3 class="text-xl font-black text-rose-800 tracking-tight leading-none mb-3">Waktu Presensi Habis</h3>
-                <p class="text-rose-700 text-sm">Waktu kerja hari ini telah berakhir dan Anda tidak melakukan presensi masuk dari pagi. Status Anda tercatat sebagai <span class="font-bold text-rose-900">Alfa</span>.</p>
+                <p class="text-rose-700 text-sm">Waktu kerja hari ini telah berakhir dan Anda tidak melakukan presensi masuk dari pagi. Status Anda tercatat sebagai <span class="font-bold text-rose-900">Alpa</span>.</p>
             </div>
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
@@ -255,8 +256,8 @@
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const KORDINAT_TARGET = [-3.2761294, 114.5968002];
-    const RADIUS_AMAN = 2000;
+    const KORDINAT_TARGET = [-3.2762178, 114.5968513];
+    const RADIUS_AMAN = 4000;
 
     let userLat = 0; let userLng = 0;
     let faceLandmarker, objectDetector, drawingUtils;

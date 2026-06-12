@@ -1,35 +1,33 @@
 @extends('layouts.pembimbing')
+@section('page_title', 'Dashboard')
 
 @section('content')
 <main class="max-w-7xl mx-auto p-4 sm:p-5 lg:p-10 space-y-6 lg:space-y-10">
 
     <!-- HERO SECTION -->
-    <section class="animate-in bg-maroon-950 rounded-[2rem] lg:rounded-[3rem] p-6 lg:p-10 text-white shadow-premium relative overflow-hidden border border-maroon-900" style="animation-delay: 0.1s">
-        <!-- Dekorasi Background -->
-        <div class="absolute -top-20 -right-20 w-72 h-72 lg:w-96 lg:h-96 bg-gold/20 rounded-full blur-[80px] lg:blur-[100px] pointer-events-none"></div>
-        <div class="absolute -bottom-20 -left-20 w-64 h-64 lg:w-80 lg:h-80 bg-rose-500/10 rounded-full blur-[60px] lg:blur-[80px] pointer-events-none"></div>
+    <!-- HERO SECTION -->
+    <!-- HERO SECTION -->
+    <section class="animate-in bg-maroon-900 rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 border border-maroon-800 shadow-premium relative overflow-hidden" style="animation-delay: 0.1s">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
 
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 lg:gap-8">
-            <div class="space-y-2.5 lg:space-y-3 max-w-2xl">
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-gold shadow-sm">
-                    <span class="w-1.5 h-1.5 bg-gold rounded-full animate-pulse"></span>
-                    Dashboard
-                </div>
-                <h2 class="text-2xl sm:text-3xl lg:text-5xl font-black italic tracking-tight leading-tight">
-                    Monitoring Aktivitas <br><span class="text-white">Siswa Magang</span>
+            <div class="space-y-1">
+                <h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight">
+                    Monitoring Siswa Magang
                 </h2>
-                <p class="text-maroon-100/70 text-[11px] sm:text-xs lg:text-sm font-medium leading-relaxed max-w-xl">
-                    Pantau rekapitulasi kehadiran, lakukan validasi pada jurnal harian, serta evaluasi kesiapan penilaian akhir anak bimbingan Anda secara real-time.
+                <p class="text-maroon-200 text-xs lg:text-sm font-bold uppercase tracking-widest opacity-80">
+                    Dashboard Pembimbing Teknik Elektro
                 </p>
             </div>
 
-            <!-- Widget Waktu Live -->
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl lg:rounded-[2rem] p-4 lg:p-6 text-center shrink-0 shadow-inner w-full lg:w-auto flex flex-row lg:flex-col items-center justify-between lg:justify-center">
-                <div class="text-left lg:text-center">
-                    <p class="text-[8px] lg:text-[9px] font-black text-maroon-300 uppercase tracking-widest mb-0.5 lg:mb-2">Waktu Server</p>
-                    <div id="liveDate" class="text-[9px] lg:text-[10px] font-bold text-gold uppercase tracking-wider lg:tracking-[0.2em]">Memuat...</div>
+            <!-- Widget Waktu Minimalis -->
+            <div class="flex items-center gap-4 bg-maroon-800/50 px-5 py-3 rounded-2xl border border-maroon-700/50 w-full lg:w-auto justify-between lg:justify-start">
+                <div class="text-right">
+                    <div id="liveDate" class="text-[9px] font-black text-maroon-200 uppercase tracking-widest">Memuat...</div>
+                    <div id="liveClock" class="text-2xl font-black text-white tracking-tighter leading-none font-mono">00:00:00</div>
                 </div>
-                <div id="liveClock" class="text-2xl sm:text-3xl lg:text-5xl font-black tracking-tighter leading-none text-white font-mono">00:00:00</div>
+                <div class="w-10 h-10 bg-gold text-maroon-950 rounded-xl flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
             </div>
         </div>
     </section>
@@ -98,7 +96,7 @@
         <div class="flex items-center justify-between px-1 lg:px-2">
             <div class="flex items-center gap-2 lg:gap-3">
                 <div class="w-1.5 h-5 lg:h-6 bg-maroon-900 rounded-full"></div>
-                <h3 class="text-lg lg:text-2xl font-black text-maroon-950 tracking-tight italic">Daftar Anak Bimbingan</h3>
+                <h3 class="text-lg lg:text-2xl font-black text-maroon-950 tracking-tight">Daftar Anak Bimbingan</h3>
             </div>
             <a href="{{ route('pembimbing.presensi-siswa.index') }}" class="text-[9px] lg:text-xs font-black text-maroon-700 uppercase underline tracking-widest hover:text-maroon-900 transition-colors">Lihat Semua</a>
         </div>

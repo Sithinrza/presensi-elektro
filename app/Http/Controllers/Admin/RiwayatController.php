@@ -99,7 +99,7 @@ class RiwayatController extends Controller
         $riwayat = collect();
 
         $statistik = [
-            'Tepat CI' => 0, 'Telat CI' => 0, 'Alfa' => 0,
+            'Tepat CI' => 0, 'Telat CI' => 0, 'Alpa' => 0,
             'Tepat CO' => 0, 'Telat CO' => 0, 'Lupa CO' => 0, 'Libur' => 0
         ];
 
@@ -119,7 +119,7 @@ class RiwayatController extends Controller
 
                 if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') $statistik['Tepat CI']++;
                 if ($p->statusCi && $p->statusCi->name == 'Terlambat') $statistik['Telat CI']++;
-                if ($p->statusCi && $p->statusCi->name == 'Alfa') $statistik['Alfa']++;
+                if ($p->statusCi && $p->statusCi->name == 'Alpa') $statistik['Alpa']++;
                 if ($p->statusCi && $p->statusCi->name == 'Libur') $statistik['Libur']++;
 
                 if ($p->statusCo && in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $statistik['Tepat CO']++;
@@ -138,8 +138,8 @@ class RiwayatController extends Controller
                         $statistik['Libur']++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $statistik['Alfa']++;
-                        $statusMock = new StatusPresensi(['name' => 'Alfa']);
+                        $statistik['Alpa']++;
+                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
                     }
 
                     $mock = new Presensi(['tanggal' => $dateString, 'jam_masuk' => null, 'jam_pulang' => null]);
@@ -224,7 +224,7 @@ class RiwayatController extends Controller
                     if ($isLibur) {
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $statusMock = new StatusPresensi(['name' => 'Alfa']);
+                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
                     }
 
                     $mock = new Presensi(['tanggal' => $dateString, 'jam_masuk' => null, 'jam_pulang' => null]);
@@ -293,7 +293,7 @@ class RiwayatController extends Controller
                 'instansi' => $kategori == 'siswa' ? ($u->sekolah_asal ?? '-') : ($u->unitKerja->nama_unit ?? '-'),
                 'rekap_ci' => [],
                 'rekap_co' => [],
-                'ci_tepat' => 0, 'ci_telat' => 0, 'ci_alfa' => 0, 'ci_libur' => 0,
+                'ci_tepat' => 0, 'ci_telat' => 0, 'ci_alpa' => 0, 'ci_libur' => 0,
                 'co_tepat' => 0, 'co_telat' => 0, 'co_lupa' => 0,
             ];
 
@@ -308,7 +308,7 @@ class RiwayatController extends Controller
                     if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') { $simbol_ci = 'TW'; $row['ci_tepat']++; }
                     elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') { $simbol_ci = 'T'; $row['ci_telat']++; }
                     elseif ($p->statusCi && $p->statusCi->name == 'Libur') { $simbol_ci = 'L'; $row['ci_libur']++; }
-                    else { $simbol_ci = 'A'; $row['ci_alfa']++; }
+                    else { $simbol_ci = 'A'; $row['ci_alpa']++; }
 
                     // PERBAIKAN LOGIKA LUPA CO
                     if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
@@ -334,7 +334,7 @@ class RiwayatController extends Controller
                             $simbol_ci = 'L'; $row['ci_libur']++;
                             $simbol_co = 'L';
                         } else {
-                            $simbol_ci = 'A'; $row['ci_alfa']++;
+                            $simbol_ci = 'A'; $row['ci_alpa']++;
                             $simbol_co = 'A';
                         }
                     }

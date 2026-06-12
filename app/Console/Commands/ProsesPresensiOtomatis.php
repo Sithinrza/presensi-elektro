@@ -13,7 +13,7 @@ use Carbon\Carbon;
 class ProsesPresensiOtomatis extends Command
 {
     protected $signature = 'presensi:otomatis';
-    protected $description = 'Sapu bersih Alfa, Lupa CO, dan set otomatis Libur tepat sebelum ganti hari';
+    protected $description = 'Sapu bersih Alpa, Lupa CO, dan set otomatis Libur tepat sebelum ganti hari';
 
 
 
@@ -26,12 +26,12 @@ class ProsesPresensiOtomatis extends Command
         $hariIniIso = $waktuSekarang->dayOfWeekIso;
 
         // Ambil ID Status dari Database
-        $statusAlfa = StatusPresensi::where('name', 'Alfa')->first();
+        $statusAlpa = StatusPresensi::where('name', 'Alpa')->first();
         $statusLupaCO = StatusPresensi::where('name', 'Lupa Check-Out')->first();
         $statusLibur = StatusPresensi::where('name', 'Libur')->first();
 
-        if (!$statusAlfa || !$statusLupaCO || !$statusLibur) {
-            $this->error("Pastikan status 'Alfa', 'Lupa Check-Out', dan 'Libur' sudah ada di tabel status_presensi!");
+        if (!$statusAlpa || !$statusLupaCO || !$statusLibur) {
+            $this->error("Pastikan status 'Alpa', 'Lupa Check-Out', dan 'Libur' sudah ada di tabel status_presensi!");
             return;
         }
 
@@ -82,7 +82,7 @@ class ProsesPresensiOtomatis extends Command
         // =========================================================
         // 2. JIKA HARI KERJA NORMAL (PROSES ALFA & LUPA CO)
         // =========================================================
-        $jumlahAlfa = 0;
+        $jumlahAlpa = 0;
         $jumlahLupaCo = 0;
 
         foreach ($semuaIdTarget as $idUser) {
@@ -96,19 +96,19 @@ class ProsesPresensiOtomatis extends Command
             // KONDISI A: TIDAK MUNCUL SAMA SEKALI
             if (!$presensiHariIni) {
                 $waktuSekarang = Carbon::now('Asia/Makassar');
-                $batasAlfa = Carbon::createFromTime(8, 30, 0, 'Asia/Makassar');
+                $batasAlpa = Carbon::createFromTime(8, 30, 0, 'Asia/Makassar');
 
                 // HANYA EKSEKUSI ALFA JIKA SUDAH LEWAT JAM 08:30 PAGI
-                if ($waktuSekarang->greaterThan($batasAlfa)) {
+                if ($waktuSekarang->greaterThan($batasAlpa)) {
                     Presensi::create([
                         'id_user'      => $idUser,
-                        'id_status_ci' => $statusAlfa->id_status_presensi,
-                        'id_status_co' => $statusAlfa->id_status_presensi,
+                        'id_status_ci' => $statusAlpa->id_status_presensi,
+                        'id_status_co' => $statusAlpa->id_status_presensi,
                         'tanggal'      => $tanggalHariIni,
                         'jam_masuk'    => null,
                         'jam_pulang'   => null,
                     ]);
-                    $jumlahAlfa++;
+                    $jumlahAlpa++;
                 }
             }
             // KONDISI B: SUDAH MASUK TAPI BELUM PULANG SAMPAI 23:59
@@ -120,14 +120,14 @@ class ProsesPresensiOtomatis extends Command
                     ]);
                     $jumlahLupaCo++;
                 }
-                else if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alfa') {
+                else if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alpa') {
                     $presensiHariIni->update([
-                        'id_status_co' => $statusAlfa->id_status_presensi,
+                        'id_status_co' => $statusAlpa->id_status_presensi,
                     ]);
                 }
             }
         }
 
-        $this->info("Rekap Hari Ini: $jumlahAlfa orang bolos (Alfa), $jumlahLupaCo orang Lupa CO.");
+        $this->info("Rekap Hari Ini: $jumlahAlpa orang bolos (Alpa), $jumlahLupaCo orang Lupa CO.");
     }
 }

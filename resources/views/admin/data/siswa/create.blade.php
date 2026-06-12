@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('page_title', 'Data Siswa')
 
 @section('content')
 <main class="p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 animate-in">
@@ -9,16 +10,10 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"><path d="m15 18-6-6 6-6"/></svg>
             </a>
             <div>
-                <h1 class="text-xl sm:text-2xl font-black text-maroon-950 tracking-tight italic">Tambah Data Personel</h1>
-                <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Registrasi Master Data Personel Baru</p>
+                <h1 class="text-xl sm:text-2xl font-black text-maroon-950 tracking-tight italic">Tambah Data Siswa</h1>
             </div>
         </div>
-        <div class="px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-xl self-start md:self-auto">
-            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2">
-                <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                Mode Tambah Aktif
-            </span>
-        </div>
+
     </div>
 
     @if(session('error') || $errors->any())
@@ -31,17 +26,7 @@
     <form action="{{ route('admin.data.siswa.store') }}" method="POST" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
 
-        <div class="bg-rose-50/80 border border-rose-100 p-4 rounded-2xl mx-4 sm:mx-6 md:mx-8 mt-6 sm:mt-8 flex items-start gap-3">
-            <div class="w-8 h-8 bg-rose-500 text-white rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            </div>
-            <div>
-                <p class="text-xs font-black text-rose-800 uppercase tracking-widest">Peringatan Pengisian Data</p>
-                <p class="text-[10px] sm:text-[11px] font-bold text-rose-600 mt-1">
-                    Semua kolom yang memiliki tanda bintang merah (<span class="text-rose-600 text-sm align-top">*</span>) <span class="underline underline-offset-2">wajib diisi</span>. Jangan biarkan kosong sebelum menyimpan.
-                </p>
-            </div>
-        </div>
+
 
         <div class="p-5 sm:p-8 md:p-10 space-y-8 md:space-y-10">
 
@@ -52,7 +37,7 @@
                     </div>
                     <div>
                         <h3 class="text-base sm:text-lg font-black text-maroon-950 tracking-tight uppercase italic leading-none">Informasi Dasar Akun</h3>
-                        <p class="text-[9px] sm:text-[10px] font-bold text-rose-500 mt-1 uppercase tracking-widest">KOLOM WAJIB DIISI</p>
+                        <p class="text-[9px] sm:text-[10px] font-bold text-rose-500 mt-1 uppercase tracking-widest"> * KOLOM WAJIB DIISI</p>
                     </div>
                 </div>
 
@@ -102,7 +87,7 @@
                     </div>
                     <div>
                         <h3 class="text-base sm:text-lg font-black text-maroon-950 tracking-tight uppercase italic leading-none">Data Penugasan Presensi</h3>
-                        <p class="text-[9px] sm:text-[10px] font-bold text-rose-500 mt-1 uppercase tracking-widest">KOLOM WAJIB DIISI</p>
+                        <p class="text-[9px] sm:text-[10px] font-bold text-rose-500 mt-1 uppercase tracking-widest"> * KOLOM WAJIB DIISI</p>
                     </div>
                 </div>
 
@@ -208,14 +193,7 @@
                     </div>
                 </div>
 
-                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-start gap-3 mt-5 md:mt-6">
-                    <div class="w-8 h-8 bg-slate-400 text-white rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                    </div>
-                    <p class="text-[9px] sm:text-[10px] font-bold text-slate-600 leading-relaxed italic uppercase">
-                        Catatan: Bagian Detail Profil bersifat opsional. Jika dibiarkan kosong, sistem akan otomatis meminta pengguna melengkapinya secara mandiri saat mereka melakukan login pertama kali.
-                    </p>
-                </div>
+
             </div>
 
         </div>

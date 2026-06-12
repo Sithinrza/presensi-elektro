@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('page_title', 'Data Pembimbing')
 
 @section('content')
 <main class="p-6 lg:p-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -30,7 +31,7 @@
                 </div>
             </div>
 
-            <div class="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex items-center gap-4 min-w-[220px]">
+            {{-- <div class="bg-white border border-slate-100 p-5 rounded-3xl shadow-sm flex items-center gap-4 min-w-[220px]">
                 <div class="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 </div>
@@ -38,7 +39,7 @@
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Bimbingan</p>
                     <p class="text-2xl font-black text-amber-600 tracking-tight">{{ str_pad($totalBimbingan ?? 0, 2, '0', STR_PAD_LEFT) }} <span class="text-sm font-bold text-amber-500/80">Siswa</span></p>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
         <a href="{{ route('admin.data.pembimbing.create') }}" class="group bg-maroon-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-maroon-900/20 hover:bg-maroon-950 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3 w-full lg:w-fit">

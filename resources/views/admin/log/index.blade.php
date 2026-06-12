@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('page_title', 'Logbook Siswa')
 
 @section('content')
 <main class="p-10 space-y-8 animate-in">

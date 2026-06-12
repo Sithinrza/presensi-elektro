@@ -5,8 +5,8 @@
     <div class="px-7 mb-8 flex items-center gap-4 overflow-hidden">
         <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png" alt="Logo Poliban" class="w-11 h-11 object-contain shrink-0 drop-shadow-md">
         <div class="sidebar-header-text whitespace-nowrap">
-            <h2 class="text-white font-black text-sm leading-none tracking-tight uppercase">Admin Panel</h2>
-            <p class="text-amber-400 text-[10px] font-bold uppercase mt-1 tracking-widest leading-none">Jurusan Elektro</p>
+            <h2 class="text-white font-black text-sm leading-none tracking-tight uppercase">Admin SIPETANG</h2>
+            {{-- <p class="text-amber-400 text-[10px] font-bold uppercase mt-1 tracking-widest leading-none">Jurusan Elektro</p> --}}
         </div>
     </div>
 

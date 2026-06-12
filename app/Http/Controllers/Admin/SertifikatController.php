@@ -82,7 +82,7 @@ class SertifikatController extends Controller
             'kajur_nama' => $kajur->nama_lengkap,
             'kajur_nip' => $kajur->nip,
             'nomor_sertifikat' => $nilai->nomor_sertifikat,
-            'alpa' => $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alfa')->count() : 0
+            'alpa' => $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alpa')->count() : 0
         ];
 
         $pdf = Pdf::loadView('pembimbing.nilai.sertifikat', $data)->setPaper('A4', 'landscape');

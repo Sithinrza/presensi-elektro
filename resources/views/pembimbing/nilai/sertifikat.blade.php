@@ -139,7 +139,7 @@
                 <td style="width: 30%; vertical-align: top; text-align: right;">
                     <table class="tabel-info" style="float: right; width: 120px;">
                         <tr>
-                            <td style="text-align: left; background-color: #f1f5f9; font-weight: bold;">Ketidakhadiran (Alfa)</td>
+                            <td style="text-align: left; background-color: #f1f5f9; font-weight: bold;">Ketidakhadiran (Alpa)</td>
                             <td style="font-weight: bold;">: {{ $alpa ?? '0' }} Hari</td>
                         </tr>
                     </table>

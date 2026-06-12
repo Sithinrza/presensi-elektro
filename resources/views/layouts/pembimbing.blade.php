@@ -59,21 +59,23 @@
         }
     </style>
 </head>
-<body class="font-sans text-slate-900 pb-24 lg:pb-0 lg:pl-24">
 
-    <!-- Memanggil Sidebar -->
-    @include('layouts.pembimbing.sidebar')
+<body class="font-sans text-slate-900 {{ View::hasSection('hide_nav') ? '' : 'pb-24 lg:pb-0 lg:pl-24' }}">
 
-    <!-- Memanggil navbar -->
-    @include('layouts.pembimbing.navbar')
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.pembimbing.sidebar')
+    @endif
 
-    <!-- AREA KONTEN UTAMA -->
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.pembimbing.navbar')
+    @endif
+
     @yield('content')
 
-    <!-- Memanggil Bottom Nav (Mobile) -->
-    @include('layouts.pembimbing.bottomnav')
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.pembimbing.bottomnav')
+    @endif
 
-    <!-- Global Scripts -->
     <script>
         function updateClock() {
             const clockElement = document.getElementById("liveClock");

@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('page_title', 'Riwayat Presensi')
 
 @section('content')
 <main class="max-w-7xl mx-auto w-full p-6 lg:p-10 space-y-6 animate-in fade-in slide-in-from-right-8 duration-500">
@@ -26,41 +27,56 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-between sm:justify-start gap-3 sm:gap-4 bg-black/20 p-4 rounded-2xl border border-white/10 backdrop-blur-sm overflow-x-auto no-scrollbar w-full xl:w-auto shrink-0">
-                <div class="text-center shrink-0 px-2">
-                    <p class="text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Tepat CI</p>
-                    <p class="text-xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CI'] ?? 0 }}</p>
+            <div class="grid grid-cols-4 sm:flex sm:items-center sm:justify-start gap-y-4 gap-x-1 sm:gap-4 bg-black/20 p-4 rounded-2xl border border-white/10 backdrop-blur-sm w-full xl:w-auto shrink-0">
+
+                <div class="text-center shrink-0">
+                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Tepat CI</p>
+                    <p class="text-lg sm:text-xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CI'] ?? 0 }}</p>
                 </div>
-                <div class="w-[1px] h-8 bg-white/10 shrink-0"></div>
-                <div class="text-center shrink-0 px-2">
-                    <p class="text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Telat CI</p>
-                    <p class="text-xl font-black text-amber-400 leading-none">{{ $statistik['Telat CI'] ?? 0 }}</p>
+
+                <!-- Garis Pemisah (Disembunyikan di HP) -->
+                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
+
+                <div class="text-center shrink-0">
+                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Telat CI</p>
+                    <p class="text-lg sm:text-xl font-black text-amber-400 leading-none">{{ $statistik['Telat CI'] ?? 0 }}</p>
                 </div>
-                <div class="w-[1px] h-8 bg-white/10 shrink-0"></div>
-                <div class="text-center shrink-0 px-2">
-                    <p class="text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Alfa</p>
-                    <p class="text-xl font-black text-rose-400 leading-none">{{ $statistik['Alfa'] ?? 0 }}</p>
+
+                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
+
+                <div class="text-center shrink-0">
+                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Alpa</p>
+                    <p class="text-lg sm:text-xl font-black text-rose-400 leading-none">{{ $statistik['Alpa'] ?? 0 }}</p>
                 </div>
-                <div class="w-[1px] h-8 bg-white/10 shrink-0"></div>
-                <div class="text-center shrink-0 px-2">
-                    <p class="text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Libur</p>
-                    <p class="text-xl font-black text-blue-400 leading-none">{{ $statistik['Libur'] ?? 0 }}</p>
+
+                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
+
+                <div class="text-center shrink-0">
+                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Libur</p>
+                    <p class="text-lg sm:text-xl font-black text-blue-400 leading-none">{{ $statistik['Libur'] ?? 0 }}</p>
                 </div>
-                <div class="w-[1px] h-8 bg-white/10 shrink-0"></div>
-                <div class="text-center shrink-0 px-2">
-                    <p class="text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Tepat CO</p>
-                    <p class="text-xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CO'] ?? 0 }}</p>
+
+                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
+
+                <div class="text-center shrink-0">
+                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Tepat CO</p>
+                    <p class="text-lg sm:text-xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CO'] ?? 0 }}</p>
                 </div>
-                <div class="w-[1px] h-8 bg-white/10 shrink-0"></div>
-                <div class="text-center shrink-0 px-2">
-                    <p class="text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Telat CO</p>
-                    <p class="text-xl font-black text-amber-400 leading-none">{{ $statistik['Telat CO'] ?? 0 }}</p>
+
+                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
+
+                <div class="text-center shrink-0">
+                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Telat CO</p>
+                    <p class="text-lg sm:text-xl font-black text-amber-400 leading-none">{{ $statistik['Telat CO'] ?? 0 }}</p>
                 </div>
-                <div class="w-[1px] h-8 bg-white/10 shrink-0"></div>
-                <div class="text-center shrink-0 px-2">
-                    <p class="text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1.5">Lupa CO</p>
-                    <p class="text-xl font-black text-rose-400 leading-none">{{ $statistik['Lupa CO'] ?? 0 }}</p>
+
+                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
+
+                <div class="text-center shrink-0">
+                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Lupa CO</p>
+                    <p class="text-lg sm:text-xl font-black text-rose-400 leading-none">{{ $statistik['Lupa CO'] ?? 0 }}</p>
                 </div>
+
             </div>
 
         </div>
@@ -146,12 +162,12 @@
 
                                     @php
                                         // LOGIKA WARNA (Cukup urus warna saja, teks murni dari DB)
-                                        $ciName = isset($r->statusCi) ? $r->statusCi->name : 'Alfa';
+                                        $ciName = isset($r->statusCi) ? $r->statusCi->name : 'Alpa';
                                         $colorCi = match($ciName) {
                                             'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                             'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
                                             'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
-                                            default => 'bg-rose-50 text-rose-600 border-rose-200' // Alfa
+                                            default => 'bg-rose-50 text-rose-600 border-rose-200' // Alpa
                                         };
 
                                         $coName = isset($r->statusCo) ? $r->statusCo->name : 'Belum CO';
