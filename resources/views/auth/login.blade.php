@@ -175,7 +175,9 @@
 
                 <!-- Password -->
                 <div class="space-y-2">
-
+                    <div class="flex items-center justify-between ml-1">
+                        <label class="block text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em]">Kata Sandi</label>
+                    </div>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -187,12 +189,9 @@
                             <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
                     </div>
-                    <div class="flex items-center justify-between ml-1">
-                        <label class="block text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em]">Kata Sandi</label>
-                        <a href="{{ route('password.request') }}" class="text-[10px] font-black text-gold-dark hover:text-maroon-700 uppercase tracking-widest transition-colors">Lupa Password?</a>
-                    </div>
                 </div>
 
+                <a href="{{ route('password.request') }}" class="text-[10px] font-black text-gold-dark hover:text-maroon-700 uppercase tracking-widest transition-colors">Lupa Password?</a>
 
 
                 <!-- Login Button -->
