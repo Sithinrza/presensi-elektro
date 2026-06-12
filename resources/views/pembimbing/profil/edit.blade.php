@@ -86,15 +86,15 @@
                     <input type="tel" inputmode="numeric" name="no_telp" value="{{ old('no_telp', $pembimbing->no_telp) }}" placeholder="08..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
-                <div class="space-y-1.5">
+                {{-- <div class="space-y-1.5">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tempat Lahir</label>
                     <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $pembimbing->tempat_lahir) }}" placeholder="Kota Kelahiran..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
-                </div>
+                </div> --}}
 
-                <div class="space-y-1.5">
+                {{-- <div class="space-y-1.5">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tanggal Lahir</label>
                     <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $pembimbing->tanggal_lahir) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
-                </div>
+                </div> --}}
 
                 <div class="space-y-1.5">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama</label>
@@ -115,10 +115,10 @@
                     </select>
                 </div>
 
-                <div class="space-y-1.5 sm:col-span-2">
+                {{-- <div class="space-y-1.5 sm:col-span-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Alamat Domisili Lengkap</label>
                     <textarea name="alamat" rows="2" placeholder="Tulis alamat lengkap rumah saat ini..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none resize-none transition-all shadow-sm">{{ old('alamat', $pembimbing->alamat) }}</textarea>
-                </div>
+                </div> --}}
 
                 <div class="space-y-1.5 sm:col-span-2 mt-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nomor Induk / NIK</label>
