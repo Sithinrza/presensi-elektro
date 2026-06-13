@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Pembimbing;
 use App\Models\Presensi;
 use App\Models\SiswaMagang;
+use App\Models\StatusPresensi; // <-- WAJIB IMPORT INI
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -30,18 +31,22 @@ class DashboardController extends Controller
         // 2. Kumpulkan ID User dari semua siswa bimbingannya
         $siswaIds = SiswaMagang::where('id_pembimbing', $id_pembimbing)->pluck('id_user');
 
+        // Ambil ID Status Tepat Waktu dan Terlambat secara dinamis
+        $idTepatWaktu = StatusPresensi::where('name', 'Tepat Waktu')->value('id_status_presensi');
+        $idTerlambat  = StatusPresensi::where('name', 'Terlambat')->value('id_status_presensi');
+
         // 3. HITUNG STATISTIK ATAS (KOTAK 4 BUAH)
         $totalBimbingan = $siswaIds->count();
 
-        // Hitung Logbook yang statusnya 'Pending' (Pastikan di tabel log kolomnya bernama 'status')
+        // Hitung Logbook yang statusnya 'Pending'
         $totalLogPending = \App\Models\Log::whereIn('id_user', $siswaIds)
                                           ->where('status', 'Pending')
                                           ->count();
 
-        // PERBAIKAN: Hitung Presensi Hadir (id_status_ci bernilai 1 atau 2)
+        // PERBAIKAN: Hitung Presensi Hadir menggunakan variabel ID yang sudah dicari
         $hadirHariIni = \App\Models\Presensi::whereIn('id_user', $siswaIds)
                                             ->whereDate('tanggal', $hariIni)
-                                            ->whereIn('id_status_ci', [1, 2]) // 1 = Tepat Waktu, 2 = Terlambat
+                                            ->whereIn('id_status_ci', [$idTepatWaktu, $idTerlambat])
                                             ->count();
 
         // Hitung Siswa yang masa magangnya sudah habis (Siap dinilai)
@@ -52,11 +57,11 @@ class DashboardController extends Controller
         // 4. AMBIL DAFTAR SISWA BESERTA STATISTIK PRIBADINYA
         $daftarSiswa = SiswaMagang::where('id_pembimbing', $id_pembimbing)
             ->withCount([
-                // PERBAIKAN: Hitung jumlah hadir bulan ini (id_status_ci bernilai 1 atau 2)
-                'presensi as hadir_bulan_ini' => function ($query) use ($hariIni) {
+                // PERBAIKAN: Hitung jumlah hadir bulan ini menggunakan ID dinamis
+                'presensi as hadir_bulan_ini' => function ($query) use ($hariIni, $idTepatWaktu, $idTerlambat) {
                     $query->whereMonth('tanggal', $hariIni->month)
                           ->whereYear('tanggal', $hariIni->year)
-                          ->whereIn('id_status_ci', [1, 2]); // 1 = Tepat Waktu, 2 = Terlambat
+                          ->whereIn('id_status_ci', [$idTepatWaktu, $idTerlambat]);
                 },
                 // Hitung jumlah logbook pending per siswa
                 'logbook as log_pending' => function ($query) {
@@ -71,6 +76,7 @@ class DashboardController extends Controller
             'hadirHariIni', 'siapPenilaian', 'daftarSiswa'
         ));
     }
+
     public function show($id)
     {
         $user = Auth::user();

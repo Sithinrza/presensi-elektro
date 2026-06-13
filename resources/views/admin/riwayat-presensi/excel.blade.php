@@ -50,7 +50,7 @@
             </tr>
             <tr>
                 <td style="background-color: #ffc7ce; color: #9c0006; font-weight: bold; text-align: center; padding: 4px;">A</td>
-                <td style="padding-left: 8px;">Alfa / Tanpa Keterangan</td>
+                <td style="padding-left: 8px;">Alpa / Tanpa Keterangan</td>
             </tr>
             <tr>
                 <td style="background-color: #e2e8f0; color: #475569; font-weight: bold; text-align: center; padding: 4px;">L</td>
@@ -82,7 +82,7 @@
                 @endforeach
                 <th style="background-color: #a7f3d0; text-align: center; width: 60px;">Tepat</th>
                 <th style="background-color: #fde68a; text-align: center; width: 60px;">Telat</th>
-                <th style="background-color: #fecaca; text-align: center; width: 60px;">Alfa</th>
+                <th style="background-color: #fecaca; text-align: center; width: 60px;">Alpa</th>
                 <th style="background-color: #bfdbfe; text-align: center; width: 60px;">Libur</th>
             </tr>
         </thead>
@@ -119,7 +119,7 @@
 
                 <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0fdf4; color: #166534;">{{ $row['ci_tepat'] }}</td>
                 <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #fffbeb; color: #b45309;">{{ $row['ci_telat'] }}</td>
-                <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #fef2f2; color: #b91c1c;">{{ $row['ci_alfa'] }}</td>
+                <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #fef2f2; color: #b91c1c;">{{ $row['ci_alpa'] }}</td>
                 <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #f8fafc; color: #475569;">{{ $row['ci_libur'] }}</td>
             </tr>
             @endforeach

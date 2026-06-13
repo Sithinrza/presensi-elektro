@@ -9,6 +9,7 @@ use App\Models\Tendik;
 use App\Models\Agama;
 use App\Models\PendidikanTerakhir;
 use App\Models\Presensi;
+use App\Models\StatusPresensi;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -37,39 +38,52 @@ class DashboardController extends Controller
         $bulanIni = Carbon::now('Asia/Makassar')->month;
         $tahunIni = Carbon::now('Asia/Makassar')->year;
 
+        // Ambil ID secara dinamis dari database agar tidak pernah salah
+        $idTepatWaktu = StatusPresensi::where('name', 'Tepat Waktu')->value('id_status_presensi');
+        $idTerlambat  = StatusPresensi::where('name', 'Terlambat')->value('id_status_presensi');
+        $idAlpa       = StatusPresensi::where('name', 'Alpa')->value('id_status_presensi');
+
         $presensiBulanIni = Presensi::where('id_user', $user->id_user)
                                     ->whereMonth('tanggal', $bulanIni)
                                     ->whereYear('tanggal', $tahunIni)
                                     ->get();
 
-        // 1. Tepat Waktu (Status CI = 1)
-        $tepatWaktu = $presensiBulanIni->where('id_status_ci', 1)->count();
+        // 1. Tepat Waktu
+        $tepatWaktu = $presensiBulanIni->where('id_status_ci', $idTepatWaktu)->count();
 
-        // 2. Terlambat (Status CI = 2)
-        $telat = $presensiBulanIni->where('id_status_ci', 2)->count();
+        // 2. Terlambat
+        $telat = $presensiBulanIni->where('id_status_ci', $idTerlambat)->count();
 
         // 3. Total Hadir (Tepat Waktu + Terlambat)
         $hadir = $tepatWaktu + $telat;
 
-        // 4. Alpa (Status CI = 3)
-        $alpa = $presensiBulanIni->where('id_status_ci', 3)->count();
+        // 4. Alfa
+        $alpa = $presensiBulanIni->where('id_status_ci', $idAlpa)->count();
+
+        // ==========================================
+        // FITUR PINTAR: CEK STATUS PRESENSI HARI INI
+        // ==========================================
+        $hariIni = Carbon::now('Asia/Makassar')->format('Y-m-d');
+        $presensiHariIni = Presensi::where('id_user', $user->id_user)
+                                   ->where('tanggal', $hariIni)
+                                   ->first();
 
         return view('tendik.dashboard.index', compact(
-            'tendik', 'isProfilLengkap', 'agama', 'pendidikan', 'hadir', 'tepatWaktu', 'telat', 'alpa'
+            'tendik', 'isProfilLengkap', 'agama', 'pendidikan', 'hadir', 'tepatWaktu', 'telat', 'alpa', 'presensiHariIni'
         ));
     }
 
     public function lengkapiProfil(Request $request)
     {
         $request->validate([
-            'nip'           => 'required|string|max:50',
-            'id_agama'      => 'required|integer',
+            'nip'              => 'required|string|max:50',
+            'id_agama'         => 'required|integer',
             'id_pend_terakhir' => 'required|integer',
-            'jk'            => 'required|in:L,P',
-            'tempat_lahir'  => 'required|string|max:40',
-            'tanggal_lahir' => 'required|date',
-            'no_hp'         => 'required|string|max:20',
-            'alamat'        => 'required|string',
+            'jk'               => 'required|in:L,P',
+            'tempat_lahir'     => 'required|string|max:40',
+            'tanggal_lahir'    => 'required|date',
+            'no_hp'            => 'required|string|max:20',
+            'alamat'           => 'required|string',
         ]);
 
         $user = Auth::user();
@@ -77,14 +91,14 @@ class DashboardController extends Controller
 
         if ($tendik) {
             $tendik->update([
-                'nip'           => $request->nip,
-                'id_agama'      => $request->id_agama,
+                'nip'              => $request->nip,
+                'id_agama'         => $request->id_agama,
                 'id_pend_terakhir' => $request->id_pend_terakhir,
-                'jk'            => $request->jk,
-                'tempat_lahir'  => $request->tempat_lahir,
-                'tanggal_lahir' => $request->tanggal_lahir,
-                'no_hp'         => $request->no_hp,
-                'alamat'        => $request->alamat,
+                'jk'               => $request->jk,
+                'tempat_lahir'     => $request->tempat_lahir,
+                'tanggal_lahir'    => $request->tanggal_lahir,
+                'no_hp'            => $request->no_hp,
+                'alamat'           => $request->alamat,
             ]);
 
             return redirect()->back()->with('success', 'Profil berhasil dilengkapi! Anda sekarang dapat melakukan presensi.');

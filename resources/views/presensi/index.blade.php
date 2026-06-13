@@ -1,4 +1,5 @@
 @extends($layout)
+@section('page_title', 'Presensi')
 
 @section('content')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -20,7 +21,64 @@
 
 <div class="p-4 lg:p-8 w-full flex justify-center items-start min-h-screen">
 
-    @if($presensiSelesai)
+    {{-- KONDISI BLOKIR PRIORITAS 1: AKUN NONAKTIF --}}
+    @if($isNonaktif)
+        <div class="card-presensi animate-in">
+            <div class="flex items-center gap-4 mb-5">
+                <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                </div>
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Akun Nonaktif</h2>
+            </div>
+
+            <div class="p-8 bg-slate-50 border border-slate-200 rounded-xl mb-6 text-center">
+                <div class="w-20 h-20 bg-white text-slate-400 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm border border-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                </div>
+                <h3 class="text-xl font-black text-slate-800 tracking-tight leading-none mb-3">Akses Presensi Ditutup</h3>
+                <p class="text-slate-600 text-sm">Status akun Anda saat ini adalah <b class="text-red-600">Nonaktif</b>. Anda sudah tidak dapat melakukan presensi lagi.</p>
+            </div>
+            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+        </div>
+
+    {{-- KONDISI BLOKIR PRIORITAS 2: PUNYA DOSA LUPA CO --}}
+    @elseif($presensiGantung)
+        <div class="card-presensi animate-in">
+            <div class="flex items-center gap-4 mb-5">
+                <div class="w-10 h-10 flex items-center justify-center rounded-xl bg-amber-100 text-amber-700 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Peringatan Sistem</h2>
+            </div>
+
+            <div class="p-6 bg-amber-50 border border-amber-200 rounded-xl mb-6 text-left">
+                <h3 class="text-lg font-bold text-amber-800 mb-2">Alasan Lupa Check-Out</h3>
+                <p class="text-amber-700 text-sm mb-4 leading-relaxed">
+                    Sistem mendeteksi Anda tidak melakukan presensi pulang pada tanggal
+                    <b class="font-black bg-amber-200 px-2 py-0.5 rounded">{{ \Carbon\Carbon::parse($presensiGantung->tanggal)->translatedFormat('d F Y') }}</b>.
+                    Anda wajib mengisi alasan sebelum dapat melakukan presensi hari ini.
+                </p>
+
+                <form action="{{ route('presensi.simpan_alasan') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="id_presensi" value="{{ $presensiGantung->id_presensi }}">
+
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Tulis Alasan Anda:</label>
+                    <textarea name="alasan" rows="3" required class="w-full p-3 border border-slate-300 rounded-lg focus:ring-maroon-900 focus:border-maroon-900" placeholder="Misal: Lupa klik check-out karena buru-buru ada perbaikan mendadak..."></textarea>
+
+                    @error('alasan')
+                        <span class="text-red-500 text-xs font-bold">{{ $message }}</span>
+                    @enderror
+
+                    <button type="submit" class="mt-4 w-full py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 active:scale-95 transition shadow-lg">
+                        Simpan Alasan & Lanjutkan
+                    </button>
+                </form>
+            </div>
+            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+        </div>
+
+    @elseif($presensiSelesai)
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
                 <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
@@ -53,10 +111,46 @@
                 </div>
                 <div class="flex justify-between items-center pt-3 border-t">
                     <span class="text-slate-500 text-sm font-bold">Status Pulang</span>
-                    <span class="font-black {{ $presensiHariIni->statusCo->name == 'Tepat Waktu' ? 'text-emerald-600' : 'text-rose-600' }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
+                    <span class="font-black {{ in_array($presensiHariIni->statusCo->name ?? '', ['Check Out', 'Tepat Waktu']) ? 'text-emerald-600' : 'text-rose-600' }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
                         {{ $presensiHariIni->statusCo->name ?? 'Belum CO' }}
                     </span>
                 </div>
+            </div>
+            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+        </div>
+
+    @elseif($isWeekend)
+        <div class="card-presensi animate-in">
+            <div class="flex items-center gap-4 mb-5">
+                <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </a>
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Akhir Pekan</h2>
+            </div>
+            <div class="p-8 bg-slate-50 border border-slate-200 rounded-xl mb-6">
+                <div class="w-20 h-20 bg-white text-slate-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm border border-slate-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </div>
+                <h3 class="text-2xl font-black text-slate-800 tracking-tight leading-none mb-3">Selamat Beristirahat</h3>
+                <p class="text-slate-600 text-sm">Sistem presensi tidak diaktifkan pada hari Sabtu dan Minggu.</p>
+            </div>
+            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+        </div>
+
+    @elseif($belumBuka)
+        <div class="card-presensi animate-in">
+            <div class="flex items-center gap-4 mb-5">
+                <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </a>
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Belum Buka</h2>
+            </div>
+            <div class="p-8 bg-blue-50 border border-blue-200 rounded-xl mb-6">
+                <div class="w-20 h-20 bg-white text-blue-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm border border-blue-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <h3 class="text-xl font-black text-blue-800 tracking-tight leading-none mb-3">Sistem Belum Aktif</h3>
+                <p class="text-blue-700 text-sm">Sistem presensi masuk baru akan dibuka pada pukul <b class="px-2 py-1 bg-white rounded shadow-sm text-blue-900">06:00 WITA</b>. Silakan kembali lagi nanti.</p>
             </div>
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
@@ -78,6 +172,24 @@
                 <div class="mt-4 px-4 py-2 bg-white rounded-lg border border-rose-100 shadow-sm inline-block">
                     <span class="text-rose-900 font-extrabold uppercase tracking-widest text-xs">{{ $hariLiburIni->nama_libur }}</span>
                 </div>
+            </div>
+            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+        </div>
+
+    @elseif($lewatJamCo)
+        <div class="card-presensi animate-in">
+            <div class="flex items-center gap-4 mb-5">
+                <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </a>
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Sistem Ditutup</h2>
+            </div>
+            <div class="p-8 bg-rose-50 border border-rose-200 rounded-xl mb-6">
+                <div class="w-20 h-20 bg-white text-rose-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm border border-rose-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                </div>
+                <h3 class="text-xl font-black text-rose-800 tracking-tight leading-none mb-3">Waktu Presensi Habis</h3>
+                <p class="text-rose-700 text-sm">Waktu kerja hari ini telah berakhir dan Anda tidak melakukan presensi masuk dari pagi. Status Anda tercatat sebagai <span class="font-bold text-rose-900">Alpa</span>.</p>
             </div>
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
@@ -138,13 +250,14 @@
     @endif
 </div>
 
-@if(!$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni)
+{{-- PASTIKAN SCRIPT AI DIBLOKIR JIKA ADA SALAH SATU KONDISI DI BAWAH INI --}}
+@if(!$isNonaktif && !$presensiGantung && !$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni && !$isWeekend && !$belumBuka && !$lewatJamCo)
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const KORDINAT_TARGET = [-3.2761294, 114.5968002];
-    const RADIUS_AMAN = 2000;
+    const KORDINAT_TARGET = [-3.2762178, 114.5968513];
+    const RADIUS_AMAN = 4000;
 
     let userLat = 0; let userLng = 0;
     let faceLandmarker, objectDetector, drawingUtils;

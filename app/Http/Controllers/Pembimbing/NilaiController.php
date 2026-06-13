@@ -38,7 +38,7 @@ class NilaiController extends Controller
         }
 
         // HANYA HITUNG ALFA
-        $alpa = $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alfa')->count() : 0;
+        $alpa = $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alpa')->count() : 0;
 
         return view('pembimbing.nilai.form', compact('siswa', 'alpa'));
     }
@@ -109,7 +109,7 @@ class NilaiController extends Controller
         }
 
         // HANYA HITUNG ALFA
-        $alpa = $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alfa')->count() : 0;
+        $alpa = $siswa->presensi ? $siswa->presensi->where('statusCi.name', 'Alpa')->count() : 0;
 
         return view('pembimbing.nilai.form', compact('siswa', 'alpa'));
     }
@@ -166,7 +166,7 @@ class NilaiController extends Controller
             'huruf' => $huruf,
             'keterangan' => $keterangan,
             'kajur_nama' => $kajur->nama_lengkap,
-            'kajur_nip' => $kajur->nip,           
+            'kajur_nip' => $kajur->nip,
             'nomor_sertifikat' => $nilai->nomor_sertifikat
         ];
 

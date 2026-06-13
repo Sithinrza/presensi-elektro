@@ -26,6 +26,7 @@ class Presensi extends Model
         'foto_pulang',
         'latitude_pulang',
         'longitude_pulang',
+        'alasan',
     ];
 
     // Relasi ke User
@@ -46,6 +47,6 @@ class Presensi extends Model
         return $this->belongsTo(StatusPresensi::class, 'id_status_co', 'id_status_presensi');
     }
 
-    
+
 
 }

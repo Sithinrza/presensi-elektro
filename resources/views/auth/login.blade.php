@@ -177,7 +177,6 @@
                 <div class="space-y-2">
                     <div class="flex items-center justify-between ml-1">
                         <label class="block text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em]">Kata Sandi</label>
-                        <a href="#" class="text-[10px] font-black text-gold-dark hover:text-maroon-700 uppercase tracking-widest transition-colors">Lupa Password?</a>
                     </div>
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
@@ -192,15 +191,8 @@
                     </div>
                 </div>
 
-                <!-- Remember Me -->
-                <label class="flex items-center gap-3 cursor-pointer group w-fit">
-                    <div class="relative w-5 h-5">
-                        <input type="checkbox" name="remember" class="peer hidden">
-                        <div class="w-full h-full border-2 border-slate-200 rounded-lg peer-checked:bg-maroon-600 peer-checked:border-maroon-600 transition-all"></div>
-                        <svg class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" fill="none" stroke="currentColor" stroke-width="4" viewBox="0 0 24 24"><path d="M20 6L9 17L4 12" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                    </div>
-                    <span class="text-xs font-bold text-slate-400 group-hover:text-maroon-900 transition-colors uppercase tracking-widest">Ingat Saya</span>
-                </label>
+                <a href="{{ route('password.request') }}" class="text-[10px] font-black text-gold-dark hover:text-maroon-700 uppercase tracking-widest transition-colors">Lupa Password?</a>
+
 
                 <!-- Login Button -->
                 <div class="pt-4">

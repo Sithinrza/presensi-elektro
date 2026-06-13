@@ -24,7 +24,7 @@
             </a>
 
             <!-- Nilai -->
-            <a href="#"
+            <a href="{{ route('pembimbing.nilai.index') }}" title="Penilaian"
                class="flex-1 flex flex-col items-center justify-center py-3 rounded-[2rem] transition-all duration-300 {{ request()->is('pembimbing/nilai') ? 'bg-white text-maroon-950 shadow-lg scale-105' : 'text-white/40 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-2 5l9-9l-7 0l2-5l-9 9l7 0"/></svg>
                 <span class="text-[8px] font-black uppercase tracking-widest mt-1">Nilai</span>

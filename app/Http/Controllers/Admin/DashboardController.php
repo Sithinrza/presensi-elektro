@@ -7,6 +7,7 @@ use App\Models\Presensi;
 use App\Models\SiswaMagang;
 use App\Models\Tendik;
 use App\Models\Pembimbing;
+use App\Models\StatusPresensi;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -15,15 +16,19 @@ class DashboardController extends Controller
     {
         $hariIni = Carbon::now('Asia/Makassar')->format('Y-m-d');
 
-        // 2. Hitung Status Presensi Hari Ini (Berdasarkan ID Status Masuk / CI)
-        // 1 = Tepat Waktu, 2 = Terlambat, 3 = Alfa
-        $hadirHariIni = Presensi::where('tanggal', $hariIni)->where('id_status_ci', 1)->count();
-        $terlambatHariIni = Presensi::where('tanggal', $hariIni)->where('id_status_ci', 2)->count();
-        $alpaHariIni = Presensi::where('tanggal', $hariIni)->where('id_status_ci', 3)->count();
+        // 1. Ambil ID Status secara dinamis dari tabel status_presensi
+        $idTepatWaktu = StatusPresensi::where('name', 'Tepat Waktu')->value('id_status_presensi');
+        $idTerlambat  = StatusPresensi::where('name', 'Terlambat')->value('id_status_presensi');
+        $idAlpa       = StatusPresensi::where('name', 'Alpa')->value('id_status_presensi');
+
+        // 2. Hitung Status Presensi Hari Ini (Menggunakan ID Dinamis)
+        $hadirHariIni     = Presensi::where('tanggal', $hariIni)->where('id_status_ci', $idTepatWaktu)->count();
+        $terlambatHariIni = Presensi::where('tanggal', $hariIni)->where('id_status_ci', $idTerlambat)->count();
+        $alpaHariIni      = Presensi::where('tanggal', $hariIni)->where('id_status_ci', $idAlpa)->count();
 
         // 3. Hitung Total Data Master
-        $totalSiswa = SiswaMagang::count();
-        $totalTendik = Tendik::count();
+        $totalSiswa      = SiswaMagang::count();
+        $totalTendik     = Tendik::count();
         $totalPembimbing = Pembimbing::count();
 
         // 4. Ambil 10 Aktivitas Terbaru Hari Ini

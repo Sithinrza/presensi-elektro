@@ -4,9 +4,10 @@ use Illuminate\Support\Facades\Route;
 
 // Import Controller Global
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Controllers\RiwayatController;
+use App\Http\Controllers\Auth\ProfilePasswordController;
 
 // Import Controller Admin
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Admin\KajurController;
 use App\Http\Controllers\Admin\LogController as AdminLog;
 use App\Http\Controllers\Admin\RiwayatController as AdminRiwayat;
 use App\Http\Controllers\Admin\SertifikatController;
+use App\Http\Controllers\Auth\ResetPasswordOtpController;
 // Import Controller Siswa
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboard;
 use App\Http\Controllers\Siswa\LogController as SiswaLog;
@@ -47,6 +49,13 @@ Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::post('/login', [AuthController::class, 'authenticate'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::get('/forgot-password', [ResetPasswordOtpController::class, 'showRequestForm'])->name('password.request');
+Route::post('/forgot-password', [ResetPasswordOtpController::class, 'sendOtp'])->name('password.email');
+Route::get('/verify-otp', [ResetPasswordOtpController::class, 'showVerifyForm'])->name('password.otp.verify');
+Route::post('/verify-otp', [ResetPasswordOtpController::class, 'verifyOtp'])->name('password.otp.submit');
+Route::get('/reset-password', [ResetPasswordOtpController::class, 'showResetForm'])->name('password.otp.reset');
+Route::post('/reset-password', [ResetPasswordOtpController::class, 'resetPassword'])->name('password.update');
+
 
 // ==========================================
 // JALUR TERPROTEKSI (PAGAR UTAMA: WAJIB LOGIN)
@@ -56,8 +65,18 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------------
     // PRESENSI GLOBAL
     // ------------------------------------------
+
+    Route::post('/profil/password/send-otp', [ProfilePasswordController::class, 'sendOtp'])->name('profile.password.send');
+    Route::get('/profil/password/verify', [ProfilePasswordController::class, 'showVerifyForm'])->name('profile.password.verify');
+    Route::post('/profil/password/verify-submit', [ProfilePasswordController::class, 'verifyOtp'])->name('profile.password.verify.submit');
+    Route::get('/profil/password/reset', [ProfilePasswordController::class, 'showResetForm'])->name('profile.password.reset');
+    Route::post('/profil/password/update', [ProfilePasswordController::class, 'updatePassword'])->name('profile.password.update');
+
+
+
     Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi.index');
     Route::post('/presensi-submit', [PresensiController::class, 'store'])->name('presensi.store');
+    Route::post('/presensi/simpan-alasan', [PresensiController::class, 'simpanAlasan'])->name('presensi.simpan_alasan');
 
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('presensi.riwayat-presensi');
 
@@ -112,6 +131,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profil/update', [SiswaProfil::class, 'update'])->name('profil.update');
         Route::put('/profil/update-foto', [SiswaProfil::class, 'updateFoto'])->name('profil.update-foto');
         Route::delete('/profil/hapus-foto', [SiswaProfil::class, 'deleteFoto'])->name('profil.delete-foto');
+        Route::get('/profil/edit', [SiswaProfil::class, 'edit'])->name('profil.edit');
     });
 
     // ------------------------------------------
@@ -141,6 +161,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profil/update', [PembimbingProfil::class, 'update'])->name('profil.update');
         Route::put('/profil/update-foto', [PembimbingProfil::class, 'updateFoto'])->name('profil.update-foto');
         Route::delete('/profil/hapus-foto', [PembimbingProfil::class, 'deleteFoto'])->name('profil.delete-foto');
+        Route::get('/profil/edit', [PembimbingProfil::class, 'edit'])->name('profil.edit');
         });
 
     // ------------------------------------------
@@ -153,6 +174,8 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/profil/update', [TendikProfil::class, 'update'])->name('profil.update');
         Route::put('/profil/update-foto', [TendikProfil::class, 'updateFoto'])->name('profil.update-foto');
         Route::delete('/tendik/profil/hapus-foto', [TendikProfil::class, 'deleteFoto'])->name('profil.delete-foto');
+
+        Route::get('/profil/edit', [TendikProfil::class, 'edit'])->name('profil.edit');
         });
 
 });

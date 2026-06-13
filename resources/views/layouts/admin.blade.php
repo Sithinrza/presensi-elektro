@@ -78,12 +78,16 @@
     </head>
     <body class="font-sans text-slate-900 relative">
 
-        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-maroon-950/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+        @if(!View::hasSection('hide_nav'))
+            <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-maroon-950/40 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300 md:hidden"></div>
+            @include('layouts.admin.sidebar')
+        @endif
 
-        @include('layouts.admin.sidebar')
+        <div id="{{ View::hasSection('hide_nav') ? 'fullscreen-container' : 'main-container' }}" class="main-content {{ View::hasSection('hide_nav') ? 'w-full min-h-screen' : '' }}">
 
-        <div id="main-container" class="main-content">
-            @include('layouts.admin.navbar')
+            @if(!View::hasSection('hide_nav'))
+                @include('layouts.admin.navbar')
+            @endif
 
             @yield('content')
         </div>
