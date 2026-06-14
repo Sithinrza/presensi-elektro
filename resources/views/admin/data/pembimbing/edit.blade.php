@@ -2,7 +2,7 @@
 @section('page_title', 'Data Pembimbing')
 
 @section('content')
-<main class="p-4 sm:p-6 lg:p-10 space-y-6 sm:space-y-8 animate-in">
+<main class="p-4 sm:p-6 lg:p-10 space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-center gap-3 sm:gap-4">
@@ -13,12 +13,6 @@
                 <h1 class="text-xl sm:text-2xl font-black text-maroon-950 tracking-tight italic leading-none">Edit Data Pembimbing</h1>
             </div>
         </div>
-        {{-- <div class="px-3 py-2 sm:px-4 sm:py-2 bg-amber-50 border border-amber-100 rounded-lg sm:rounded-xl w-fit">
-            <span class="text-[9px] sm:text-[10px] font-black text-amber-600 uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
-                <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-amber-500 rounded-full animate-pulse"></span>
-                Mode Edit Aktif
-            </span>
-        </div> --}}
     </div>
 
     @if(session('error') || $errors->any())
@@ -28,11 +22,10 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.data.pembimbing.update', $pembimbing->id_pembimbing) }}" method="POST" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
+    <!-- FORM EDIT DENGAN ID DAN ONSUBMIT JS -->
+    <form id="formEditPembimbing" onsubmit="confirmUpdate(event)" action="{{ route('admin.data.pembimbing.update', $pembimbing->id_pembimbing) }}" method="POST" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
         @method('PUT')
-
-
 
         <div class="p-4 sm:p-6 md:p-10 space-y-8 sm:space-y-10">
 
@@ -49,6 +42,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 bg-slate-50/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-100">
 
+                    <!-- Baris 1: Status (Full Width) -->
                     <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Status Kepegawaian <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -59,6 +53,7 @@
                         </select>
                     </div>
 
+                    <!-- Baris 2: Nama & NIP -->
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Nama Lengkap & Gelar <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -73,6 +68,7 @@
                         <input type="text" name="no_induk" value="{{ old('no_induk', $pembimbing->no_induk) }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
+                    <!-- Baris 3: Email & Telepon -->
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Email Institusi <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -84,9 +80,10 @@
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Nomor Telepon / WA <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
                         </label>
-                        <input type="text" name="no_telp" value="{{ old('no_telp', $pembimbing->no_telp) }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                        <input type="tel" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="no_telp" value="{{ old('no_telp', $pembimbing->no_telp) }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
+                    <!-- Baris 4: Jabatan & Pendidikan Terakhir -->
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Jabatan Fungsional <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -108,6 +105,7 @@
                         </select>
                     </div>
 
+                    <!-- Baris 5: Agama -->
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Agama <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -122,6 +120,7 @@
                         </select>
                     </div>
 
+                    <!-- Baris 6: Update Password (Full Width) -->
                     <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update Password</label>
                         <div class="relative group">
@@ -146,8 +145,10 @@
                 Simpan Perubahan
             </button>
         </div>
+
     </form>
 </main>
+
 <script>
     function togglePassword() {
         const input = document.getElementById('passwordInput');
@@ -159,6 +160,48 @@
         } else {
             input.type = 'password';
             icon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+        }
+    }
+
+    // FUNGSI KONFIRMASI UPDATE DENGAN SWEETALERT2
+    function confirmUpdate(event) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = document.getElementById('formEditPembimbing');
+
+        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Simpan Perubahan?',
+                text: "Pastikan data pembimbing yang diperbarui sudah benar.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
+                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    // Kelas khusus agar responsive di HP
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                }
+            });
+        } else {
+            // Fallback jika CDN SweetAlert gagal dimuat
+            if (confirm('Apakah Anda yakin ingin menyimpan perubahan data pembimbing ini?')) {
+                form.submit();
+            }
         }
     }
 </script>

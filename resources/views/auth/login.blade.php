@@ -39,7 +39,7 @@
   <style>
     body {
       background-color: #fcfaf8;
-      background-image:
+      background-image: 
         radial-gradient(at 0% 0%, rgba(188, 90, 117, 0.08) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(216, 185, 139, 0.1) 0px, transparent 50%);
     }
@@ -73,7 +73,7 @@
       box-shadow: 0 0 0 4px rgba(188, 90, 117, 0.1);
       transform: translateY(-1px);
     }
-
+    
     ::-webkit-scrollbar {
       width: 6px;
     }
@@ -86,127 +86,130 @@
     }
   </style>
 </head>
-<body class="font-sans text-slate-900 min-h-screen flex items-center justify-center p-4 sm:p-8">
+<body class="font-sans text-slate-900 min-h-screen flex items-center justify-center p-4 sm:p-8 relative">
 
   <!-- Background Decorative Elements -->
   <div class="fixed inset-0 circuit-pattern pointer-events-none"></div>
   <div class="fixed top-[-10%] right-[-5%] w-[40%] h-[40%] bg-maroon-100/30 rounded-full blur-[120px] pointer-events-none"></div>
   <div class="fixed bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-gold-light/40 rounded-full blur-[120px] pointer-events-none"></div>
 
-  <main class="relative w-full max-w-5xl grid lg:grid-cols-10 glass-effect rounded-[3rem] overflow-hidden shadow-premium border border-white my-auto">
-
+  <main class="relative z-10 w-full max-w-5xl grid lg:grid-cols-10 glass-effect rounded-3xl lg:rounded-[3rem] overflow-hidden shadow-premium border border-white my-auto">
+    
     <!-- LEFT SIDE: BRANDING & INFO (Hidden on Mobile) -->
-    <div class="hidden lg:flex lg:col-span-4 relative bg-maroon-950 p-12 flex-col justify-between overflow-hidden min-h-[600px]">
+    <div class="hidden lg:flex lg:col-span-4 relative bg-maroon-950 p-10 lg:p-12 flex-col justify-between overflow-hidden min-h-[600px]">
         <!-- Overlay Decorative -->
         <div class="absolute top-0 right-0 w-full h-full opacity-10 circuit-pattern"></div>
         <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-gold/20 rounded-full blur-3xl"></div>
 
         <div class="relative z-10">
-            <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png"
-                 alt="Logo Elektro"
-                 class="w-20 h-20 object-contain animate-float">
-
-            <div class="mt-12 space-y-4">
-                <h2 class="font-display text-4xl text-white leading-tight">Presensi<br><span class="text-gold italic">Elektro Poliban.</span></h2>
-                <div class="w-16 h-1 bg-gold rounded-full"></div>
+            <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png" 
+                 alt="Logo Elektro" 
+                 class="w-16 h-16 lg:w-20 lg:h-20 object-contain animate-float drop-shadow-lg">
+            
+            <div class="mt-10 lg:mt-12 space-y-4">
+                <h2 class="font-display text-3xl lg:text-4xl text-white leading-tight">Sistem Presensi<br><span class="text-gold italic">Teknik Elektro.</span></h2>
+                <div class="w-12 h-1 bg-gold rounded-full"></div>
             </div>
         </div>
 
-        <div class="relative z-10 space-y-6">
-            <div class="flex items-center gap-4 text-white/70">
-                <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/><circle cx="12" cy="12" r="3"/></svg>
+        <div class="relative z-10 space-y-5 lg:space-y-6">
+            <div class="flex items-center gap-4 text-white/80">
+                <div class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12c0 1.2-4.03 6-9 6s-9-4.8-9-6c0-1.2 4.03-6 9-6s9 4.8 9 6Z"/><circle cx="12" cy="12" r="3"/></svg>
                 </div>
-                <p class="text-sm font-medium">Teknologi Face Match & Liveness</p>
+                <p class="text-xs lg:text-sm font-medium">Verifikasi Wajah Biometrik</p>
             </div>
-            <div class="flex items-center gap-4 text-white/70">
-                <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            <div class="flex items-center gap-4 text-white/80">
+                <div class="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                 </div>
-                <p class="text-sm font-medium">Validasi Geo-Location Presisi</p>
+                <p class="text-xs lg:text-sm font-medium">Validasi Lokasi Terintegrasi</p>
             </div>
         </div>
 
-        <p class="relative z-10 text-white/30 text-[10px] font-bold uppercase tracking-widest leading-none">
+        <p class="relative z-10 text-white/40 text-[9px] lg:text-[10px] font-bold uppercase tracking-widest leading-none">
             &copy; 2026 Jurusan Teknik Elektro • Poliban
         </p>
     </div>
 
     <!-- RIGHT SIDE: LOGIN FORM -->
-    <div class="lg:col-span-6 p-8 md:p-16 flex flex-col justify-center bg-white/50 min-h-[500px]">
-
+    <div class="lg:col-span-6 p-6 sm:p-10 md:p-16 flex flex-col justify-center bg-white/60 min-h-full">
+        
         <div class="max-w-md mx-auto w-full">
             <!-- Mobile Header Logo -->
-            <div class="lg:hidden flex justify-center mb-8">
-                <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png"
-                     alt="Logo Elektro"
-                     class="w-16 h-16 object-contain">
+            <div class="lg:hidden flex flex-col items-center justify-center mb-8">
+                <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png" 
+                     alt="Logo Elektro" 
+                     class="w-16 h-16 object-contain drop-shadow-md mb-4">
+                <h2 class="font-display text-2xl font-bold text-maroon-950 leading-none">Sistem Presensi</h2>
             </div>
 
-            <div class="mb-10 text-center lg:text-left">
-                <h1 class="text-3xl md:text-4xl font-black text-maroon-950 tracking-tight leading-none mb-4">Selamat Datang</h1>
-                <p class="text-slate-400 font-medium">Silakan masuk untuk mengakses sistem presensi digital.</p>
+            <div class="mb-8 sm:mb-10 text-center lg:text-left">
+                <h1 class="text-2xl sm:text-3xl md:text-4xl font-black text-maroon-950 tracking-tight leading-none mb-3">Selamat Datang</h1>
+                <p class="text-sm sm:text-base text-slate-500 font-medium">Silakan masuk menggunakan akun Anda.</p>
             </div>
 
             <!-- FORM LARAVEL START -->
-            <form action="{{ route('login.post') }}" method="POST" class="space-y-6">
+            <form action="{{ route('login.post') }}" method="POST" class="space-y-5 sm:space-y-6">
                 @csrf
 
                 <!-- Alert Error Login -->
                 @if($errors->any())
-                    <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-2xl relative text-sm font-medium mb-4 flex items-center gap-3 shadow-sm" role="alert">
+                    <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl sm:rounded-2xl relative text-xs sm:text-sm font-bold mb-4 flex items-center gap-3 shadow-sm" role="alert">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                         <span>{{ $errors->first() }}</span>
                     </div>
                 @endif
 
                 <!-- Username/Email -->
-                <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em] ml-1">Email</label>
+                <div class="space-y-1.5 sm:space-y-2">
+                    <label class="block text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em] ml-1">Email</label>
                     <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[18px] sm:h-[18px] w-4 h-4"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         </div>
                         <input type="email" name="email" value="{{ old('email') }}" required
                                placeholder="Masukkan Email Anda"
-                               class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-maroon-950 outline-none focus:border-maroon-500 input-focus shadow-sm">
+                               class="w-full bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3.5 sm:py-4 pl-10 sm:pl-12 pr-4 text-xs sm:text-sm font-bold text-maroon-950 outline-none focus:border-maroon-500 input-focus shadow-sm">
                     </div>
                 </div>
 
                 <!-- Password -->
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between ml-1">
-                        <label class="block text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em]">Kata Sandi</label>
-                    </div>
+                <div class="space-y-1.5 sm:space-y-2">
+                    <!-- Label Kata Sandi -->
+                    <label class="block text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em] ml-1">Kata Sandi</label>
+                    
                     <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[18px] sm:h-[18px] w-4 h-4"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                         </div>
                         <input id="password-input" type="password" name="password" required
                                placeholder="••••••••"
-                               class="w-full bg-white border border-slate-200 rounded-2xl py-4 pl-12 pr-12 text-sm font-bold text-maroon-950 outline-none focus:border-maroon-500 input-focus shadow-sm">
-                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-5 flex items-center text-slate-300 hover:text-maroon-500 transition-colors">
-                            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                               class="w-full bg-white border border-slate-200 rounded-xl sm:rounded-2xl py-3.5 sm:py-4 pl-10 sm:pl-12 pr-12 text-xs sm:text-sm font-bold text-maroon-950 outline-none focus:border-maroon-500 input-focus shadow-sm">
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-4 sm:pr-5 flex items-center text-slate-400 hover:text-maroon-600 transition-colors focus:outline-none">
+                            <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[18px] sm:h-[18px] w-4 h-4"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
+                    </div>
+
+                    <!-- Lupa Password Ditaruh Di Sini Agar Tidak Salah Pencet -->
+                    <div class="flex justify-end pt-1">
+                        <a href="{{ route('password.request') }}" class="text-[9px] sm:text-[10px] font-black text-maroon-600 hover:text-maroon-900 uppercase tracking-widest transition-colors mr-1">Lupa Sandi?</a>
                     </div>
                 </div>
 
-                <a href="{{ route('password.request') }}" class="text-[10px] font-black text-gold-dark hover:text-maroon-700 uppercase tracking-widest transition-colors">Lupa Password?</a>
-
-
                 <!-- Login Button -->
-                <div class="pt-4">
-                    <button type="submit" class="w-full bg-maroon-950 text-white py-5 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl shadow-maroon-950/20 hover:bg-maroon-800 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
-                        Masuk Sekarang
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                <div class="pt-2 sm:pt-4">
+                    <button type="submit" class="w-full bg-maroon-950 text-white py-4 sm:py-5 rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm uppercase tracking-[0.2em] shadow-lg shadow-maroon-950/20 hover:bg-maroon-800 active:scale-[0.98] transition-all flex items-center justify-center gap-2 sm:gap-3">
+                        Masuk ke Sistem
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[18px] sm:h-[18px]"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                     </button>
                 </div>
             </form>
             <!-- FORM LARAVEL END -->
 
-            <div class="mt-12 pt-8 border-t border-slate-100 text-center">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ada Masalah Akses?</p>
-                <a href="#" class="inline-block mt-2 text-xs font-black text-maroon-700 hover:text-maroon-900 underline transition-colors">Hubungi Admin IT Jurusan</a>
+            <div class="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-slate-200 text-center">
+                <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ada Masalah Akses?</p>
+                <a href="#" class="inline-block mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-black text-maroon-700 hover:text-maroon-900 underline transition-colors">Hubungi Admin IT Jurusan</a>
             </div>
         </div>
 

@@ -63,7 +63,7 @@ class ProfilController extends Controller
             'alamat'        => $request->alamat,
         ]);
 
-        return redirect()->route('tendik.profil')->with('success', 'Biodata berhasil diperbarui!');
+        return redirect()->route('tendik.profil.index')->with('success', 'Biodata berhasil diperbarui!');
     }
 
     public function updateFoto(Request $request)

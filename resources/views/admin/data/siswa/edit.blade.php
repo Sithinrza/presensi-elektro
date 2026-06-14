@@ -1,8 +1,7 @@
 @extends('layouts.admin')
-@section('page_title', 'Data Siswa')
 
 @section('content')
-<main class="p-4 sm:p-6 lg:p-10 space-y-6 sm:space-y-8 animate-in">
+<main class="p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 animate-in">
 
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-center gap-3 sm:gap-4">
@@ -24,11 +23,10 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.data.siswa.update', $siswa->id_siswa ?? 1) }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
+    <!-- FORM EDIT DENGAN ID DAN ONSUBMIT JS -->
+    <form id="formEditSiswa" action="{{ route('admin.data.siswa.update', $siswa->id_siswa ?? 1) }}" method="POST" enctype="multipart/form-data" onsubmit="confirmUpdate(event)" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
         @method('PUT')
-
-
 
         <div class="p-4 sm:p-6 md:p-10 space-y-8 sm:space-y-10">
 
@@ -234,6 +232,48 @@
         } else {
             input.type = 'password';
             icon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+        }
+    }
+
+    // FUNGSI KONFIRMASI UPDATE DENGAN SWEETALERT2
+    function confirmUpdate(event) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = document.getElementById('formEditSiswa');
+
+        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Simpan Perubahan?',
+                text: "Pastikan data siswa yang diperbarui sudah benar.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
+                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    // Kelas khusus agar responsive di HP
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                }
+            });
+        } else {
+            // Fallback jika CDN SweetAlert gagal dimuat
+            if (confirm('Apakah Anda yakin ingin menyimpan perubahan data siswa ini?')) {
+                form.submit();
+            }
         }
     }
 </script>
