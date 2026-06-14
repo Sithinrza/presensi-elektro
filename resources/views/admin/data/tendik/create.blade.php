@@ -28,10 +28,8 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.data.tendik.store') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
+    <form id="formTambahTendik" onsubmit="confirmSave(event)" action="{{ route('admin.data.tendik.store') }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
-
-
 
         <div class="p-4 sm:p-6 md:p-10 space-y-8 sm:space-y-10">
 
@@ -176,7 +174,6 @@
                     </div>
                 </div>
 
-
             </div>
 
         </div>
@@ -203,6 +200,48 @@
         } else {
             input.type = 'password';
             icon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+        }
+    }
+
+    // FUNGSI KONFIRMASI SIMPAN DENGAN SWEETALERT2
+    function confirmSave(event) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = document.getElementById('formTambahTendik');
+
+        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Simpan Data Tendik?',
+                text: "Pastikan semua data yang dimasukkan sudah benar.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
+                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    // Kelas khusus agar responsive di HP
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                }
+            });
+        } else {
+            // Fallback jika CDN SweetAlert gagal dimuat
+            if (confirm('Apakah Anda yakin ingin menyimpan data tendik ini?')) {
+                form.submit();
+            }
         }
     }
 </script>

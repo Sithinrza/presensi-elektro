@@ -10,7 +10,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sm:w-5 sm:h-5"><path d="m15 18-6-6 6-6"/></svg>
         </a>
         <div>
-            <h1 class="text-base sm:text-xl font-black text-maroon-950 tracking-tight uppercase  leading-none">Biodata Lengkap</h1>
+            <h1 class="text-base sm:text-xl font-black text-maroon-950 tracking-tight uppercase leading-none">Biodata Lengkap</h1>
             <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Manajemen Data Pembimbing</p>
         </div>
     </div>
@@ -60,7 +60,8 @@
         </div>
     </section>
 
-    <form action="{{ route('pembimbing.profil.update') }}" method="POST" class="space-y-6 sm:space-y-8">
+    <!-- FORM EDIT DENGAN ID DAN ONSUBMIT JS -->
+    <form id="formEditProfil" onsubmit="confirmUpdate(event)" action="{{ route('pembimbing.profil.update') }}" method="POST" class="space-y-6 sm:space-y-8">
         @csrf
         @method('PUT')
 
@@ -86,16 +87,6 @@
                     <input type="tel" inputmode="numeric" name="no_telp" value="{{ old('no_telp', $pembimbing->no_telp) }}" placeholder="08..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
-                {{-- <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tempat Lahir</label>
-                    <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $pembimbing->tempat_lahir) }}" placeholder="Kota Kelahiran..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
-                </div> --}}
-
-                {{-- <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tanggal Lahir</label>
-                    <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $pembimbing->tanggal_lahir) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
-                </div> --}}
-
                 <div class="space-y-1.5">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama</label>
                     <select name="id_agama" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
@@ -115,11 +106,6 @@
                     </select>
                 </div>
 
-                {{-- <div class="space-y-1.5 sm:col-span-2">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Alamat Domisili Lengkap</label>
-                    <textarea name="alamat" rows="2" placeholder="Tulis alamat lengkap rumah saat ini..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none resize-none transition-all shadow-sm">{{ old('alamat', $pembimbing->alamat) }}</textarea>
-                </div> --}}
-
                 <div class="space-y-1.5 sm:col-span-2 mt-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nomor Induk / NIK</label>
                     <input type="text" value="{{ $pembimbing->no_induk ?? '-' }}" disabled class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-400 outline-none cursor-not-allowed shadow-inner">
@@ -138,6 +124,9 @@
     </form>
 </main>
 
+<!-- TAMBAHKAN LIBRARY SWEETALERT 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     function confirmDeleteFoto(event) {
         event.preventDefault();
@@ -147,10 +136,16 @@
                 text: "Foto profil Anda akan dihapus dan kembali ke inisial nama.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#e11d48',
-                cancelButtonColor: '#94a3b8',
+                confirmButtonColor: '#e11d48', // Tailwind rose-600
+                cancelButtonColor: '#94a3b8',  // Tailwind slate-400
                 confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     event.target.closest('form').submit();
@@ -159,6 +154,48 @@
         } else {
             if (confirm('Apakah Anda yakin ingin menghapus foto profil?')) {
                 event.target.closest('form').submit();
+            }
+        }
+    }
+
+    // FUNGSI KONFIRMASI SIMPAN PROFIL DENGAN SWEETALERT2
+    function confirmUpdate(event) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = document.getElementById('formEditProfil');
+
+        // Pastikan HTML5 validation bawaan browser berjalan
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Simpan Perubahan?',
+                text: "Pastikan biodata Anda yang diperbarui sudah benar.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
+                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    // Kelas khusus agar responsive di HP
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                }
+            });
+        } else {
+            // Fallback jika CDN SweetAlert gagal dimuat
+            if (confirm('Apakah Anda yakin ingin menyimpan perubahan profil ini?')) {
+                form.submit();
             }
         }
     }

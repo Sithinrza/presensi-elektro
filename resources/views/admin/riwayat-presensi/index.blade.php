@@ -95,7 +95,8 @@
                                 <div class="flex items-center gap-3 lg:gap-4">
                                     <div class="w-8 h-8 lg:w-11 lg:h-11 rounded-lg lg:rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
                                         @if($t->foto_profil)
-                                            <img src="{{ asset('storage/profil/' . $t->foto_profil) }}" class="w-full h-full object-cover">
+                                            <!-- PERBAIKAN: Menghilangkan teks 'profil/' agar image bisa dimuat dengan benar -->
+                                            <img src="{{ asset('storage/' . $t->foto_profil) }}" class="w-full h-full object-cover">
                                         @else
                                             <img src="https://ui-avatars.com/api/?name={{ urlencode($t->nama_lengkap) }}&background=0f172a&color=fff" class="w-full h-full object-cover">
                                         @endif
@@ -137,6 +138,7 @@
 
 </main>
 
+<!-- MODAL CETAK DIKEMBALIKAN -->
 <div id="modal-cetak" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300" id="modal-cetak-content">
         <div class="flex justify-between items-center mb-5 lg:mb-6">
@@ -181,6 +183,7 @@
         </form>
     </div>
 </div>
+
 <script>
     let currentCategory = 'siswa';
 

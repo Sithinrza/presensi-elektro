@@ -24,6 +24,17 @@
         </div>
     </div>
 
+    @if(session('success'))
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center justify-between">
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center justify-between">
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
     <section class="bg-maroon-900 rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-8 border border-maroon-800 shadow-premium flex flex-col sm:flex-row items-center gap-5 sm:gap-8 text-center sm:text-left relative overflow-hidden">
         <div class="absolute -top-12 -right-12 w-48 h-48 bg-gold/20 rounded-full blur-[60px] pointer-events-none"></div>
         <div class="relative z-10 w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-gold p-1 shadow-md bg-white shrink-0">
@@ -69,7 +80,8 @@
         </div>
     </section>
 
-    <form action="{{ route('siswa.profil.update') }}" method="POST" class="space-y-6 sm:space-y-8">
+    <!-- FORM EDIT PROFIL -->
+    <form id="formEditProfil" onsubmit="confirmUpdate(event)" action="{{ route('siswa.profil.update') }}" method="POST" class="space-y-6 sm:space-y-8">
         @csrf
         @method('PUT')
 
@@ -124,6 +136,13 @@
                     </select>
                 </div>
 
+                <!-- KOLOM JURUSAN BARU DITAMBAHKAN -->
+                <div class="space-y-1.5 sm:col-span-2">
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jurusan / Kelas</label>
+                    <input type="text" name="jurusan" value="{{ old('jurusan', $siswa->jurusan) }}" placeholder="Contoh: Teknik Komputer dan Jaringan / XII" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                    <p class="text-[8px] sm:text-[9px] text-maroon-500 font-bold uppercase tracking-wider ml-1 mt-1 italic">* Jika Nama Jurusan Salah/Belum Lengkap Harap dirubah</p>
+                </div>
+
                 <div class="space-y-1.5 sm:col-span-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Alamat Domisili Lengkap</label>
                     <textarea name="alamat" rows="2" placeholder="Tulis alamat lengkap rumah saat ini..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none resize-none transition-all shadow-sm">{{ old('alamat', $siswa->alamat) }}</textarea>
@@ -147,6 +166,9 @@
     </form>
 </main>
 
+<!-- TAMBAHKAN LIBRARY SWEETALERT 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     function confirmDeleteFoto(event) {
         event.preventDefault();
@@ -159,7 +181,13 @@
                 confirmButtonColor: '#e11d48',
                 cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     event.target.closest('form').submit();
@@ -168,6 +196,47 @@
         } else {
             if (confirm('Apakah Anda yakin ingin menghapus foto profil?')) {
                 event.target.closest('form').submit();
+            }
+        }
+    }
+
+    // FUNGSI KONFIRMASI SIMPAN DENGAN SWEETALERT2
+    function confirmUpdate(event) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = document.getElementById('formEditProfil');
+
+        // Pastikan HTML5 validation bawaan browser berjalan
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Simpan Perubahan?',
+                text: "Pastikan biodata Anda yang diperbarui sudah benar.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
+                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan submit jika user klik 'Ya'
+                }
+            });
+        } else {
+            // Fallback jika CDN SweetAlert gagal dimuat
+            if (confirm('Apakah Anda yakin ingin menyimpan perubahan profil ini?')) {
+                form.submit();
             }
         }
     }

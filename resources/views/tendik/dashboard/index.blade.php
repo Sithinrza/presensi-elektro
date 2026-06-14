@@ -160,7 +160,7 @@
                 <div class="space-y-1.5 sm:space-y-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Agama</label>
                     <select name="id_agama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-[13px] sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none cursor-pointer">
-                        <option value="">Pilih Agama...</option>
+                        <option value="" disabled {{ empty($tendik->id_agama) ? 'selected' : '' }}>Pilih Agama...</option>
                         @if(isset($agama))
                             @foreach($agama as $item)
                                 <option value="{{ $item->id_agama }}" {{ (isset($tendik) && $tendik->id_agama == $item->id_agama) ? 'selected' : '' }}>
@@ -174,7 +174,7 @@
                 <div class="space-y-1.5 sm:space-y-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pendidikan Terakhir</label>
                     <select name="id_pend_terakhir" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-[13px] sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none cursor-pointer">
-                        <option value="">Pilih Pendidikan...</option>
+                        <option value="" disabled {{ empty($tendik->id_pend_terakhir) ? 'selected' : '' }}>Pilih Pendidikan...</option>
                         @if(isset($pendidikan))
                             @foreach($pendidikan as $p)
                                 <option value="{{ $p->id_pend_terakhir }}" {{ (isset($tendik) && $tendik->id_pend_terakhir == $p->id_pend_terakhir) ? 'selected' : '' }}>
@@ -188,7 +188,7 @@
                 <div class="space-y-1.5 sm:space-y-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jenis Kelamin</label>
                     <select name="jk" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 sm:px-4 py-2.5 sm:py-3 text-[13px] sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none cursor-pointer">
-                        <option value="">Pilih...</option>
+                        <option value="" disabled {{ empty($tendik->jk) ? 'selected' : '' }}>Pilih...</option>
                         <option value="L" {{ (isset($tendik) && $tendik->jk == 'L') ? 'selected' : '' }}>Laki-laki</option>
                         <option value="P" {{ (isset($tendik) && $tendik->jk == 'P') ? 'selected' : '' }}>Perempuan</option>
                     </select>

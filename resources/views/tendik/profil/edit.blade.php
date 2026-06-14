@@ -84,8 +84,8 @@
         </div>
     </section>
 
-    <!-- FORM BIODATA BAWAH -->
-    <form action="{{ route('tendik.profil.update') }}" method="POST" class="space-y-6 sm:space-y-8">
+    <!-- FORM BIODATA BAWAH DENGAN ID DAN ONSUBMIT JS -->
+    <form id="formEditProfil" onsubmit="confirmUpdate(event)" action="{{ route('tendik.profil.update') }}" method="POST" class="space-y-6 sm:space-y-8">
         @csrf
         @method('PUT')
 
@@ -193,6 +193,7 @@
 </main>
 
 <script>
+    // Konfirmasi Hapus Foto
     function confirmDeleteFoto(event) {
         event.preventDefault();
 
@@ -205,7 +206,14 @@
                 confirmButtonColor: '#e11d48',
                 cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Batal',
+                customClass: {
+                    // Kelas khusus agar responsive di HP
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     event.target.closest('form').submit();
@@ -214,6 +222,48 @@
         } else {
             if (confirm('Apakah Anda yakin ingin menghapus foto profil?')) {
                 event.target.closest('form').submit();
+            }
+        }
+    }
+
+    // FUNGSI KONFIRMASI SIMPAN PROFIL DENGAN SWEETALERT2
+    function confirmUpdate(event) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = document.getElementById('formEditProfil');
+
+        // Pastikan HTML5 validation bawaan browser berjalan
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Simpan Perubahan?',
+                text: "Pastikan biodata Anda yang diperbarui sudah benar.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
+                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    // Kelas khusus agar responsive di HP
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                }
+            });
+        } else {
+            // Fallback jika CDN SweetAlert gagal dimuat
+            if (confirm('Apakah Anda yakin ingin menyimpan perubahan profil ini?')) {
+                form.submit();
             }
         }
     }

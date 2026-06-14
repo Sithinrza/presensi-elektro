@@ -13,7 +13,12 @@
                 <h1 class="text-xl sm:text-2xl font-black text-maroon-950 tracking-tight italic leading-none">Edit Data Tendik</h1>
             </div>
         </div>
-
+        {{-- <div class="px-3 py-2 sm:px-4 sm:py-2 bg-emerald-50 border border-emerald-100 rounded-lg sm:rounded-xl w-fit">
+            <span class="text-[9px] sm:text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
+                <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                Mode Tambah Aktif
+            </span>
+        </div> --}}
     </div>
 
     @if(session('error') || $errors->any())
@@ -23,11 +28,9 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.data.tendik.update', $tendik->id_tendik) }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
+    <form id="formEditTendik" onsubmit="confirmUpdate(event)" action="{{ route('admin.data.tendik.update', $tendik->id_tendik) }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
         @method('PUT')
-
-
 
         <div class="p-4 sm:p-6 md:p-10 space-y-8 sm:space-y-10">
 
@@ -187,6 +190,7 @@
                         <input type="file" name="foto_profil" accept="image/jpeg,image/png,image/jpg" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-md sm:file:rounded-lg file:border-0 file:text-[10px] sm:file:text-xs file:font-black file:bg-maroon-50 file:text-maroon-700 hover:file:bg-maroon-100">
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -213,6 +217,48 @@
         } else {
             input.type = 'password';
             icon.innerHTML = '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>';
+        }
+    }
+
+    // FUNGSI KONFIRMASI UPDATE DENGAN SWEETALERT2
+    function confirmUpdate(event) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = document.getElementById('formEditTendik');
+
+        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Simpan Perubahan?',
+                text: "Pastikan data tendik yang diperbarui sudah benar.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
+                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    // Kelas khusus agar responsive di HP
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                }
+            });
+        } else {
+            // Fallback jika CDN SweetAlert gagal dimuat
+            if (confirm('Apakah Anda yakin ingin menyimpan perubahan data tendik ini?')) {
+                form.submit();
+            }
         }
     }
 </script>

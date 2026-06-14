@@ -48,6 +48,7 @@ class ProfilController extends Controller
             'id_agama'      => 'nullable|exists:agama,id_agama', // Pastikan nama tabelnya 'agama'
             'jk'            => 'nullable|in:L,P',
             'alamat'        => 'nullable|string',
+            'jurusan'       => 'required|string|max:100',
         ]);
 
         // 1. Update email di tabel users
@@ -62,9 +63,10 @@ class ProfilController extends Controller
             'id_agama'      => $request->id_agama,
             'jk'            => $request->jk,
             'alamat'        => $request->alamat,
+            'jurusan'       => $request->jurusan,
         ]);
 
-        return redirect()->route('siswa.profil')->with('success', 'Biodata berhasil diperbarui!');
+        return redirect()->route('siswa.profil.index')->with('success', 'Biodata berhasil diperbarui!');
     }
 
     public function updateFoto(Request $request)

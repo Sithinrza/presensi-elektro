@@ -136,8 +136,6 @@
             </div>
         </section>
 
-
-
     </div>
 </main>
 
@@ -175,13 +173,14 @@
 
                 <div class="space-y-1.5 sm:space-y-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jurusan / Kelas</label>
-                    <input type="text" name="jurusan" required value="{{ $siswa->jurusan ?? '' }}" placeholder="Contoh: TKJ / XII" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
+                    <input type="text" name="jurusan" required value="{{ $siswa->jurusan ?? '' }}" placeholder="Contoh: Teknik Komputer dan Jaringan / XII" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
+                    <p class="text-[8px] sm:text-[9px] text-maroon-500 font-bold uppercase tracking-wider ml-1 mt-1 italic">* Harap tulis nama jurusan secara lengkap, jangan disingkat.</p>
                 </div>
 
                 <div class="space-y-1.5 sm:space-y-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Agama</label>
                     <select name="id_agama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none cursor-pointer">
-                        <option value="">Pilih...</option>
+                        <option value="" disabled {{ empty($siswa->id_agama) ? 'selected' : '' }}>Pilih Agama...</option>
                         @if(isset($agama))
                             @foreach($agama as $item)
                                 <option value="{{ $item->id_agama }}" {{ (isset($siswa) && $siswa->id_agama == $item->id_agama) ? 'selected' : '' }}>
@@ -195,7 +194,7 @@
                 <div class="space-y-1.5 sm:space-y-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jenis Kelamin</label>
                     <select name="jk" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none cursor-pointer">
-                        <option value="">Pilih...</option>
+                        <option value="" disabled {{ empty($siswa->jk) ? 'selected' : '' }}>Pilih Jenis Kelamin...</option>
                         <option value="L" {{ (isset($siswa) && $siswa->jk == 'L') ? 'selected' : '' }}>Laki-laki</option>
                         <option value="P" {{ (isset($siswa) && $siswa->jk == 'P') ? 'selected' : '' }}>Perempuan</option>
                     </select>

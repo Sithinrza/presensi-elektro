@@ -35,8 +35,11 @@
         <div class="text-[9px] sm:text-[10px] font-black text-maroon-600 bg-maroon-50 px-2 py-1 rounded-lg uppercase tracking-widest">Aktif</div>
     </div>
 
-    <section class="bg-maroon-900 rounded-3xl sm:rounded-[3rem] p-6 sm:p-8 md:p-12 text-white shadow-premium border border-maroon-800 relative overflow-hidden flex flex-col md:flex-row items-center justify-center md:justify-start gap-5 sm:gap-8">
-        <div class="absolute inset-0 pointer-events-none">
+    <!-- DIUBAH: Menghapus overflow-hidden dari section utama agar dropdown tidak terpotong -->
+    <section class="bg-maroon-900 rounded-3xl sm:rounded-[3rem] p-6 sm:p-8 md:p-12 text-white shadow-premium border border-maroon-800 relative flex flex-col md:flex-row items-center justify-center md:justify-start gap-5 sm:gap-8">
+        
+        <!-- Pembungkus khusus efek cahaya dengan overflow-hidden -->
+        <div class="absolute inset-0 overflow-hidden rounded-3xl sm:rounded-[3rem] pointer-events-none">
             <div class="absolute -top-12 -right-12 w-48 sm:w-64 h-48 sm:h-64 bg-gold/20 rounded-full blur-[60px] sm:blur-[80px]"></div>
             <div class="absolute -bottom-10 -left-10 w-32 sm:w-48 h-32 sm:h-48 bg-white/10 rounded-full blur-[40px] sm:blur-[60px]"></div>
         </div>
@@ -60,6 +63,7 @@
                 </div>
             </button>
 
+            <!-- Dropdown Menu -->
             <div x-show="openPhotoMenu"
                  @click.outside="openPhotoMenu = false"
                  x-transition:enter="transition ease-out duration-200"
@@ -131,12 +135,13 @@
             <section class="bg-white rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-8 border border-maroon-100 shadow-sm space-y-5 sm:space-y-6">
                 <div class="flex items-center gap-3 mb-2">
                     <div class="w-10 h-10 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1-1-1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                     </div>
                     <h3 class="text-base sm:text-lg font-black text-maroon-950 tracking-tight leading-none">Pengaturan Keamanan</h3>
                 </div>
                 <div class="space-y-3 sm:space-y-4">
-                    <form action="{{ route('profile.password.send') }}" method="POST" class="block m-0">
+                    <!-- Form Ubah Sandi dengan konfirmasi -->
+                    <form action="{{ route('profile.password.send') }}" method="POST" class="block m-0" onsubmit="confirmChangePassword(event)">
                         @csrf
                         <button type="submit" class="w-full flex items-center justify-between p-3.5 sm:p-4 bg-maroon-50 hover:bg-maroon-100 rounded-xl sm:rounded-2xl transition-all group">
                             <div class="flex items-center gap-2.5 sm:gap-3">
@@ -168,8 +173,11 @@
     </div>
 </main>
 
+<!-- TAMBAHKAN LIBRARY SWEETALERT 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-    // Fungsi konfirmasi Hapus Foto menggunakan SweetAlert
+    // Fungsi konfirmasi Hapus Foto
     function confirmDeleteFoto(event) {
         event.preventDefault(); // Mencegah submit form secara otomatis
 
@@ -182,7 +190,13 @@
                 confirmButtonColor: '#e11d48', // Tailwind rose-600
                 cancelButtonColor: '#94a3b8',  // Tailwind slate-400
                 confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-3xl p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     event.target.closest('form').submit();
@@ -191,6 +205,39 @@
         } else {
             if (confirm('Apakah Anda yakin ingin menghapus foto profil?')) {
                 event.target.closest('form').submit();
+            }
+        }
+    }
+
+    // Fungsi konfirmasi Ubah Kata Sandi
+    function confirmChangePassword(event) {
+        event.preventDefault(); // Mencegah submit form secara otomatis
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Ubah Kata Sandi?',
+                text: "Sistem akan mengirimkan link ke email untuk mengatur ulang kata sandi Anda. Lanjutkan?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Tailwind maroon-900
+                cancelButtonColor: '#94a3b8',  // Tailwind slate-400
+                confirmButtonText: 'Ya, Ubah Sandi!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    popup: 'rounded-3xl p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    event.target.submit(); // Lanjutkan submit jika dikonfirmasi
+                }
+            });
+        } else {
+            if (confirm('Apakah Anda yakin ingin mengatur ulang kata sandi?')) {
+                event.target.submit();
             }
         }
     }

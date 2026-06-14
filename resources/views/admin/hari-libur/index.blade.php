@@ -73,14 +73,15 @@
                         </td>
                         <td class="px-4 sm:px-6 lg:px-10 py-4 sm:py-6">
                             <div class="flex justify-end gap-1.5 sm:gap-2 text-right">
-                                <button onclick="openModal('edit', {{ json_encode($libur) }})" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 text-slate-400 hover:bg-maroon-100 hover:text-maroon-900 transition-all shadow-sm">
+                                <button type="button" onclick="openModal('edit', {{ json_encode($libur) }})" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 text-slate-400 hover:bg-maroon-100 hover:text-maroon-900 transition-all shadow-sm">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-4 sm:h-4"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
                                 </button>
 
-                                <form action="{{ route('admin.hari-libur.destroy', $libur->id_libur) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus libur ini?');">
+                                <form action="{{ route('admin.hari-libur.destroy', $libur->id_libur) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 text-slate-400 hover:bg-rose-100 hover:text-rose-600 transition-all shadow-sm">
+                                    <!-- Diubah menggunakan button type="button" dengan onClick konfirmasi SweetAlert2 -->
+                                    <button type="button" onclick="confirmDelete(event, this)" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg sm:rounded-xl bg-slate-50 text-slate-400 hover:bg-rose-100 hover:text-rose-600 transition-all shadow-sm">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-4 sm:h-4"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
                                     </button>
                                 </form>
@@ -98,11 +99,13 @@
     </section>
 </main>
 
+<!-- MODAL TAMBAH/EDIT -->
 <div id="crudModal" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-maroon-950/40 backdrop-blur-sm" onclick="closeModal()"></div>
     <div class="relative w-full max-w-lg animate-in zoom-in-95 duration-200">
 
-        <form id="liburForm" action="{{ route('admin.hari-libur.store') }}" method="POST" class="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-maroon-100 flex flex-col">
+        <!-- Ditambahkan onsubmit="confirmSave(event)" pada form -->
+        <form id="liburForm" onsubmit="confirmSave(event)" action="{{ route('admin.hari-libur.store') }}" method="POST" class="bg-white rounded-3xl sm:rounded-[2.5rem] shadow-2xl overflow-hidden border border-maroon-100 flex flex-col">
             @csrf
             <input type="hidden" name="_method" id="formMethod" value="POST">
 
@@ -154,6 +157,9 @@
     </div>
 </div>
 
+<!-- TAMBAHKAN LIBRARY SWEETALERT 2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     function openModal(mode, data = null) {
         const modal = document.getElementById('crudModal');
@@ -163,7 +169,7 @@
 
         if(mode === 'edit' && data) {
             title.textContent = "Edit Hari Libur";
-            // Ganti action URL untuk Edit (Sesuaikan dengan nama rute kamu)
+            // Ganti action URL untuk Edit
             form.action = `/admin/hari-libur/${data.id_libur}`;
             methodInput.value = 'PUT'; // Ubah method jadi PUT
 
@@ -186,6 +192,86 @@
 
     function closeModal() {
         document.getElementById('crudModal').classList.add('hidden');
+    }
+
+    // FUNGSI KONFIRMASI SIMPAN (TAMBAH & EDIT) DENGAN SWEETALERT2
+    function confirmSave(event) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = document.getElementById('liburForm');
+
+        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const isEdit = document.getElementById('formMethod').value === 'PUT';
+        const actionText = isEdit ? 'menyimpan perubahan' : 'menambahkan';
+        const titleText = isEdit ? 'Simpan Perubahan?' : 'Tambah Hari Libur?';
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: titleText,
+                text: `Pastikan data hari libur yang akan Anda ${actionText} sudah benar.`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4d182b', // Warna maroon-900
+                cancelButtonColor: '#94a3b8',  // Warna slate-400
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                customClass: {
+                    // Kelas khusus agar responsive di HP
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-maroon-950',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                }
+            });
+        } else {
+            // Fallback jika CDN SweetAlert gagal dimuat
+            if (confirm(`Apakah Anda yakin ingin ${actionText} data hari libur ini?`)) {
+                form.submit();
+            }
+        }
+    }
+
+    // FUNGSI KONFIRMASI HAPUS DENGAN SWEETALERT2
+    function confirmDelete(event, button) {
+        event.preventDefault(); // Cegah submit otomatis
+        const form = button.closest('form');
+
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Hapus Hari Libur?',
+                text: "Data hari libur ini akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48', // Warna rose-600
+                cancelButtonColor: '#94a3b8',  // Warna slate-400
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                    title: 'text-lg sm:text-xl font-black text-slate-800',
+                    confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
+                    cancelButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Submit form jika user menyetujui
+                }
+            });
+        } else {
+            if (confirm('Apakah Anda yakin ingin menghapus data hari libur ini?')) {
+                form.submit();
+            }
+        }
     }
 </script>
 @endsection
