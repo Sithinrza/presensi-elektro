@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Beranda Pembimbing - E-Presensi Elektro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -58,21 +59,23 @@
         }
     </style>
 </head>
-<body class="font-sans text-slate-900 pb-24 lg:pb-0 lg:pl-24">
 
-    <!-- Memanggil Sidebar -->
-    @include('layouts.pembimbing.sidebar')
+<body class="font-sans text-slate-900 {{ View::hasSection('hide_nav') ? '' : 'pb-24 lg:pb-0 lg:pl-24' }}">
 
-    <!-- Memanggil navbar -->
-    @include('layouts.pembimbing.navbar')
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.pembimbing.sidebar')
+    @endif
 
-    <!-- AREA KONTEN UTAMA -->
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.pembimbing.navbar')
+    @endif
+
     @yield('content')
 
-    <!-- Memanggil Bottom Nav (Mobile) -->
-    @include('layouts.pembimbing.bottomnav')
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.pembimbing.bottomnav')
+    @endif
 
-    <!-- Global Scripts -->
     <script>
         function updateClock() {
             const clockElement = document.getElementById("liveClock");
@@ -92,5 +95,9 @@
         setInterval(updateClock, 1000);
         updateClock();
     </script>
+
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
 </body>
 </html>

@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Dashboard Tendik - E-Presensi Elektro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Perhatikan ada tambahan font Playfair Display di sini -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <script>
         tailwind.config = {
@@ -64,21 +67,23 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="font-sans text-slate-900 pb-24 lg:pb-0 lg:pl-24">
 
-    <!-- Memanggil Sidebar Desktop -->
-    @include('layouts.tendik.sidebar')
+<body class="font-sans text-slate-900 {{ View::hasSection('hide_nav') ? '' : 'pb-24 lg:pb-0 lg:pl-24' }}">
 
-    <!-- Memanggil navbar -->
-    @include('layouts.tendik.navbar')
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.tendik.sidebar')
+    @endif
 
-    <!-- AREA KONTEN UTAMA -->
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.tendik.navbar')
+    @endif
+
     @yield('content')
 
-    <!-- Memanggil Bottom Nav (Mobile) -->
-    @include('layouts.tendik.bottomnav')
+    @if(!View::hasSection('hide_nav'))
+        @include('layouts.tendik.bottomnav')
+    @endif
 
-    <!-- Global Scripts -->
     <script>
         function updateClock() {
             const clockElement = document.getElementById("liveClock");
