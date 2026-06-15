@@ -22,11 +22,12 @@ class RiwayatController extends Controller
                                    ->get()
                                    ->keyBy('id_user');
 
-        $isMinggu = Carbon::now('Asia/Makassar')->isSunday();
+        // PERBAIKAN: Libur akhir pekan mencakup Sabtu (6) dan Minggu (7)
+        $isLiburMingguan = in_array(Carbon::now('Asia/Makassar')->dayOfWeekIso, [6, 7]);
         $liburNasional = \App\Models\HariLibur::whereDate('tanggal_mulai', '<=', $hariIni)
                                               ->whereDate('tanggal_selesai', '>=', $hariIni)
                                               ->exists();
-        $isLiburHariIni = $isMinggu || $liburNasional;
+        $isLiburHariIni = $isLiburMingguan || $liburNasional;
 
         $siswa = SiswaMagang::with('user')->get()->map(function ($s) use ($presensiHariIni, $isLiburHariIni) {
             $status = 'Belum Hadir';
@@ -77,10 +78,12 @@ class RiwayatController extends Controller
         $tahun = $request->tahun ?? date('Y');
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
-        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
+        // PERBAIKAN: Set Timezone Asia/Makassar agar batas loop sinkron dengan $waktuSekarang
+        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1, 'Asia/Makassar')->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
-        $tanggalBikinAkun = Carbon::parse($user->created_at)->startOfDay();
+        // PERBAIKAN: Set Timezone
+        $tanggalBikinAkun = Carbon::parse($user->created_at)->timezone('Asia/Makassar')->startOfDay();
         $mulaiLoop = $startOfMonth->copy()->max($tanggalBikinAkun);
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->copy()->startOfDay() : $endOfMonth->copy();
 
@@ -109,7 +112,6 @@ class RiwayatController extends Controller
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
 
-                // PERBAIKAN LOGIKA LUPA CO
                 if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                     $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
                     $p->setRelation('statusCo', $statusLupa);
@@ -127,9 +129,11 @@ class RiwayatController extends Controller
                 if ($p->statusCo && $p->statusCo->name == 'Lupa Check-Out') $statistik['Lupa CO']++;
             } else {
                 if ($date->lte($batasLoop)) {
-                    $isLibur = $date->isSunday();
+                    // PERBAIKAN: Libur akhir pekan mencakup Sabtu (6) dan Minggu (7)
+                    $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
                     foreach ($hariLibur as $hl) {
-                        if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) {
+                        // Memastikan filter libur spesifik sesuai timezone
+                        if ($date->between(Carbon::parse($hl->tanggal_mulai, 'Asia/Makassar')->startOfDay(), Carbon::parse($hl->tanggal_selesai, 'Asia/Makassar')->endOfDay())) {
                             $isLibur = true; break;
                         }
                     }
@@ -179,10 +183,11 @@ class RiwayatController extends Controller
         $tahun = $request->tahun ?? date('Y');
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
-        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
+        // PERBAIKAN TIMEZONE
+        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1, 'Asia/Makassar')->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
-        $tanggalBikinAkun = Carbon::parse($user->created_at)->startOfDay();
+        $tanggalBikinAkun = Carbon::parse($user->created_at)->timezone('Asia/Makassar')->startOfDay();
         $mulaiLoop = $startOfMonth->copy()->max($tanggalBikinAkun);
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->copy()->startOfDay() : $endOfMonth->copy();
 
@@ -206,7 +211,6 @@ class RiwayatController extends Controller
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
 
-                // PERBAIKAN LOGIKA LUPA CO
                 if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                     $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
                 }
@@ -214,9 +218,10 @@ class RiwayatController extends Controller
                 $riwayat->push($p);
             } else {
                 if ($date->lte($batasLoop)) {
-                    $isLibur = $date->isSunday();
+                    // PERBAIKAN SABTU & MINGGU
+                    $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
                     foreach ($hariLibur as $hl) {
-                        if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) {
+                        if ($date->between(Carbon::parse($hl->tanggal_mulai, 'Asia/Makassar')->startOfDay(), Carbon::parse($hl->tanggal_selesai, 'Asia/Makassar')->endOfDay())) {
                             $isLibur = true; break;
                         }
                     }
@@ -258,7 +263,8 @@ class RiwayatController extends Controller
         $tahun = $request->tahun ?? date('Y');
         $kategori = $request->kategori ?? 'siswa';
 
-        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay();
+        // PERBAIKAN TIMEZONE
+        $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1, 'Asia/Makassar')->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
         $waktuSekarang = Carbon::now('Asia/Makassar');
 
@@ -310,7 +316,6 @@ class RiwayatController extends Controller
                     elseif ($p->statusCi && $p->statusCi->name == 'Libur') { $simbol_ci = 'L'; $row['ci_libur']++; }
                     else { $simbol_ci = 'A'; $row['ci_alpa']++; }
 
-                    // PERBAIKAN LOGIKA LUPA CO
                     if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                         $simbol_co = 'LC'; $row['co_lupa']++;
                     } elseif ($p->statusCo) {
@@ -325,9 +330,12 @@ class RiwayatController extends Controller
 
                 } else {
                     if ($date->lte($batasLoop)) {
-                        $isLibur = $date->isSunday();
+                        // PERBAIKAN SABTU & MINGGU
+                        $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
                         foreach ($hariLibur as $hl) {
-                            if ($date->between(Carbon::parse($hl->tanggal_mulai), Carbon::parse($hl->tanggal_selesai))) { $isLibur = true; break; }
+                            if ($date->between(Carbon::parse($hl->tanggal_mulai, 'Asia/Makassar')->startOfDay(), Carbon::parse($hl->tanggal_selesai, 'Asia/Makassar')->endOfDay())) {
+                                $isLibur = true; break;
+                            }
                         }
 
                         if ($isLibur) {

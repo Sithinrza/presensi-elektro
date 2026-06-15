@@ -66,7 +66,7 @@
                 <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
 
                 <div class="text-center shrink-0">
-                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Telat CO</p>
+                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Terlambat CO</p>
                     <p class="text-lg sm:text-xl font-black text-amber-400 leading-none">{{ $statistik['Telat CO'] ?? 0 }}</p>
                 </div>
 

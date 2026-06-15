@@ -81,7 +81,7 @@
                     <th style="text-align: center; width: 35px;">{{ $date->format('d') }}</th>
                 @endforeach
                 <th style="background-color: #a7f3d0; text-align: center; width: 60px;">Tepat</th>
-                <th style="background-color: #fde68a; text-align: center; width: 60px;">Telat</th>
+                <th style="background-color: #fde68a; text-align: center; width: 60px;">Terlambat</th>
                 <th style="background-color: #fecaca; text-align: center; width: 60px;">Alpa</th>
                 <th style="background-color: #bfdbfe; text-align: center; width: 60px;">Libur</th>
             </tr>
@@ -148,7 +148,7 @@
                     <th style="text-align: center; width: 35px;">{{ $date->format('d') }}</th>
                 @endforeach
                 <th style="background-color: #a7f3d0; text-align: center; width: 60px;">Normal</th>
-                <th style="background-color: #fde68a; text-align: center; width: 60px;">Telat CO</th>
+                <th style="background-color: #fde68a; text-align: center; width: 60px;">Terlambat CO</th>
                 <th style="background-color: #fecaca; text-align: center; width: 60px;">Lupa CO</th>
             </tr>
         </thead>

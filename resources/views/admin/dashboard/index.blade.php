@@ -10,7 +10,7 @@
             <div class="absolute -bottom-5 sm:-bottom-10 -left-5 sm:-left-10 w-32 sm:w-64 h-32 sm:h-64 bg-white/5 rounded-full blur-[40px] lg:blur-[60px] pointer-events-none"></div>
 
             <div class="relative z-10 space-y-2 lg:space-y-3">
-                
+
                 <h2 class="text-xl sm:text-2xl lg:text-4xl font-black tracking-tight leading-tight">
                     Selamat Datang, <br class="hidden md:block">
                     <span class="text-amber-400">{{ auth()->check() ? auth()->user()->name : 'Admin' }}!</span>
@@ -69,7 +69,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="lg:w-[120px] lg:h-[120px]"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <div class="flex items-center justify-between mb-3 lg:mb-6 relative z-10">
-                    <span class="text-[8px] lg:text-[10px] font-black text-amber-700 bg-amber-50 border border-amber-100 px-2 py-1 lg:px-3 lg:py-1.5 rounded-md lg:rounded-lg uppercase tracking-widest">Telat</span>
+                    <span class="text-[8px] lg:text-[10px] font-black text-amber-700 bg-amber-50 border border-amber-100 px-2 py-1 lg:px-3 lg:py-1.5 rounded-md lg:rounded-lg uppercase tracking-widest">Terlambat</span>
                     <div class="w-8 h-8 lg:w-12 lg:h-12 rounded-lg lg:rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="lg:w-6 lg:h-6"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
@@ -212,7 +212,7 @@
                                     IN: {{ $ciName == 'Tepat Waktu' ? 'Tepat' : $ciName }}
                                 </span>
                                 <span class="inline-flex items-center px-2 lg:px-2.5 py-1 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest w-[70px] lg:w-[85px] justify-center mt-0.5 lg:mt-0">
-                                    OUT: {{ in_array($coName, ['Tepat Waktu', 'Check Out']) ? 'Tepat' : ($coName == 'Terlambat CO' ? 'Telat' : ($coName == 'Lupa Check-Out' ? 'Lupa' : $coName)) }}
+                                    OUT: {{ in_array($coName, ['Tepat Waktu', 'Check Out']) ? 'Tepat' : ($coName == 'Terlambat CO' ? 'Terlambat CO' : ($coName == 'Lupa Check-Out' ? 'Lupa CO' : $coName)) }}
                                 </span>
                             </div>
                         </td>

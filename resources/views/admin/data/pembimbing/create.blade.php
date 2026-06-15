@@ -117,14 +117,7 @@
                     </div>
                 </div>
 
-                <div class="p-3 sm:p-4 mt-4 sm:mt-6 bg-gold/5 rounded-xl sm:rounded-2xl border border-gold/20 flex items-start gap-2.5 sm:gap-3">
-                    <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gold text-maroon-950 rounded-md sm:rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-4 sm:h-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
-                    </div>
-                    <p class="text-[9px] sm:text-[10px] font-bold text-gold-dark leading-relaxed italic uppercase mt-0.5">
-                        Akun pembimbing memiliki wewenang untuk memvalidasi logbook harian siswa magang yang berada di bawah bimbingannya.
-                    </p>
-                </div>
+                
             </div>
 
         </div>

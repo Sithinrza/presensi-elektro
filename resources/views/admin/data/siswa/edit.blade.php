@@ -175,8 +175,8 @@
                     </div>
 
                     <div class="space-y-1.5 sm:space-y-2">
-                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jurusan / Kelas</label>
-                        <input type="text" name="jurusan" value="{{ old('jurusan', $siswa->jurusan ?? '') }}" placeholder="Contoh: TKJ / XII" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jurusan Lengkap</label>
+                        <input type="text" name="jurusan" value="{{ old('jurusan', $siswa->jurusan ?? '') }}" placeholder="Contoh: Rekayasa Perangkat Lunak" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
                     <div class="space-y-1.5 sm:space-y-2">

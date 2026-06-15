@@ -14,13 +14,13 @@ return new class extends Migration
        Schema::create('tendik', function (Blueprint $table) {
             $table->id('id_tendik');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
-            $table->string('nip')->nullable()->unique();
-            $table->string('nama_lengkap', 50);
+            $table->string('nip', 25)->nullable()->unique();
+            $table->string('nama_lengkap', 100);
 
             $table->enum('status', ['Aktif', 'Nonaktif'])->default('Aktif');
             $table->foreignId('id_agama')->nullable()->constrained('agama', 'id_agama');
             $table->enum('jk', ['L', 'P'])->nullable();
-            
+
             $table->foreignId('id_pend_terakhir')->nullable()->constrained('pendidikan_terakhir', 'id_pend_terakhir');
             $table->foreignId('id_unit_kerja')->nullable()->constrained('unit_kerja', 'id_unit_kerja');
             $table->foreignId('id_pangkat_golongan')->nullable()->constrained('pangkat_golongan', 'id_pangkat_golongan');
@@ -29,7 +29,7 @@ return new class extends Migration
 
             $table->string('tempat_lahir', 40)->nullable();
             $table->date('tanggal_lahir')->nullable();
-            $table->string('no_hp')->nullable();
+            $table->string('no_hp', 20)->nullable();
             $table->text('alamat')->nullable();
             $table->string('foto_profil')->nullable();
 

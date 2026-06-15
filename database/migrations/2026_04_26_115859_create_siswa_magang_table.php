@@ -23,7 +23,7 @@ return new class extends Migration
 
 
             $table->enum('jk', ['L', 'P'])->nullable();
-            $table->string('tempat_lahir', 50)->nullable();
+            $table->string('tempat_lahir', 40)->nullable();
             $table->date('tanggal_lahir')->nullable();
             $table->string('sekolah_asal', 100)->nullable();
             $table->string('jurusan', 100)->nullable();

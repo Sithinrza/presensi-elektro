@@ -22,14 +22,14 @@
             background-repeat: no-repeat;
         }
 
-        /* BANTALAN KHUSUS HALAMAN 1 (Padding atas dikurangi drastis biar logo naik) */
+        /* BANTALAN KHUSUS HALAMAN 1 */
         .page-front {
             padding: 45px 140px 40px 140px;
         }
 
-        /* BANTALAN KHUSUS HALAMAN 2 (Tetap aman sesuai sebelumnya) */
+        /* BANTALAN KHUSUS HALAMAN 2 */
         .page-back {
-            padding: 120px 140px 80px 140px;
+            padding: 120px 140px 60px 140px;
         }
 
         .text-center { text-align: center; }
@@ -37,11 +37,13 @@
         .page-break { page-break-before: always; }
         p { margin: 0; padding: 0; }
 
-        /* --- TEMA NAVY BLUE --- */
+        /* --- FONT SERTIFIKAT --- */
         .header-title {
             color: #1b365d;
-            letter-spacing: 5px;
-            font-weight: 900;
+            letter-spacing: 2px;
+            font-family: 'Monotype Corsiva', 'Apple Chancery', 'URW Chancery L', 'Brush Script MT', 'Georgia', cursive;
+            font-weight: bold; /* Diubah jadi Bold */
+            font-style: normal; /* Diubah jadi normal (tidak italic) */
         }
 
         .cursive-name {
@@ -91,31 +93,36 @@
         <!-- LOGO NAIK KE ATAS -->
         <img src="{{ public_path('img/logo-sertif.png') }}" alt="Logo" style="height: 80px; margin-bottom: 5px;">
 
-        <h1 class="header-title" style="font-size: 38px; margin-bottom: 5px;">SERTIFIKAT</h1>
+        <h1 class="header-title" style="font-size: 48px; margin-bottom: 0px;">Sertifikat</h1>
 
-        <p style="font-size: 13px; color: #475569; margin-bottom: 25px;">NOMOR : {{ $nomor_sertifikat }}</p>
+        <p style="font-size: 12px; color: #475569; margin-bottom: 20px;">NOMOR : {{ $nomor_sertifikat }}</p>
 
-        <p style="font-size: 15px; margin-bottom: 5px;">Diberikan kepada :</p>
+        <p style="font-size: 14px; margin-bottom: 5px;">Diberikan kepada :</p>
 
         <!-- Margin nama dirapatkan sedikit -->
-        <div class="cursive-name" style="font-size: 44px; margin: 5px 0;">{{ $siswa->nama_lengkap }}</div>
+        <div class="cursive-name" style="font-size: 42px; margin: 5px 0;">{{ $siswa->nama_lengkap }}</div>
 
-        <p style="font-size: 15px; margin-top: 20px;">Asal Sekolah :</p>
-        <p class="text-bold" style="font-size: 17px; margin-bottom: 25px;">{{ $siswa->sekolah_asal }}</p>
+        <p style="font-size: 14px; margin-top: 15px;">Asal Sekolah :</p>
 
-        <p style="font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
+        <!-- Sekolah dibuat lebih besar (18px) dan margin bawah dirapatkan -->
+        <p class="text-bold" style="font-size: 18px; margin-bottom: 2px;">{{ $siswa->sekolah_asal }}</p>
+
+        <!-- Jurusan langsung ditaruh di bawahnya tanpa label, ukuran sedikit lebih kecil (15px) -->
+        <p style="font-size: 15px; margin-bottom: 20px;">{{ $siswa->jurusan ?? '-' }}</p>
+
+        <p style="font-size: 14px; line-height: 1.5; margin-bottom: 20px;">
             Yang Telah Melakukan Praktik Kerja Industri (Prakerin)<br>
             Di<br>
             Jurusan Teknik Elektro Politeknik Negeri Banjarmasin<br>
             Tanggal {{ \Carbon\Carbon::parse($siswa->tanggal_mulai)->locale('id')->translatedFormat('d F Y') }} s/d {{ \Carbon\Carbon::parse($siswa->tanggal_selesai)->locale('id')->translatedFormat('d F Y') }}
         </p>
 
-        <!-- TTD KAJUR DITENGAH (Aman di Halaman 1) -->
-        <table style="width: 100%; margin-top: 15px; font-size: 14px;">
+        <!-- TTD KAJUR DITENGAH -->
+        <table style="width: 100%; margin-top: 10px; font-size: 14px;">
             <tr>
                 <td style="text-align: center;">
                 <p style="margin-bottom: 5px;">Banjarmasin, {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}<br>Ketua Jurusan Teknik Elektro</p>
-                <div style="height: 80px;"></div>
+                <div style="height: 70px;"></div>
                     <p class="text-bold" style="text-decoration: underline;">{{ $kajur_nama }}</p>
                     <p>NIP {{ $kajur_nip }}</p>
                 </td>
@@ -134,7 +141,8 @@
                 <td style="width: 70%; vertical-align: top; line-height: 1.4;">
                     <span class="text-bold" style="font-size: 12px;">Nama : {{ $siswa->nama_lengkap }}</span><br>
                     <span class="text-bold" style="font-size: 12px;">Nomor Induk : {{ $siswa->nis }}</span><br>
-                    <span class="text-bold" style="font-size: 12px;">Asal Sekolah : {{ $siswa->sekolah_asal }}</span>
+                    <span class="text-bold" style="font-size: 12px;">Asal Sekolah : {{ $siswa->sekolah_asal }}</span><br><br>
+                    {{-- <span class="text-bold" style="font-size: 12px;">Jurusan : {{ $siswa->jurusan ?? '-' }}</span>  --}}
                 </td>
                 <td style="width: 30%; vertical-align: top; text-align: right;">
                     <table class="tabel-info" style="float: right; width: 120px;">
@@ -214,18 +222,26 @@
                 <td class="text-center">{{ getGrade($nilai->mutu_hasil_kerja) }}</td>
             </tr>
 
-            <tr>
+            <!-- BARIS NILAI RATA-RATA -->
+            <tr style="background-color: #f1f5f9;">
                 <td colspan="2" style="text-align: right; padding-right: 15px;">
-                    <span class="text-bold">Nilai Rata-Rata</span><br>
-                    <span class="text-bold">Keterangan</span>
+                    <span class="text-bold" style="font-size: 12px;">Nilai Rata-Rata Akhir</span>
                 </td>
                 <td class="text-center">
-                    <span class="text-bold">{{ number_format($rataRata, 2, ',', '') }}</span><br>
-                    <span class="text-bold">-- {{ strtoupper($keterangan) }} --</span>
+                    <span class="text-bold" style="font-size: 12px;">{{ number_format($rataRata, 2, ',', '') }}</span>
                 </td>
                 <td class="text-center">
-                    <span class="text-bold">{{ $huruf }}</span><br>
-                    <span class="text-bold">( {{ str_replace('Lulus ', '', $keterangan) }} )</span>
+                    <span class="text-bold" style="font-size: 12px;">{{ $huruf }}</span>
+                </td>
+            </tr>
+
+            <!-- BARIS KETERANGAN DIGABUNG JADI 1 KOLOM KE KANAN -->
+            <tr style="background-color: #f1f5f9;">
+                <td colspan="2" style="text-align: right; padding-right: 15px;">
+                    <span class="text-bold" style="font-size: 12px;">Keterangan</span>
+                </td>
+                <td colspan="2" class="text-center">
+                    <span class="text-bold" style="font-size: 12px; color: #000;">-- {{ strtoupper($keterangan) }} --</span>
                 </td>
             </tr>
         </table>
@@ -243,7 +259,7 @@
                 </td>
                 <td style="width: 55%; vertical-align: top; text-align: center;">
                     <p>Ketua Jurusan Teknik Elektro</p>
-                    <div style="height: 80px;"></div>
+                    <div style="height: 70px;"></div>
                     <p class="text-bold" style="text-decoration: underline;">{{ $kajur_nama }}</p>
                     <p>NIP {{ $kajur_nip }}</p>
                 </td>

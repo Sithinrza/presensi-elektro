@@ -155,7 +155,7 @@
 
             <div class="p-3 sm:p-4 bg-rose-50 rounded-xl sm:rounded-2xl border border-rose-100">
                 <p class="text-[9px] sm:text-[11px] font-black text-rose-800 leading-relaxed uppercase tracking-wider text-center">
-                    🚨 Anda wajib melengkapi data di bawah ini untuk mengaktifkan fitur Liveness Detection.
+                    Anda wajib melengkapi data di bawah ini
                 </p>
             </div>
 
@@ -172,7 +172,7 @@
                 </div>
 
                 <div class="space-y-1.5 sm:space-y-2">
-                    <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jurusan / Kelas</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jurusan Lengkap</label>
                     <input type="text" name="jurusan" required value="{{ $siswa->jurusan ?? '' }}" placeholder="Contoh: Teknik Komputer dan Jaringan / XII" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
                     <p class="text-[8px] sm:text-[9px] text-maroon-500 font-bold uppercase tracking-wider ml-1 mt-1 italic">* Harap tulis nama jurusan secara lengkap, jangan disingkat.</p>
                 </div>

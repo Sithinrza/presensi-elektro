@@ -45,22 +45,25 @@ use App\Http\Controllers\Tendik\ProfilController as TendikProfil;
 // ==========================================
 Route::get('/', [LandingController::class, 'index'])->name('landing');
 
-Route::get('/login', [AuthController::class, 'index'])->name('login');
-Route::post('/login', [AuthController::class, 'authenticate'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware(['guest'])->group(function () {
+    // Login
+    Route::get('/login', [AuthController::class, 'index'])->name('login');
+    Route::post('/login', [AuthController::class, 'authenticate'])->name('login.post');
 
-Route::get('/forgot-password', [ResetPasswordOtpController::class, 'showRequestForm'])->name('password.request');
-Route::post('/forgot-password', [ResetPasswordOtpController::class, 'sendOtp'])->name('password.email');
-Route::get('/verify-otp', [ResetPasswordOtpController::class, 'showVerifyForm'])->name('password.otp.verify');
-Route::post('/verify-otp', [ResetPasswordOtpController::class, 'verifyOtp'])->name('password.otp.submit');
-Route::get('/reset-password', [ResetPasswordOtpController::class, 'showResetForm'])->name('password.otp.reset');
-Route::post('/reset-password', [ResetPasswordOtpController::class, 'resetPassword'])->name('password.update');
-
+    // Lupa Password / OTP
+    Route::get('/forgot-password', [ResetPasswordOtpController::class, 'showRequestForm'])->name('password.request');
+    Route::post('/forgot-password', [ResetPasswordOtpController::class, 'sendOtp'])->name('password.email');
+    Route::get('/verify-otp', [ResetPasswordOtpController::class, 'showVerifyForm'])->name('password.otp.verify');
+    Route::post('/verify-otp', [ResetPasswordOtpController::class, 'verifyOtp'])->name('password.otp.submit');
+    Route::get('/reset-password', [ResetPasswordOtpController::class, 'showResetForm'])->name('password.otp.reset');
+    Route::post('/reset-password', [ResetPasswordOtpController::class, 'resetPassword'])->name('password.update');
+});
 
 // ==========================================
 // JALUR TERPROTEKSI (PAGAR UTAMA: WAJIB LOGIN)
 // ==========================================
 Route::middleware(['auth'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // ------------------------------------------
     // PRESENSI GLOBAL
