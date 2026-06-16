@@ -5,7 +5,7 @@
 <main class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-10 space-y-4 sm:space-y-6 lg:space-y-8 animate-in">
 
     <div class="flex items-center justify-between">
-        <a href="{{ route('pembimbing.presensi-siswa.index') }}" class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-5 sm:py-2.5 bg-white border border-slate-200 rounded-lg sm:rounded-2xl text-[9px] sm:text-xs font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 hover:text-maroon-900 transition-colors shadow-sm active:scale-95">
+        <a href="{{ $backUrl }}" class="inline-flex items-center gap-1.5 sm:gap-2 px-3 py-2 sm:px-5 sm:py-2.5 bg-white border border-slate-200 rounded-lg sm:rounded-2xl text-[9px] sm:text-xs font-black text-slate-500 uppercase tracking-widest hover:bg-slate-50 hover:text-maroon-900 transition-colors shadow-sm active:scale-95">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sm:w-4 sm:h-4"><path d="m15 18-6-6 6-6"/></svg>
             Kembali
         </a>
@@ -164,6 +164,7 @@
                                         'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                         'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         default => 'bg-rose-50 text-rose-600 border-rose-200'
                                     };
 
@@ -173,6 +174,7 @@
                                         'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Belum CO' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         default => 'bg-rose-50 text-rose-600 border-rose-200'
                                     };
                                 @endphp
@@ -184,6 +186,11 @@
                                 <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[7px] sm:text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full lg:w-auto mt-0.5 lg:mt-0">
                                     OUT: {{ $coName }}
                                 </span>
+                                @if(isset($p->alasan) && $p->alasan)
+                                    <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[150px] md:max-w-[200px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $p->alasan }}">
+                                        💬 Alasan: {{ $p->alasan }}
+                                    </div>
+                                @endif
 
                             </div>
                         </td>
@@ -204,5 +211,6 @@
             </table>
         </div>
     </section>
+
 </main>
 @endsection

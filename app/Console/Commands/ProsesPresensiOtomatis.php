@@ -112,18 +112,25 @@ class ProsesPresensiOtomatis extends Command
                 }
             }
             // KONDISI B: SUDAH MASUK TAPI BELUM PULANG SAMPAI 23:59
-            else if ($presensiHariIni->jam_pulang == null) {
+           else if ($presensiHariIni->jam_pulang == null) {
 
-                if ($presensiHariIni->statusCi && in_array($presensiHariIni->statusCi->name, ['Tepat Waktu', 'Terlambat'])) {
-                    $presensiHariIni->update([
-                        'id_status_co' => $statusLupaCO->id_status_presensi,
-                    ]);
-                    $jumlahLupaCo++;
-                }
-                else if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alpa') {
-                    $presensiHariIni->update([
-                        'id_status_co' => $statusAlpa->id_status_presensi,
-                    ]);
+                $batasLupaCo = Carbon::createFromTime(23, 50, 0, 'Asia/Makassar');
+
+                // HANYA EKSEKUSI LUPA CO JIKA SUDAH LEWAT JAM 23:50 MALAM
+                if ($waktuSekarang->greaterThan($batasLupaCo)) {
+
+                    if ($presensiHariIni->statusCi && in_array($presensiHariIni->statusCi->name, ['Tepat Waktu', 'Terlambat'])) {
+                        $presensiHariIni->update([
+                            'id_status_co' => $statusLupaCO->id_status_presensi,
+                        ]);
+                        $jumlahLupaCo++;
+                    }
+                    else if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alpa') {
+                        $presensiHariIni->update([
+                            'id_status_co' => $statusAlpa->id_status_presensi,
+                        ]);
+                    }
+
                 }
             }
         }

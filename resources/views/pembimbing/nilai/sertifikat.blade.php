@@ -71,7 +71,7 @@
             font-size: 11px;
         }
 
-        /* Tabel Keterangan & Absen */
+        /* Tabel Keterangan & presensi */
         .tabel-info { border-collapse: collapse; text-align: center; font-size: 10px; }
         .tabel-info th, .tabel-info td { border: 1px solid #1b365d; padding: 2px 4px; }
     </style>

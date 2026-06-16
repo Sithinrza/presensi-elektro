@@ -34,7 +34,7 @@ class DashboardController extends Controller
         // 4. Ambil 10 Aktivitas Terbaru Hari Ini
         $aktivitasHariIni = Presensi::with(['user.roles', 'statusCi', 'statusCo'])
             ->where('tanggal', $hariIni)
-            ->orderBy('updated_at', 'desc') // Biar yang baru absen pulang juga naik ke atas
+            ->orderBy('updated_at', 'desc') // Biar yang baru presensi pulang juga naik ke atas
             ->take(10)
             ->get();
 

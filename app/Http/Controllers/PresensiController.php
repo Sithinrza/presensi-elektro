@@ -167,14 +167,14 @@ class PresensiController extends Controller
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
 
-        // ================= LOGIKA AMBIL ABSEN MASUK (CHECK-IN) =================
+        // ================= LOGIKA AMBIL presensi MASUK (CHECK-IN) =================
         if (!$presensiHariIni) {
 
             $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
             if ($jamSekarang > $batasBatasCo) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Waktu presensi hari ini telah berakhir. Anda tidak dapat melakukan absen masuk lagi dan tercatat Alpa.'
+                    'message' => 'Waktu presensi hari ini telah berakhir. Anda tidak dapat melakukan presensi masuk lagi dan tercatat Alpa.'
                 ]);
             }
 
@@ -202,9 +202,9 @@ class PresensiController extends Controller
                 'longitude_masuk'    => $request->longitude,
             ]);
 
-            $pesan = ($statusNameCi == 'Alpa') ? 'Anda absen terlalu siang, status dicatat sebagai Alpa.' : 'Presensi Masuk Berhasil dicatat!';
+            $pesan = ($statusNameCi == 'Alpa') ? 'Anda presensi terlalu siang, status dicatat sebagai Alpa.' : 'Presensi Masuk Berhasil dicatat!';
 
-        // ================= LOGIKA AMBIL ABSEN PULANG (CHECK-OUT) =================
+        // ================= LOGIKA AMBIL presneis PULANG (CHECK-OUT) =================
         } else {
             if ($presensiHariIni->jam_pulang != null) {
                 return response()->json(['status' => 'error', 'message' => 'Anda sudah melakukan presensi pulang hari ini!']);
@@ -224,7 +224,7 @@ class PresensiController extends Controller
 
             if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alpa') {
                 $statusNameCo = 'Alpa';
-                $pesan = 'Presensi Pulang dicatat. Status tetap Alpa karena absen masuk Anda terlambat parah.';
+                $pesan = 'Presensi Pulang dicatat. Status tetap Alpa karena presensi masuk Anda terlambat parah.';
             } else {
                 if ($waktuSekarang->greaterThan($batasTerlambatCo)) {
                     $statusNameCo = 'Terlambat CO';

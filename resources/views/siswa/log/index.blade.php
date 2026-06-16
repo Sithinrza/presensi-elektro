@@ -58,7 +58,7 @@
                     <p class="text-xs sm:text-sm text-slate-400 font-medium mt-1 sm:mt-2">Input rincian tugas yang Anda kerjakan hari ini.</p>
                 </div>
 
-                @if(!$sudahAbsen)
+                @if(!$sudahPresensi)
                     <div class="bg-rose-50 border border-rose-100 rounded-2xl p-5 sm:p-6 text-center">
                         <div class="w-12 h-12 sm:w-16 sm:h-16 bg-rose-100 text-rose-500 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 sm:w-8 sm:h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -100,7 +100,8 @@
                                     name="tanggal"
                                     max="{{ date('Y-m-d') }}"
                                     value="{{ date('Y-m-d') }}"
-                                    class="w-full bg-maroon-50/50 border border-maroon-100/50 rounded-xl sm:rounded-2xl px-4 py-3 sm:px-5 sm:py-4 text-xs sm:text-sm font-bold text-maroon-950 focus:outline-none focus:ring-2 focus:ring-maroon-500 focus:bg-white transition-all cursor-pointer"
+                                    class="w-full bg-maroon-50/50 border border-maroon-100/50 rounded-xl sm:rounded-2xl px-4 py-3 sm:px-5 sm:py-4 text-xs sm:text-sm font-bold text-maroon-950 focus:outline-none transition-all cursor-not-allowed opacity-70"
+                                    readonly
                                     required
                                 >
                             </div>

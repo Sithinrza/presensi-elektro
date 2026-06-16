@@ -171,7 +171,12 @@
                         <td class="px-4 py-3 lg:px-8 lg:py-4">
                             <div class="flex items-center gap-3 lg:gap-4">
                                 <div class="w-8 h-8 lg:w-11 lg:h-11 rounded-lg lg:rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0 flex items-center justify-center font-black text-maroon-900 text-xs lg:text-base">
-                                    {{ substr($aktivitas->user->name ?? 'U', 0, 1) }}
+                                   @if($aktivitas->user->siswaMagang->foto_profil ?? $aktivitas->user->tendik->foto_profil ?? null)
+                                        <img src="{{ asset('storage/' . ($aktivitas->user->siswaMagang->foto_profil ?? $aktivitas->user->tendik->foto_profil)) }}" class="w-full h-full object-cover" alt="Foto">
+                                    @else
+                                        {{-- Kalau beneran kosong, baru tampilin huruf depan --}}
+                                        {{ substr($aktivitas->user->name ?? 'U', 0, 1) }}
+                                    @endif
                                 </div>
                                 <div>
                                     <p class="text-xs lg:text-sm font-extrabold text-slate-800 leading-none tracking-tight group-hover:text-maroon-700 transition-colors">

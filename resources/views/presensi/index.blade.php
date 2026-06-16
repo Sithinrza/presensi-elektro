@@ -384,9 +384,9 @@
                             sampelMata.push(curEAR);
                             if (sampelMata.length >= 8) {
                                 batasKedipPersonal = (sampelMata.reduce((a, b) => a + b, 0) / sampelMata.length) * 0.55;
-                                modeSistem = "ABSEN";
+                                modeSistem = "PRESENSI";
                             }
-                        } else if (modeSistem === "ABSEN") {
+                        } else if (modeSistem === "PRESENSI") {
                             panduan.innerText = "✅ Siap! Silakan Berkedip"; panduan.style.background = "#22c55e";
                             if (curEAR < batasKedipPersonal) {
                                 isDone = true; verifikasiSukses();

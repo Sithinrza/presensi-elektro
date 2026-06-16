@@ -52,10 +52,17 @@ class RiwayatController extends Controller
             if ($dbRiwayat->has($dateString)) {
                 $presensi = $dbRiwayat->get($dateString);
 
-                if ($dateString != $todayString && !is_null($presensi->jam_masuk) && is_null($presensi->jam_pulang)) {
+                // jIKA ALPA CI = MAKA WAJIB ALPA CO
+                if ($presensi->statusCi && $presensi->statusCi->name == 'Alpa') {
+                    $statusAlpaCo = new StatusPresensi(['name' => 'Alpa']);
+                    $presensi->setRelation('statusCo', $statusAlpaCo);
+                }
+                // JIKA BUKAN ALPA, BARU BOLEH JADI LUPA CHECK-OUT (UNTUK HARI KEMARIN)
+                elseif ($dateString != $todayString && !is_null($presensi->jam_masuk) && is_null($presensi->jam_pulang)) {
                     $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
                     $presensi->setRelation('statusCo', $statusLupa);
                 }
+                // =======================================================
 
                 $riwayatFinal->push($presensi);
 
@@ -82,8 +89,17 @@ class RiwayatController extends Controller
                         $libur++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $alpa++;
-                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        // CEK JIKA TANGGAL ADALAH HARI INI DAN MASIH PAGI
+                        $batasAlpaHariIni = Carbon::now('Asia/Makassar')->startOfDay()->setTime(8, 30, 0);
+
+                        if ($date->isSameDay($waktuSekarang) && $waktuSekarang->lessThan($batasAlpaHariIni)) {
+                            // Masih jam aman, jangan dicap Alpa
+                            $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
+                        } else {
+                            // Sudah lewat jam 8.30 atau hari-hari sebelumnya
+                            $alpa++;
+                            $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        }
                     }
 
                     $mockPresensi = new Presensi([
