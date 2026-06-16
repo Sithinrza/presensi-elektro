@@ -13,8 +13,8 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->is('tendik/dashboard') ? 'opacity-100' : 'opacity-80' }}">Beranda</span>
         </a>
-        
-        <!-- 2. Absen -->
+
+        <!-- 2. presensi -->
         <a href="{{ route('presensi.index') }}" title="Presensi"
            class="group nav-transition flex flex-col items-center justify-center py-4 rounded-[2rem] {{ request()->is('tendik/presensi') || request()->routeIs('presensi.index') ? 'bg-white text-maroon-950 shadow-xl scale-105' : 'text-white/75 hover:bg-white/10 hover:text-white' }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>

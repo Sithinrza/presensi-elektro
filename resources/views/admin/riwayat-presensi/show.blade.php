@@ -18,7 +18,12 @@
 
             <div class="flex items-center gap-6">
                 <div class="w-20 h-20 rounded-2xl border-2 border-amber-400/50 bg-white/10 backdrop-blur-md flex items-center justify-center text-4xl font-black text-amber-400 shadow-inner overflow-hidden shrink-0">
-                    {{ substr($nama_lengkap ?? 'A', 0, 1) }}
+                    @if(isset($foto_profil) && $foto_profil)
+                        <img src="{{ asset('storage/' . $foto_profil) }}" alt="Foto Profil" class="w-full h-full object-cover">
+                    @else
+                        {{-- Jika tidak ada foto, tampilkan inisial huruf depan --}}
+                        {{ substr($nama_lengkap ?? 'A', 0, 1) }}
+                    @endif
                 </div>
                 <div>
                     <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] mb-1.5 leading-none">{{ $role ?? 'Siswa Magang' }}</p>
@@ -167,6 +172,7 @@
                                             'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                             'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
                                             'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                            'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                             default => 'bg-rose-50 text-rose-600 border-rose-200' // Alpa
                                         };
 
@@ -176,6 +182,7 @@
                                             'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                             'Belum CO' => 'bg-slate-50 text-slate-500 border-slate-200',
                                             'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                            'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                             default => 'bg-rose-50 text-rose-600 border-rose-200' // Lupa CO
                                         };
                                     @endphp
@@ -187,6 +194,11 @@
                                     <span class="inline-flex items-center px-3 py-1.5 {{ $colorCo }} border rounded-md text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap mt-1 sm:mt-0">
                                         OUT: {{ $coName }}
                                     </span>
+                                    @if(isset($r->alasan) && $r->alasan)
+                                        <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[180px] md:max-w-[250px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $r->alasan }}">
+                                            💬 Alasan: {{ $r->alasan }}
+                                        </div>
+                                    @endif
 
                                 </div>
                             </td>

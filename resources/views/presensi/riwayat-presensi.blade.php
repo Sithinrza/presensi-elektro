@@ -124,6 +124,7 @@
                                         'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                         'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         default => 'bg-rose-50 text-rose-600 border-rose-200'
                                     };
 
@@ -133,6 +134,7 @@
                                         'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Belum CO' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         default => 'bg-rose-50 text-rose-600 border-rose-200'
                                     };
                                 @endphp
@@ -144,6 +146,11 @@
                                 <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full sm:w-auto">
                                     OUT: {{ $coName }}
                                 </span>
+                                @if(isset($r->alasan) && $r->alasan)
+                                    <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[150px] sm:max-w-full text-left bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $r->alasan }}">
+                                        💬 Alasan: {{ $r->alasan }}
+                                    </div>
+                                @endif
 
                             </div>
                         </td>

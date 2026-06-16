@@ -68,7 +68,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <div class="flex items-center justify-between mb-2 lg:mb-3">
-                <p class="text-[9px] lg:text-[10px] font-black text-emerald-700/60 uppercase tracking-widest leading-none">Hadir Tepat</p>
+                <p class="text-[9px] lg:text-[10px] font-black text-emerald-700/60 uppercase tracking-widest leading-none">Hadir Tepat Waktu</p>
                 <div class="w-6 h-6 lg:w-10 lg:h-10 rounded-lg lg:rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 lg:w-5 lg:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
@@ -183,7 +183,7 @@
                         </div>
 
                         <div class="flex gap-2 mt-auto">
-                            <a href="{{ route('pembimbing.presensi-siswa.show', $siswa->id_siswa) }}" class="flex-1 bg-maroon-50 text-maroon-900 border border-maroon-100 py-3 lg:py-3.5 rounded-xl text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-center hover:bg-maroon-900 hover:text-white transition-all shadow-sm">
+                            <a href="{{ route('pembimbing.presensi-siswa.show', $siswa->id_user) }}" class="flex-1 bg-maroon-50 text-maroon-900 border border-maroon-100 py-3 lg:py-3.5 rounded-xl text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-center hover:bg-maroon-900 hover:text-white transition-all shadow-sm">
                                 Riwayat
                             </a>
                             <a href="{{ route('pembimbing.monitoring.show', $siswa->id_siswa) }}" class="bg-slate-50 text-slate-500 border border-slate-200 px-3 lg:px-3.5 py-3 lg:py-3.5 rounded-xl hover:bg-amber-100 hover:text-amber-700 hover:border-amber-200 transition-all shadow-sm flex items-center justify-center" title="Validasi Jurnal">

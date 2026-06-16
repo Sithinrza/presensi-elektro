@@ -39,12 +39,12 @@ class DashboardController extends Controller
         $totalBimbingan = $siswaIds->count();
 
         // Hitung Logbook yang statusnya 'Pending'
-        $totalLogPending = \App\Models\Log::whereIn('id_user', $siswaIds)
+        $totalLogPending = Log::whereIn('id_user', $siswaIds)
                                           ->where('status', 'Pending')
                                           ->count();
 
         // PERBAIKAN: Hitung Presensi Hadir menggunakan variabel ID yang sudah dicari
-        $hadirHariIni = \App\Models\Presensi::whereIn('id_user', $siswaIds)
+        $hadirHariIni = Presensi::whereIn('id_user', $siswaIds)
                                             ->whereDate('tanggal', $hariIni)
                                             ->whereIn('id_status_ci', [$idTepatWaktu, $idTerlambat])
                                             ->count();

@@ -68,6 +68,7 @@ class PresensiSiswaController extends Controller
                 $dateString = $date->format('Y-m-d');
 
                 // Jika ADA data presensi
+                // Jika ADA data presensi
                 if ($presensiSiswa->has($dateString)) {
                     $p = $presensiSiswa->get($dateString);
 
@@ -75,7 +76,13 @@ class PresensiSiswaController extends Controller
                     elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') $s->stat_telat_ci++;
                     elseif ($p->statusCi && $p->statusCi->name == 'Alpa') $s->stat_alpa++;
 
-                    if ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
+                    // =======================================================
+                    // PERBAIKAN: JIKA ALPA CI = MAKA JANGAN DIHITUNG LUPA CO
+                    // =======================================================
+                    if ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                        // Jangan hitung apa-apa untuk CO, biarkan saja
+                    }
+                    elseif ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                         $s->stat_lupa_co++;
                     } elseif ($p->statusCo) {
                         if (in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $s->stat_tepat_co++;
@@ -146,7 +153,14 @@ class PresensiSiswaController extends Controller
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
 
-                if ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
+                // =======================================================
+                // PERBAIKAN: ALPA CI = WAJIB ALPA CO
+                // =======================================================
+                if ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                    $statusAlpaCo = new StatusPresensi(['name' => 'Alpa']);
+                    $p->setRelation('statusCo', $statusAlpaCo);
+                }
+                elseif ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                     $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
                     $p->setRelation('statusCo', $statusLupa);
                 }
@@ -176,8 +190,17 @@ class PresensiSiswaController extends Controller
                         $statistik['Libur']++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $statistik['Alpa']++;
-                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        // =======================================================
+                        // PERBAIKAN: STATUS "BELUM PRESENSI" PAGI HARI
+                        // =======================================================
+                        $jamSekarang = Carbon::now('Asia/Makassar')->format('H:i:s');
+
+                        if ($dateString === $waktuSekarang->format('Y-m-d') && $jamSekarang < '08:30:00') {
+                            $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
+                        } else {
+                            $statistik['Alpa']++;
+                            $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        }
                     }
 
                     $mock = new Presensi([
@@ -195,6 +218,17 @@ class PresensiSiswaController extends Controller
 
         $riwayatPresensi = $riwayatPresensi->sortByDesc('tanggal')->values();
 
-        return view('pembimbing.presensi-siswa.show', compact('siswa', 'riwayatPresensi', 'statistik', 'bulan', 'tahun'));
+
+        $urlAsal = url()->previous();
+
+        // 2. Deteksi, apakah dia datang dari dashboard?
+        if (str_contains($urlAsal, 'dashboard')) {
+            $backUrl = route('pembimbing.dashboard');
+        } else {
+            // Kalau bukan dari dashboard, kembalikan ke halaman index
+            $backUrl = route('pembimbing.presensi-siswa.index');
+        }
+
+        return view('pembimbing.presensi-siswa.show', compact('siswa', 'riwayatPresensi', 'statistik', 'bulan', 'tahun', 'backUrl'));
     }
 }

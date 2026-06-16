@@ -30,7 +30,7 @@ class RiwayatController extends Controller
         $isLiburHariIni = $isLiburMingguan || $liburNasional;
 
         $siswa = SiswaMagang::with('user')->get()->map(function ($s) use ($presensiHariIni, $isLiburHariIni) {
-            $status = 'Belum Hadir';
+            $status = 'Belum Presensi';
             if ($presensiHariIni->has($s->id_user)) {
                 $p = $presensiHariIni->get($s->id_user);
                 $status = $p->statusCi ? $p->statusCi->name : 'Belum Hadir';
@@ -42,7 +42,7 @@ class RiwayatController extends Controller
         });
 
         $tendik = Tendik::with(['user', 'unitKerja'])->get()->map(function ($t) use ($presensiHariIni, $isLiburHariIni) {
-            $status = 'Belum Hadir';
+            $status = 'Belum Presensi';
             if ($presensiHariIni->has($t->id_user)) {
                 $p = $presensiHariIni->get($t->id_user);
                 $status = $p->statusCi ? $p->statusCi->name : 'Belum Hadir';
@@ -63,15 +63,18 @@ class RiwayatController extends Controller
         $nama_lengkap = 'User Tidak Diketahui';
         $role = 'Tidak Diketahui';
         $instansi = '-';
+        $foto_profil = null;
 
         if ($user->siswaMagang) {
             $nama_lengkap = $user->siswaMagang->nama_lengkap;
             $role = 'Siswa Magang';
             $instansi = $user->siswaMagang->sekolah_asal;
+            $foto_profil = $user->siswaMagang->foto_profil;
         } elseif ($user->tendik) {
             $nama_lengkap = $user->tendik->nama_lengkap;
             $role = 'Tenaga Kependidikan';
             $instansi = $user->tendik->unitKerja ? $user->tendik->unitKerja->nama_unit : '-';
+            $foto_profil = $user->tendik->foto_profil;
         }
 
         $bulan = $request->bulan ?? date('m');
@@ -142,8 +145,16 @@ class RiwayatController extends Controller
                         $statistik['Libur']++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $statistik['Alpa']++;
-                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        // CEK JIKA HARI INI DAN MASIH SEBELUM JAM 08:30
+                        $jamSekarang = Carbon::now('Asia/Makassar')->format('H:i:s');
+
+                        if ($dateString === $waktuSekarang->format('Y-m-d') && $jamSekarang < '08:30:00') {
+                            // Jangan hitung sebagai Alpa di statistik, dan set status Belum presensi
+                            $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
+                        } else {
+                            $statistik['Alpa']++;
+                            $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        }
                     }
 
                     $mock = new Presensi(['tanggal' => $dateString, 'jam_masuk' => null, 'jam_pulang' => null]);
@@ -157,7 +168,7 @@ class RiwayatController extends Controller
         $riwayat = $riwayat->sortByDesc('tanggal')->values();
 
         return view('admin.riwayat-presensi.show', compact(
-            'riwayat', 'statistik', 'nama_lengkap', 'role', 'instansi', 'bulan', 'tahun', 'id_user'
+            'riwayat', 'statistik', 'nama_lengkap', 'role', 'instansi', 'foto_profil', 'bulan', 'tahun', 'id_user'
         ));
     }
 
@@ -229,7 +240,14 @@ class RiwayatController extends Controller
                     if ($isLibur) {
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        // CEK JIKA HARI INI DAN MASIH SEBELUM JAM 08:30
+                        $jamSekarang = Carbon::now('Asia/Makassar')->format('H:i:s');
+
+                        if ($dateString === $waktuSekarang->format('Y-m-d') && $jamSekarang < '08:30:00') {
+                            $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
+                        } else {
+                            $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        }
                     }
 
                     $mock = new Presensi(['tanggal' => $dateString, 'jam_masuk' => null, 'jam_pulang' => null]);
@@ -342,8 +360,17 @@ class RiwayatController extends Controller
                             $simbol_ci = 'L'; $row['ci_libur']++;
                             $simbol_co = 'L';
                         } else {
-                            $simbol_ci = 'A'; $row['ci_alpa']++;
-                            $simbol_co = 'A';
+                            // CEK JIKA HARI INI DAN MASIH SEBELUM JAM 08:30
+                            $jamSekarang = Carbon::now('Asia/Makassar')->format('H:i:s');
+
+                            if ($dateString === $waktuSekarang->format('Y-m-d') && $jamSekarang < '08:30:00') {
+                                // Kasih strip (-) biar Excelnya kosong/putih, dan jangan tambah hitungan Alpa
+                                $simbol_ci = '-';
+                                $simbol_co = '-';
+                            } else {
+                                $simbol_ci = 'A'; $row['ci_alpa']++;
+                                $simbol_co = 'A';
+                            }
                         }
                     }
                 }
