@@ -186,13 +186,12 @@
                                 <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[7px] sm:text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full lg:w-auto mt-0.5 lg:mt-0">
                                     OUT: {{ $coName }}
                                 </span>
-                                @if(isset($p->alasan) && $p->alasan)
-                                    <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[150px] md:max-w-[200px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $p->alasan }}">
-                                        💬 Alasan: {{ $p->alasan }}
-                                    </div>
-                                @endif
-
                             </div>
+                            @if(isset($p->alasan) && $p->alasan)
+                                <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[150px] md:max-w-[200px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $p->alasan }}">
+                                    💬 Alasan: {{ $p->alasan }}
+                                </div>
+                            @endif
                         </td>
                         <td class="pr-4 sm:pr-6 lg:pr-8 text-right">
                             @if($p->id_presensi)

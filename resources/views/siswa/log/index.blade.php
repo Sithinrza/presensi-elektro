@@ -105,7 +105,6 @@
                                     required
                                 >
                             </div>
-                            <p class="text-[8px] sm:text-[9px] text-slate-400 font-bold uppercase tracking-wider ml-1 italic">* Pengisian logbook masa depan dinonaktifkan</p>
                         </div>
 
                         <!-- DESKRIPSI KEGIATAN -->

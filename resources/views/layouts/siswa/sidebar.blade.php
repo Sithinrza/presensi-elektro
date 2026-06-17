@@ -13,7 +13,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('siswa.dashboard') || request()->is('siswa/dashboard') ? 'opacity-100' : 'opacity-80' }}">Beranda</span>
             </a>
-            
+
             <!-- 2. Presensi (Kamera/Scan) -->
             <a href="{{ route('presensi.index') }}" title="Presensi"
                class="group nav-transition flex flex-col items-center justify-center py-4 rounded-[2rem] {{ request()->routeIs('presensi.index') || request()->is('siswa/presensi') ? 'bg-white text-maroon-950 shadow-xl scale-105' : 'text-white/75 hover:bg-white/10 hover:text-white' }}">
@@ -27,12 +27,12 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('presensi.riwayat-presensi') || request()->is('siswa/riwayat*') ? 'opacity-100' : 'opacity-80' }}">Riwayat</span>
             </a>
-            
+
             <!-- 4. Logbook -->
-            <a href="{{ route('siswa.log') }}" title="Log Book"
+            <a href="{{ route('siswa.log') }}" title="LogBook"
                class="group nav-transition flex flex-col items-center justify-center py-4 rounded-[2rem] {{ request()->routeIs('siswa.log') || request()->is('siswa/logbook*') ? 'bg-white text-maroon-950 shadow-xl scale-105' : 'text-white/75 hover:bg-white/10 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
-                <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('siswa.log') || request()->is('siswa/logbook*') ? 'opacity-100' : 'opacity-80' }}">Log Book</span>
+                <span class="text-[9px] font-black uppercase tracking-[0.2em] mt-2 group-hover:opacity-100 transition-opacity {{ request()->routeIs('siswa.log') || request()->is('siswa/logbook*') ? 'opacity-100' : 'opacity-80' }}">LogBook</span>
             </a>
         </div>
 

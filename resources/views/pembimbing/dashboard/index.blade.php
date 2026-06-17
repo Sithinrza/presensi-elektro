@@ -5,8 +5,6 @@
 <main class="max-w-7xl mx-auto p-4 sm:p-5 lg:p-10 space-y-6 lg:space-y-10">
 
     <!-- HERO SECTION -->
-    <!-- HERO SECTION -->
-    <!-- HERO SECTION -->
     <section class="animate-in bg-maroon-900 rounded-[2rem] lg:rounded-[2.5rem] p-6 lg:p-8 border border-maroon-800 shadow-premium relative overflow-hidden" style="animation-delay: 0.1s">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
 
@@ -107,8 +105,8 @@
                 @php
                     $isSelesai = \Carbon\Carbon::parse($siswa->tanggal_selesai)->endOfDay()->isPast();
 
-                    $presensiHariIni = collect($siswa->presensi)->first();
-                    $statusCi = $presensiHariIni ? $presensiHariIni->id_status_ci : null;
+                    // Ambil satu-satunya data presensi yang dikirim (karena sudah disaring 'hari ini' di Controller)
+                    $presensiHariIni = $siswa->presensi->first();
                 @endphp
 
                 <!-- KARTU SISWA -->
@@ -148,11 +146,21 @@
                     <!-- Tampilan Magang Berjalan -->
                     <div class="bg-white rounded-[1.5rem] lg:rounded-[2.5rem] p-5 lg:p-6 border border-slate-100 shadow-sm hover:shadow-lg hover:border-maroon-100 transition-all group flex flex-col h-full relative overflow-hidden">
 
-                        <!-- Tanda Hadir Hari Ini -->
-                        @if($statusCi == 1 || $statusCi == 2)
-                            <div class="absolute top-0 right-0 bg-emerald-50 text-emerald-600 text-[7px] lg:text-[8px] font-black uppercase tracking-widest px-2.5 py-1 lg:px-3 lg:py-1.5 rounded-bl-xl border-b border-l border-emerald-100 flex items-center gap-1.5 shadow-sm">
-                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Hadir
-                            </div>
+                        <!-- Tanda Status Presensi Hari Ini -->
+                        @if($presensiHariIni && $presensiHariIni->statusCi)
+                            @if($presensiHariIni->statusCi->name == 'Tepat Waktu')
+                                <div class="absolute top-0 right-0 bg-emerald-50 text-emerald-600 text-[7px] lg:text-[8px] font-black uppercase tracking-widest px-2.5 py-1 lg:px-3 lg:py-1.5 rounded-bl-xl border-b border-l border-emerald-100 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Tepat Waktu
+                                </div>
+                            @elseif($presensiHariIni->statusCi->name == 'Terlambat')
+                                <div class="absolute top-0 right-0 bg-amber-50 text-amber-600 text-[7px] lg:text-[8px] font-black uppercase tracking-widest px-2.5 py-1 lg:px-3 lg:py-1.5 rounded-bl-xl border-b border-l border-amber-100 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span> Terlambat
+                                </div>
+                            @elseif($presensiHariIni->statusCi->name == 'Alpa')
+                                <div class="absolute top-0 right-0 bg-rose-50 text-rose-600 text-[7px] lg:text-[8px] font-black uppercase tracking-widest px-2.5 py-1 lg:px-3 lg:py-1.5 rounded-bl-xl border-b border-l border-rose-100 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span> Tap-In (Alpa)
+                                </div>
+                            @endif
                         @endif
 
                         <div class="flex items-center gap-3.5 lg:gap-4 mb-5 lg:mb-6 mt-1 lg:mt-2">
