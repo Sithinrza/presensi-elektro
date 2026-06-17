@@ -158,7 +158,19 @@
             @endif
         </section>
     </div>
-
+        @if(isset($presensi->alasan) && $presensi->alasan)
+            <section class="mt-6 lg:mt-8 bg-amber-50 border border-amber-200 p-5 sm:p-6 lg:p-8 rounded-3xl lg:rounded-[3rem] shadow-sm flex flex-col sm:flex-row gap-4 sm:gap-5 items-start animate-in">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-amber-200 text-amber-700 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-7 sm:h-7"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></svg>
+                </div>
+                <div>
+                    <h3 class="text-[10px] sm:text-xs font-black text-amber-900 uppercase tracking-widest mb-1.5 sm:mb-2">Keterangan / Alasan Lupa Check-Out</h3>
+                    <p class="text-sm sm:text-base font-bold text-amber-800 leading-relaxed italic border-l-4 border-amber-400 pl-3 sm:pl-4">
+                        "{{ $presensi->alasan }}"
+                    </p>
+                </div>
+            </section>
+            @endif
 
 </main>
 
@@ -166,8 +178,8 @@
     document.addEventListener("DOMContentLoaded", function() {
 
         // --- PENGATURAN KANTOR PUSAT ---
-        const officeLat = -3.2759542;
-        const officeLng = 114.5969156;
+        const officeLat = -3.2968707;
+        const officeLng = 114.5812529;
         const radiusAman = 50; // Radius batas aman dalam meter
 
         // Ikon Custom Titik Kantor & User

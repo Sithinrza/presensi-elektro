@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Pembimbing;
 use App\Models\Presensi;
 use App\Models\SiswaMagang;
-use App\Models\StatusPresensi; // <-- WAJIB IMPORT INI
+use App\Models\StatusPresensi;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -26,9 +26,12 @@ class DashboardController extends Controller
         }
 
         $id_pembimbing = $pembimbing->id_pembimbing;
-        $hariIni = Carbon::today();
 
-        // 2. Kumpulkan ID User dari semua siswa bimbingannya
+        // 2. PASTIKAN ZONA WAKTU TEPAT (Ditaruh di atas biar dipakai di semua query)
+        $hariIni = Carbon::now('Asia/Makassar');
+        $hariIniTanggal = $hariIni->format('Y-m-d'); // Simpan format string untuk whereDate
+
+        // Kumpulkan ID User dari semua siswa bimbingannya
         $siswaIds = SiswaMagang::where('id_pembimbing', $id_pembimbing)->pluck('id_user');
 
         // Ambil ID Status Tepat Waktu dan Terlambat secara dinamis
@@ -40,24 +43,28 @@ class DashboardController extends Controller
 
         // Hitung Logbook yang statusnya 'Pending'
         $totalLogPending = Log::whereIn('id_user', $siswaIds)
-                                          ->where('status', 'Pending')
-                                          ->count();
+                                  ->where('status', 'Pending')
+                                  ->count();
 
-        // PERBAIKAN: Hitung Presensi Hadir menggunakan variabel ID yang sudah dicari
+        // Hitung Presensi Hadir (Tepat Waktu & Terlambat) HARI INI
         $hadirHariIni = Presensi::whereIn('id_user', $siswaIds)
-                                            ->whereDate('tanggal', $hariIni)
-                                            ->whereIn('id_status_ci', [$idTepatWaktu, $idTerlambat])
-                                            ->count();
+                                    ->whereDate('tanggal', $hariIniTanggal)
+                                    ->whereIn('id_status_ci', [$idTepatWaktu, $idTerlambat])
+                                    ->count();
 
         // Hitung Siswa yang masa magangnya sudah habis (Siap dinilai)
         $siapPenilaian = SiswaMagang::where('id_pembimbing', $id_pembimbing)
-                                    ->whereDate('tanggal_selesai', '<=', $hariIni)
+                                    ->whereDate('tanggal_selesai', '<=', $hariIniTanggal)
                                     ->count();
 
         // 4. AMBIL DAFTAR SISWA BESERTA STATISTIK PRIBADINYA
         $daftarSiswa = SiswaMagang::where('id_pembimbing', $id_pembimbing)
+            ->with(['presensi' => function($query) use ($hariIniTanggal) {
+                // Tarik data presensi HARI INI SAJA beserta relasi statusCi untuk badge
+                $query->whereDate('tanggal', $hariIniTanggal)->with('statusCi');
+            }])
             ->withCount([
-                // PERBAIKAN: Hitung jumlah hadir bulan ini menggunakan ID dinamis
+                // Hitung jumlah hadir bulan ini (Zona waktu sudah akurat)
                 'presensi as hadir_bulan_ini' => function ($query) use ($hariIni, $idTepatWaktu, $idTerlambat) {
                     $query->whereMonth('tanggal', $hariIni->month)
                           ->whereYear('tanggal', $hariIni->year)

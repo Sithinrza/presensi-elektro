@@ -194,13 +194,12 @@
                                     <span class="inline-flex items-center px-3 py-1.5 {{ $colorCo }} border rounded-md text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap mt-1 sm:mt-0">
                                         OUT: {{ $coName }}
                                     </span>
-                                    @if(isset($r->alasan) && $r->alasan)
-                                        <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[180px] md:max-w-[250px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $r->alasan }}">
-                                            💬 Alasan: {{ $r->alasan }}
-                                        </div>
-                                    @endif
-
                                 </div>
+                                @if(isset($r->alasan) && $r->alasan)
+                                    <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[180px] md:max-w-[250px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $r->alasan }}">
+                                        💬 Alasan: {{ $r->alasan }}
+                                    </div>
+                                @endif
                             </td>
                         </tr>
                     @empty
