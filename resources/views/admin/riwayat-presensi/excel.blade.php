@@ -16,7 +16,7 @@
             <td colspan="5" style="font-size: 14px; font-weight: bold; text-decoration: underline;">REKAPITULASI PRESENSI KOLEKTIF {{ strtoupper($kategori) }}</td>
         </tr>
         <tr>
-            <td colspan="5" style="font-size: 11px; font-style: italic;">Periode Laporan: {{ Carbon\Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y') }}</td>
+            <td colspan="5" style="font-size: 11px; font-style: italic;">Periode Laporan: {{ \Carbon\Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y') }}</td>
         </tr>
         <tr></tr>
     </table>
@@ -131,7 +131,7 @@
     <table border="1" style="border-collapse: collapse; width: 100%;">
         <thead>
             <tr>
-                <th colspan="{{ count($hariInMonth) + 7 }}" style="background-color: #1e3a8a; color: #ffffff; font-size: 13px; font-weight: bold; text-align: left; padding: 6px;">
+                <th colspan="{{ count($hariInMonth) + 8 }}" style="background-color: #1e3a8a; color: #ffffff; font-size: 13px; font-weight: bold; text-align: left; padding: 6px;">
                     II. LAPORAN CHECK-OUT (SESI PULANG)
                 </th>
             </tr>
@@ -141,7 +141,7 @@
                 <th rowspan="2" style="text-align: center; vertical-align: middle; width: 120px;">{{ $kategori == 'siswa' ? 'NIS' : 'NIP' }}</th>
                 <th rowspan="2" style="text-align: center; vertical-align: middle; width: 180px;">{{ $kategori == 'siswa' ? 'Asal Sekolah' : 'Unit Kerja' }}</th>
                 <th colspan="{{ count($hariInMonth) }}" style="text-align: center;">Tanggal Sesi Pulang (Check-Out)</th>
-                <th colspan="3" style="text-align: center;">Total Per Status</th>
+                <th colspan="4" style="text-align: center;">Total Per Status</th>
             </tr>
             <tr style="background-color: #f3f4f6; font-weight: bold; font-size: 11px;">
                 @foreach($hariInMonth as $date)
@@ -150,6 +150,7 @@
                 <th style="background-color: #a7f3d0; text-align: center; width: 60px;">Normal</th>
                 <th style="background-color: #fde68a; text-align: center; width: 60px;">Terlambat CO</th>
                 <th style="background-color: #fecaca; text-align: center; width: 60px;">Lupa CO</th>
+                <th style="background-color: #fecaca; text-align: center; width: 60px;">Alpa</th>
             </tr>
         </thead>
         <tbody style="font-size: 11px;">
@@ -186,6 +187,7 @@
                 <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0fdf4; color: #166534;">{{ $row['co_tepat'] }}</td>
                 <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #fffbeb; color: #b45309;">{{ $row['co_telat'] }}</td>
                 <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #fef2f2; color: #b91c1c;">{{ $row['co_lupa'] }}</td>
+                <td style="text-align: center; vertical-align: middle; font-weight: bold; background-color: #fef2f2; color: #b91c1c;">{{ $row['co_alpa'] }}</td>
             </tr>
             @endforeach
         </tbody>
