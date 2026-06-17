@@ -91,7 +91,7 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------------
     // AREA ADMIN
     // ------------------------------------------
-    Route::prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
 
         Route::prefix('data')->name('data.')->group(function () {
@@ -121,12 +121,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/kajur', [KajurController::class, 'store'])->name('kajur.store');
         Route::put('/kajur/{id}/aktif', [KajurController::class, 'setAktif'])->name('kajur.aktif');
         Route::put('/kajur/{id}', [KajurController::class, 'update'])->name('kajur.update');
+        Route::delete('/kajur/{id}', [KajurController::class, 'destroy'])->name('kajur.destroy');
     });
 
     // ------------------------------------------
     // AREA SISWA MAGANG
     // ------------------------------------------
-    Route::prefix('siswa')->name('siswa.')->group(function () {
+    Route::middleware(['role:siswa,siswa magang'])->prefix('siswa')->name('siswa.')->group(function () {
         Route::get('/dashboard', [SiswaDashboard::class, 'index'])->name('dashboard');
         Route::post('/lengkapi-profil', [SiswaDashboard::class, 'simpanProfilLengkap'])->name('lengkapi.profil');
         Route::get('/log', [SiswaLog::class, 'index'])->name('log');
@@ -143,7 +144,7 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------------
     // AREA PEMBIMBING
     // ------------------------------------------
-    Route::prefix('pembimbing')->name('pembimbing.')->group(function () {
+    Route::middleware(['role:pembimbing'])->prefix('pembimbing')->name('pembimbing.')->group(function () {
         Route::get('/dashboard', [PembimbingDashboard::class, 'index'])->name('dashboard');
 
         // Monitoring Logbook
@@ -173,7 +174,7 @@ Route::middleware(['auth'])->group(function () {
     // ------------------------------------------
     // AREA TENDIK
     // ------------------------------------------
-    Route::prefix('tendik')->name('tendik.')->group(function () {
+    Route::middleware(['role:tendik'])->prefix('tendik')->name('tendik.')->group(function () {
         Route::get('/dashboard', [TendikDashboard::class, 'index'])->name('dashboard');
         Route::post('/lengkapi-profil', [TendikDashboard::class, 'lengkapiProfil'])->name('lengkapi.profil');
         Route::get('/profil', [TendikProfil::class, 'index'])->name('profil.index');

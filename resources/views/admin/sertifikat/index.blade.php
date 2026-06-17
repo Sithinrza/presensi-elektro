@@ -71,7 +71,7 @@
                         </td>
 
                         <td class="px-8 py-5">
-                            <form action="{{ route('admin.sertifikat.update', $p->id_penilaian) }}" method="POST" class="flex items-center gap-2 w-max" id="formSertifikat_{{ $p->id_penilaian }}" onsubmit="gabungSertifikat('{{ $p->id_penilaian }}')">
+                            <form action="{{ route('admin.sertifikat.update', $p->id_penilaian) }}" method="POST" class="flex items-center gap-2 w-max" id="formSertifikat_{{ $p->id_penilaian }}">
                                 @csrf @method('PUT')
 
                                 @php
@@ -83,17 +83,14 @@
                                     $middlePart = '/DST/PL18.3/DV.01.10/';
 
                                     if (!empty($nomor_db)) {
-                                        // Cari posisi garis miring pertama dan terakhir
                                         $firstSlash = strpos($nomor_db, '/');
                                         $lastSlash = strrpos($nomor_db, '/');
 
-                                        // Jika formatnya valid (punya minimal 2 garis miring)
                                         if ($firstSlash !== false && $lastSlash !== false && $firstSlash !== $lastSlash) {
                                             $noUrut = substr($nomor_db, 0, $firstSlash);
                                             $tahunSertif = substr($nomor_db, $lastSlash + 1);
                                             $middlePart = substr($nomor_db, $firstSlash, $lastSlash - $firstSlash + 1);
                                         } else {
-                                            // Fallback kalau nomor di DB aneh / tidak ada garis miringnya
                                             $noUrut = $nomor_db;
                                             $middlePart = '';
                                             $tahunSertif = '';
@@ -103,18 +100,16 @@
 
                                 <div class="flex items-center bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-maroon-500 shadow-sm group-hover:bg-white transition-all h-11">
 
-                                    <input type="text" id="prefix_{{ $p->id_penilaian }}" value="{{ $noUrut }}" required placeholder="001" class="w-14 bg-transparent px-3 py-3 text-xs font-black text-slate-800 outline-none text-center placeholder:text-slate-300">
+                                    <input type="text" id="prefix_{{ $p->id_penilaian }}" name="prefix" value="{{ $noUrut }}" required placeholder="001" class="w-14 bg-transparent px-3 py-3 text-xs font-black text-slate-800 outline-none text-center placeholder:text-slate-300">
 
-                                    <input type="text" id="middle_{{ $p->id_penilaian }}" value="{{ $middlePart }}" readonly class="w-48 bg-transparent px-0 py-3 text-[11px] font-bold text-slate-400 outline-none text-center cursor-not-allowed select-none">
+                                    <input type="text" id="middle_{{ $p->id_penilaian }}" name="middle" value="{{ $middlePart }}" required readonly class="w-48 bg-transparent px-0 py-3 text-[11px] font-bold text-slate-400 outline-none text-center cursor-not-allowed select-none">
 
                                     <button type="button" onclick="toggleLock('{{ $p->id_penilaian }}')" title="Buka Kunci / Edit Format" class="px-2 text-slate-300 hover:text-amber-500 transition-colors">
                                         <svg id="iconLock_{{ $p->id_penilaian }}" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0"></path></svg>
                                     </button>
 
-                                    <input type="text" id="suffix_{{ $p->id_penilaian }}" value="{{ $tahunSertif }}" required class="w-16 bg-transparent px-2 py-3 text-xs font-black text-slate-800 outline-none text-center border-l border-slate-200/60">
+                                    <input type="text" id="suffix_{{ $p->id_penilaian }}" name="tahun" value="{{ $tahunSertif }}" required class="w-16 bg-transparent px-2 py-3 text-xs font-black text-slate-800 outline-none text-center border-l border-slate-200/60">
                                 </div>
-
-                                <input type="hidden" name="nomor_sertifikat" id="hasil_gabung_{{ $p->id_penilaian }}">
 
                                 <button type="submit" title="Simpan Nomor Sertifikat" class="h-11 px-4 bg-maroon-950 text-white rounded-xl flex items-center justify-center gap-2 shadow-lg hover:bg-maroon-800 active:scale-95 transition-all">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -122,7 +117,8 @@
                                 </button>
 
                                 @if($p->nomor_sertifikat)
-                                    <div class="w-px h-6 bg-slate-200 mx-1"></div> <a href="{{ route('admin.sertifikat.cetak', $p->id_penilaian) }}" target="_blank" title="Cetak Sertifikat (PDF)" class="h-11 px-4 bg-emerald-500 text-white rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 active:scale-95 transition-all">
+                                    <div class="w-px h-6 bg-slate-200 mx-1"></div>
+                                    <a href="{{ route('admin.sertifikat.cetak', $p->id_penilaian) }}" target="_blank" title="Cetak Sertifikat (PDF)" class="h-11 px-4 bg-emerald-500 text-white rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 active:scale-95 transition-all">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
                                         <span class="text-[10px] font-black uppercase tracking-widest">Cetak</span>
                                     </a>
@@ -174,15 +170,5 @@
         }
     }
 
-    // Fungsi untuk menggabungkan text sesaat sebelum form disubmit
-    function gabungSertifikat(id) {
-        let prefix = document.getElementById('prefix_' + id).value;
-        let middle = document.getElementById('middle_' + id).value;
-        let suffix = document.getElementById('suffix_' + id).value;
-
-        let hasilAkhir = prefix + middle + suffix;
-
-        document.getElementById('hasil_gabung_' + id).value = hasilAkhir;
-    }
 </script>
 @endsection

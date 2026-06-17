@@ -11,6 +11,17 @@
         </div>
     @endif
 
+    {{-- TAMPILAN ERROR VALIDASI (NIP / TAHUN SALAH) --}}
+    @if($errors->any())
+        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm mb-4">
+            <ul class="list-disc list-inside space-y-1">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
 
         <section class="w-full lg:w-1/3 bg-white p-5 sm:p-6 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border border-slate-100 shadow-sm shrink-0 lg:sticky lg:top-10">
@@ -29,11 +40,11 @@
                 <div class="grid grid-cols-2 gap-3 sm:gap-4">
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tahun Mulai</label>
-                        <input type="number" name="tahun_mulai" required min="2000" max="2099" placeholder="2022" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 text-center transition-all shadow-sm">
+                        <input type="number" id="tahun_mulai_add" name="tahun_mulai" required min="2000" max="2099" placeholder="2022" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 text-center transition-all shadow-sm">
                     </div>
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tahun Selesai</label>
-                        <input type="number" name="tahun_selesai" required min="2000" max="2099" placeholder="2026" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 text-center transition-all shadow-sm">
+                        <input type="number" id="tahun_selesai_add" name="tahun_selesai" required min="2000" max="2099" placeholder="2026" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 text-center transition-all shadow-sm">
                     </div>
                 </div>
 
@@ -96,6 +107,14 @@
                                         Edit
                                     </button>
 
+                                    <form action="{{ route('admin.kajur.destroy', $k->id_kajur) }}" method="POST" class="inline-block shrink-0" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data Kajur ini secara permanen?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="bg-rose-100 text-rose-700 hover:bg-rose-200 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95">
+                                            Hapus
+                                        </button>
+                                    </form>
+
                                     @if($k->status_aktif)
                                         <span class="inline-flex items-center justify-center gap-1.5 bg-emerald-100 text-emerald-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest border border-emerald-200 shadow-sm cursor-default w-[80px] sm:w-[90px]">
                                             <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse shrink-0"></div>
@@ -115,7 +134,6 @@
                         </tr>
 
                         @php
-                            // Pecah string "2022 - 2026" kembali menjadi array untuk form edit
                             $periodeArr = explode(' - ', $k->periode);
                         @endphp
                         <div id="modal-edit-{{ $k->id_kajur }}" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm transition-opacity p-4">
@@ -140,11 +158,11 @@
                                     <div class="grid grid-cols-2 gap-3 sm:gap-4">
                                         <div class="space-y-1.5 sm:space-y-2">
                                             <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tahun Mulai</label>
-                                            <input type="number" name="tahun_mulai" value="{{ $periodeArr[0] ?? '' }}" required min="2000" max="2099" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 text-center transition-all shadow-sm">
+                                            <input type="number" id="tahun_mulai_edit_{{ $k->id_kajur }}" name="tahun_mulai" value="{{ $periodeArr[0] ?? '' }}" required min="2000" max="2099" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 text-center transition-all shadow-sm">
                                         </div>
                                         <div class="space-y-1.5 sm:space-y-2">
                                             <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tahun Selesai</label>
-                                            <input type="number" name="tahun_selesai" value="{{ $periodeArr[1] ?? '' }}" required min="2000" max="2099" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 text-center transition-all shadow-sm">
+                                            <input type="number" id="tahun_selesai_edit_{{ $k->id_kajur }}" name="tahun_selesai" value="{{ $periodeArr[1] ?? '' }}" required min="2000" max="2099" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 text-center transition-all shadow-sm">
                                         </div>
                                     </div>
                                     <button type="submit" class="w-full bg-amber-500 text-white py-3 sm:py-3.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-widest shadow-lg hover:bg-amber-600 transition active:scale-95 mt-4 sm:mt-6">
@@ -154,6 +172,16 @@
                             </div>
                         </div>
 
+                        <script>
+                            document.getElementById('tahun_mulai_edit_{{ $k->id_kajur }}').addEventListener('change', function() {
+                                let minVal = this.value;
+                                let inputSelesai = document.getElementById('tahun_selesai_edit_{{ $k->id_kajur }}');
+                                inputSelesai.min = minVal;
+                                if(inputSelesai.value && inputSelesai.value < minVal) {
+                                    inputSelesai.value = minVal;
+                                }
+                            });
+                        </script>
                         @empty
                         <tr>
                             <td colspan="3" class="px-4 py-10 sm:px-6 sm:py-12 text-center text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -172,12 +200,24 @@
 <script>
     function openModal(modalId) {
         document.getElementById(modalId).classList.remove('hidden');
-        document.body.classList.add('overflow-hidden'); // Kunci scroll background
+        document.body.classList.add('overflow-hidden');
     }
 
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }
+
+    // MENGUNCI TAHUN SELESAI AGAR TIDAK LEBIH KECIL DARI TAHUN MULAI (FORM TAMBAH)
+    document.getElementById('tahun_mulai_add').addEventListener('change', function() {
+        const tahunMulai = this.value;
+        const inputSelesai = document.getElementById('tahun_selesai_add');
+
+        inputSelesai.min = tahunMulai;
+
+        if(inputSelesai.value && inputSelesai.value < tahunMulai) {
+            inputSelesai.value = tahunMulai;
+        }
+    });
 </script>
 @endsection

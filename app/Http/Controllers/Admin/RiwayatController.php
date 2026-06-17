@@ -116,8 +116,14 @@ class RiwayatController extends Controller
                 $p = $dbRiwayat->get($dateString);
 
                 if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
-                    $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
-                    $p->setRelation('statusCo', $statusLupa);
+                    // Cek jika status awalnya Alpa, maka pulangnya tetap Alpa
+                    if ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                        $statusAlpa = new StatusPresensi(['name' => 'Alpa']);
+                        $p->setRelation('statusCo', $statusAlpa);
+                    } else {
+                        $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
+                        $p->setRelation('statusCo', $statusLupa);
+                    }
                 }
 
                 $riwayat->push($p);
@@ -223,7 +229,11 @@ class RiwayatController extends Controller
                 $p = $dbRiwayat->get($dateString);
 
                 if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
-                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
+                    if ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                        $p->setRelation('statusCo', new StatusPresensi(['name' => 'Alpa']));
+                    } else {
+                        $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
+                    }
                 }
 
                 $riwayat->push($p);
@@ -311,6 +321,7 @@ class RiwayatController extends Controller
         foreach ($users as $u) {
             $presensiUser = $presensiAll->has($u->id_user) ? $presensiAll->get($u->id_user)->keyBy('tanggal') : collect();
 
+            // PERBAIKAN: Tambahkan 'co_alpa' => 0 di sini agar tidak error undefined key
             $row = [
                 'nama' => $u->nama_lengkap,
                 'identitas' => $kategori == 'siswa' ? ($u->nis ?? '-') : ($u->nip ?? '-'),
@@ -318,7 +329,7 @@ class RiwayatController extends Controller
                 'rekap_ci' => [],
                 'rekap_co' => [],
                 'ci_tepat' => 0, 'ci_telat' => 0, 'ci_alpa' => 0, 'ci_libur' => 0,
-                'co_tepat' => 0, 'co_telat' => 0, 'co_lupa' => 0,
+                'co_tepat' => 0, 'co_telat' => 0, 'co_lupa' => 0, 'co_alpa' => 0,
             ];
 
             foreach ($hariInMonth as $date) {
@@ -335,7 +346,11 @@ class RiwayatController extends Controller
                     else { $simbol_ci = 'A'; $row['ci_alpa']++; }
 
                     if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
-                        $simbol_co = 'LC'; $row['co_lupa']++;
+                        if ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                            $simbol_co = 'A'; // Tetap catat sebagai Alpa di Excel
+                        } else {
+                            $simbol_co = 'LC'; $row['co_lupa']++;
+                        }
                     } elseif ($p->statusCo) {
                         if (in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) { $simbol_co = 'CO'; $row['co_tepat']++; }
                         elseif ($p->statusCo->name == 'Terlambat CO') { $simbol_co = 'TC'; $row['co_telat']++; }
@@ -369,7 +384,7 @@ class RiwayatController extends Controller
                                 $simbol_co = '-';
                             } else {
                                 $simbol_ci = 'A'; $row['ci_alpa']++;
-                                $simbol_co = 'A';
+                                $simbol_co = 'A'; $row['co_alpa']++;
                             }
                         }
                     }
@@ -381,6 +396,11 @@ class RiwayatController extends Controller
             $laporan[] = $row;
         }
 
-        return view('admin.riwayat-presensi.excel', compact('laporan', 'hariInMonth', 'bulan', 'tahun', 'kategori'));
+        // PERBAIKAN: Langsung tembak file download Excel (Tanpa Preview)
+        $namaFile = 'Laporan_Kolektif_' . strtoupper($kategori) . '_' . date('M_Y', strtotime($tahun.'-'.$bulan.'-01')) . '.xls';
+
+        return response(view('admin.riwayat-presensi.excel', compact('laporan', 'hariInMonth', 'bulan', 'tahun', 'kategori')))
+            ->header('Content-Type', 'application/vnd.ms-excel')
+            ->header('Content-Disposition', 'attachment; filename="' . $namaFile . '"');
     }
 }

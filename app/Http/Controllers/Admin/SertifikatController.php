@@ -21,14 +21,18 @@ class SertifikatController extends Controller
     // Menyimpan nomor sertifikat dari form Admin (SEKALIGUS MENGUNCI KAJUR)
     public function updateNomor(Request $request, $id_penilaian)
     {
-        // 1. Menggunakan Validator manual agar tidak nyasar ke route GET jika terjadi error (misal kepanjangan)
-        $validator = Validator::make($request->all(), [
-            'nomor_sertifikat' => 'required|string|max:100' // Pastikan max diset ke 50 atau 100 sesuai database barumu
+        // 1. VALIDASI KETAT: Pisah per bagian agar sesuai skenario UAT
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'prefix' => 'required|string',
+            'middle' => 'required|string',
+            'tahun'  => 'required|numeric' // Paksa harus angka!
+        ], [
+            'middle.required' => 'Bagian format surat (tengah) tidak boleh kosong!',
+            'tahun.numeric'   => 'Kolom Tahun hanya boleh berisi angka!'
         ]);
 
         if ($validator->fails()) {
-            // PERBAIKAN: Gunakan redirect()->route(...) secara eksplisit, BUKAN back()
-            return redirect()->route('admin.sertifikat.index')->with('error', 'Gagal menyimpan! Format nomor sertifikat tidak valid atau terlalu panjang.');
+            return redirect()->route('admin.sertifikat.index')->with('error', $validator->errors()->first());
         }
 
         // 2. Cek dulu apakah ada Kajur yang aktif
@@ -39,9 +43,12 @@ class SertifikatController extends Controller
 
         $nilai = PenilaianMagang::findOrFail($id_penilaian);
 
-        // 3. Simpan Nomor Sertifikat DAN Kunci ID Kajur saat ini
+        // 3. GABUNGKAN NOMOR DI BACKEND (Lebih aman dari manipulasi JS)
+        $nomorSertifikatLengkap = $request->prefix . $request->middle . $request->tahun;
+
+        // 4. Simpan Nomor Sertifikat DAN Kunci ID Kajur saat ini
         $nilai->update([
-            'nomor_sertifikat' => $request->nomor_sertifikat,
+            'nomor_sertifikat' => $nomorSertifikatLengkap,
             'id_kajur'         => $kajurAktif->id_kajur // Mengunci sejarah Kajur
         ]);
 
