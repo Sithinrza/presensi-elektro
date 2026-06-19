@@ -77,13 +77,13 @@
 
     <section class="bg-white rounded-[2rem] lg:rounded-[2.5rem] border border-maroon-100 shadow-xl overflow-hidden">
         <div class="overflow-x-auto custom-scroll pb-2">
-            <table class="w-full text-left border-collapse min-w-[700px]"> <thead>
+            <table class="w-full text-left border-collapse min-w-[700px]">
+                <thead>
                     <tr class="bg-maroon-900 text-white">
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest whitespace-nowrap">Tanggal</th>
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest text-center">Masuk</th>
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest text-center">Pulang</th>
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest">Status Kehadiran</th>
-
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest text-center">Opsi</th>
                     </tr>
                 </thead>
@@ -144,7 +144,7 @@
                                     IN: {{ $ciName }}
                                 </span>
 
-                                <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full sm:w-auto">
+                                <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full sm:w-auto mt-0.5 lg:mt-0">
                                     OUT: {{ $coName }}
                                 </span>
                                 @if(isset($r->alasan) && $r->alasan)

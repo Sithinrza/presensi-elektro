@@ -65,8 +65,8 @@ class TendikController extends Controller
             'id_unit_kerja'       => 'required|integer|exists:unit_kerja,id_unit_kerja',
             'id_pangkat_golongan' => 'required|integer|exists:pangkat_golongan,id_pangkat_golongan',
 
-            // OPSIONAL (DIBERI VALIDASI UNIQUE UNTUK NIP)
-            'nip'                 => 'nullable|string|max:50|unique:tendik,nip',
+            // 🚨 PERBAIKAN: Ubah numeric menjadi string & tambah regex untuk NIP
+            'nip'                 => 'nullable|string|regex:/^[0-9]+$/|max:50|unique:tendik,nip',
 
             'id_jabatan'          => 'nullable|integer',
             'id_agama'            => 'nullable|integer',
@@ -78,9 +78,11 @@ class TendikController extends Controller
             'alamat'              => 'nullable|string',
             'foto_profil'         => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
         ], [
-            'nip.unique' => 'NIP / NIDN tersebut sudah terdaftar di sistem!',
-            'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
-             'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
+            'nip.unique'        => 'NIP / NIDN tersebut sudah terdaftar di sistem!',
+            // 🚨 PERBAIKAN: Tambah pesan error kustom untuk regex NIP
+            'nip.regex'         => 'NIP / NIDN hanya boleh berisi karakter angka!',
+            'foto_profil.max'   => 'Ukuran foto profil maksimal 3 MB!',
+            'foto_profil.image' => 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
         ]);
 
         DB::beginTransaction();
@@ -151,7 +153,8 @@ class TendikController extends Controller
             'id_unit_kerja'       => 'required|integer|exists:unit_kerja,id_unit_kerja',
             'id_pangkat_golongan' => 'required|integer|exists:pangkat_golongan,id_pangkat_golongan',
 
-            'nip'                 => 'nullable|numeric|max:50|unique:tendik,nip,' . $tendik->id_tendik . ',id_tendik',
+            // 🚨 PERBAIKAN: Ubah numeric menjadi string & tambah regex untuk NIP
+            'nip'                 => 'nullable|string|regex:/^[0-9]+$/|max:50|unique:tendik,nip,' . $tendik->id_tendik . ',id_tendik',
 
             'id_jabatan'          => 'nullable|integer',
             'id_agama'            => 'nullable|integer',
@@ -163,11 +166,11 @@ class TendikController extends Controller
             'alamat'              => 'nullable|string',
             'foto_profil'         => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
         ], [
-            'nip.unique' => 'NIP / NIDN tersebut sudah digunakan oleh staf lain!',
-            'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
-             'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).',
-
-             'nip.numeric'       => 'NIP hanya boleh berisi karakter angka numerik.',
+            'nip.unique'        => 'NIP / NIDN tersebut sudah digunakan oleh staf lain!',
+            // 🚨 PERBAIKAN: Tambah pesan error kustom untuk regex NIP
+            'nip.regex'         => 'NIP / NIDN hanya boleh berisi karakter angka!',
+            'foto_profil.max'   => 'Ukuran foto profil maksimal 3 MB!',
+            'foto_profil.image' => 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).',
         ]);
 
         DB::beginTransaction();
