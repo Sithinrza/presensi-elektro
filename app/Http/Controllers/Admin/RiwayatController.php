@@ -41,7 +41,12 @@ class RiwayatController extends Controller
                 $status = 'Belum Presensi';
                 if ($presensiHariIni->has($s->id_user)) {
                     $p = $presensiHariIni->get($s->id_user);
-                    $status = $p->statusCi ? $p->statusCi->name : 'Belum Hadir';
+                    // 🚨 PERBAIKAN: Jika ada di DB tapi kosong = Belum Presensi
+                    if (is_null($p->jam_masuk) && empty($p->alasan)) {
+                        $status = 'Belum Presensi';
+                    } else {
+                        $status = $p->statusCi ? $p->statusCi->name : 'Belum Hadir';
+                    }
                 } elseif ($isLiburHariIni) {
                     $status = 'Libur';
                 }
@@ -62,7 +67,12 @@ class RiwayatController extends Controller
                 $status = 'Belum Presensi';
                 if ($presensiHariIni->has($t->id_user)) {
                     $p = $presensiHariIni->get($t->id_user);
-                    $status = $p->statusCi ? $p->statusCi->name : 'Belum Hadir';
+                    // 🚨 PERBAIKAN: Jika ada di DB tapi kosong = Belum Presensi
+                    if (is_null($p->jam_masuk) && empty($p->alasan)) {
+                        $status = 'Belum Presensi';
+                    } else {
+                        $status = $p->statusCi ? $p->statusCi->name : 'Belum Hadir';
+                    }
                 } elseif ($isLiburHariIni) {
                     $status = 'Libur';
                 }
@@ -98,6 +108,8 @@ class RiwayatController extends Controller
         $tahun = $request->tahun ?? date('Y');
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
+        $todayString = $waktuSekarang->format('Y-m-d'); // Tanggal Hari Ini
+
         $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1, 'Asia/Makassar')->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
@@ -142,19 +154,23 @@ class RiwayatController extends Controller
         for ($date = $mulaiLoop->copy(); $date->lte($endOfMonth); $date->addDay()) {
             $dateString = $date->format('Y-m-d');
 
+            // JIKA DATA ADA DI DATABASE
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
 
-                if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
-                    if ($p->statusCi && $p->statusCi->name == 'Alpa') {
-                        $p->setRelation('statusCo', new StatusPresensi(['name' => 'Alpa']));
-                    } else {
-                        $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
-                    }
+                // 🚨 KOREKSI STATUS UNTUK HARI INI (Mengubah Alpa jadi Belum Presensi jika kosong)
+                if ($dateString === $todayString && is_null($p->jam_masuk) && empty($p->alasan)) {
+                    $p->setRelation('statusCi', new StatusPresensi(['name' => 'Belum Presensi']));
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Belum Presensi']));
+                }
+                elseif ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Alpa']));
+                }
+                elseif ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
                 }
 
-                $riwayat->push($p);
-
+                // Hitung Statistik berdasarkan status yang sudah dikoreksi
                 if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') $statistik['Tepat CI']++;
                 if ($p->statusCi && $p->statusCi->name == 'Terlambat') $statistik['Telat CI']++;
                 if ($p->statusCi && $p->statusCi->name == 'Alpa') $statistik['Alpa']++;
@@ -163,7 +179,16 @@ class RiwayatController extends Controller
                 if ($p->statusCo && in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $statistik['Tepat CO']++;
                 if ($p->statusCo && $p->statusCo->name == 'Terlambat CO') $statistik['Telat CO']++;
                 if ($p->statusCo && $p->statusCo->name == 'Lupa Check-Out') $statistik['Lupa CO']++;
-            } else {
+
+                // 🚨 MATIKAN KLIK TOMBOL DETAIL (Hilangkan ID agar Blade membaca ini sebagai baris kosong)
+                if (is_null($p->jam_masuk) && is_null($p->jam_pulang) && empty($p->alasan)) {
+                    $p->id_presensi = null;
+                }
+
+                $riwayat->push($p);
+            }
+            // JIKA DATA TIDAK ADA DI DATABASE SAMA SEKALI
+            else {
                 if ($date->lte($batasLoopUser)) {
                     $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
                     foreach ($hariLibur as $hl) {
@@ -176,8 +201,8 @@ class RiwayatController extends Controller
                         $statistik['Libur']++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $jamSekarang = Carbon::now('Asia/Makassar')->format('H:i:s');
-                        if ($dateString === $waktuSekarang->format('Y-m-d') && $jamSekarang < '08:30:00') {
+                        // 🚨 JIKA HARI INI = BELUM PRESENSI, JIKA HARI LALU = ALPA
+                        if ($dateString === $todayString) {
                             $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
                         } else {
                             $statistik['Alpa']++;
@@ -222,6 +247,8 @@ class RiwayatController extends Controller
         $tahun = $request->tahun ?? date('Y');
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
+        $todayString = $waktuSekarang->format('Y-m-d');
+
         $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1, 'Asia/Makassar')->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
 
@@ -265,12 +292,16 @@ class RiwayatController extends Controller
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
 
-                if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
-                    if ($p->statusCi && $p->statusCi->name == 'Alpa') {
-                        $p->setRelation('statusCo', new StatusPresensi(['name' => 'Alpa']));
-                    } else {
-                        $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
-                    }
+                // 🚨 KOREKSI STATUS UNTUK HARI INI
+                if ($dateString === $todayString && is_null($p->jam_masuk) && empty($p->alasan)) {
+                    $p->setRelation('statusCi', new StatusPresensi(['name' => 'Belum Presensi']));
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Belum Presensi']));
+                }
+                elseif ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Alpa']));
+                }
+                elseif ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
                 }
 
                 $riwayat->push($p);
@@ -286,8 +317,8 @@ class RiwayatController extends Controller
                     if ($isLibur) {
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $jamSekarang = Carbon::now('Asia/Makassar')->format('H:i:s');
-                        if ($dateString === $waktuSekarang->format('Y-m-d') && $jamSekarang < '08:30:00') {
+                        // 🚨 JIKA HARI INI = BELUM PRESENSI
+                        if ($dateString === $todayString) {
                             $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
                         } else {
                             $statusMock = new StatusPresensi(['name' => 'Alpa']);
@@ -328,6 +359,7 @@ class RiwayatController extends Controller
         $startOfMonth = Carbon::createFromDate($tahun, $bulan, 1, 'Asia/Makassar')->startOfDay();
         $endOfMonth = $startOfMonth->copy()->endOfMonth();
         $waktuSekarang = Carbon::now('Asia/Makassar');
+        $todayString = $waktuSekarang->format('Y-m-d');
 
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->copy()->startOfDay() : $endOfMonth->copy();
 
@@ -392,16 +424,20 @@ class RiwayatController extends Controller
                 if ($presensiUser->has($dateString)) {
                     $p = $presensiUser->get($dateString);
 
-                    // 1. Tentukan Simbol CI
-                    if ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') { $simbol_ci = 'TW'; $row['ci_tepat']++; }
+                    // 1. Tentukan Simbol CI (Cegat jika hari ini dan kosong)
+                    if ($dateString === $todayString && is_null($p->jam_masuk) && empty($p->alasan)) {
+                        $simbol_ci = '-';
+                    } elseif ($p->statusCi && $p->statusCi->name == 'Tepat Waktu') { $simbol_ci = 'TW'; $row['ci_tepat']++; }
                     elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') { $simbol_ci = 'T'; $row['ci_telat']++; }
                     elseif ($p->statusCi && $p->statusCi->name == 'Libur') { $simbol_ci = 'L'; $row['ci_libur']++; }
                     else { $simbol_ci = 'A'; $row['ci_alpa']++; }
 
-                    // 2. 🚨 Tentukan Simbol CO (Jika CI Alpa, maka CO dipaksa ikut Alpa)
+                    // 2. Tentukan Simbol CO
                     if ($simbol_ci === 'A') {
                         $simbol_co = 'A';
                         $row['co_alpa']++;
+                    } elseif ($simbol_ci === '-') {
+                        $simbol_co = '-';
                     } else {
                         if ($dateString != $waktuSekarang->format('Y-m-d') && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                             $simbol_co = 'LC'; $row['co_lupa']++;
@@ -429,12 +465,11 @@ class RiwayatController extends Controller
                             $simbol_ci = 'L'; $row['ci_libur']++;
                             $simbol_co = 'L';
                         } else {
-                            $jamSekarang = Carbon::now('Asia/Makassar')->format('H:i:s');
-                            if ($dateString === $waktuSekarang->format('Y-m-d') && $jamSekarang < '08:30:00') {
+                            // 🚨 PERBAIKAN: Jika hari ini, biarkan kosong (Strip)
+                            if ($dateString === $todayString) {
                                 $simbol_ci = '-';
                                 $simbol_co = '-';
                             } else {
-                                // 🚨 Jika tidak ada database, tapi hari kerja biasa -> CI Alpa, CO otomatis Alpa
                                 $simbol_ci = 'A'; $row['ci_alpa']++;
                                 $simbol_co = 'A'; $row['co_alpa']++;
                             }

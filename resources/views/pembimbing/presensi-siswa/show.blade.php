@@ -140,6 +140,7 @@
                     @else
                         <tr class="bg-slate-50/30 transition-colors">
                     @endif
+
                         <td class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5">
                             <p class="font-bold {{ isset($p->id_presensi) ? 'text-slate-800 group-hover:text-maroon-800' : 'text-slate-400' }} text-[10px] sm:text-xs lg:text-sm transition-colors">{{ \Carbon\Carbon::parse($p->tanggal)->translatedFormat('l, d M Y') }}</p>
                         </td>
@@ -187,6 +188,7 @@
                                 </div>
                             @endif
                         </td>
+
                         <td class="pr-4 sm:pr-6 lg:pr-8 py-3 sm:py-4 lg:py-5 text-center">
                             @if(isset($p->id_presensi))
                                 <span class="inline-flex items-center justify-center gap-1 text-[9px] lg:text-[10px] font-black text-maroon-700 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 cursor-pointer">
@@ -200,6 +202,7 @@
                                 </span>
                             @endif
                         </td>
+
                     </tr>
                     @empty
                     <tr>
