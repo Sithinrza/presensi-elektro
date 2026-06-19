@@ -10,6 +10,7 @@ use App\Models\Agama;
 use App\Models\PendidikanTerakhir;
 use App\Models\Presensi;
 use App\Models\StatusPresensi;
+use App\Models\HariLibur;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -60,16 +61,45 @@ class DashboardController extends Controller
         // 4. Alfa
         $alpa = $presensiBulanIni->where('id_status_ci', $idAlpa)->count();
 
+
         // ==========================================
-        // FITUR PINTAR: CEK STATUS PRESENSI HARI INI
+        // LOGIKA STATUS TOMBOL PRESENSI TENDIK
         // ==========================================
-        $hariIni = Carbon::now('Asia/Makassar')->format('Y-m-d');
+        $waktuSekarang = Carbon::now('Asia/Makassar');
+        $tanggalHariIni = $waktuSekarang->format('Y-m-d');
+        $jamSekarang = $waktuSekarang->format('H:i:s');
+        $hariIniIso = $waktuSekarang->dayOfWeekIso;
+
         $presensiHariIni = Presensi::where('id_user', $user->id_user)
-                                   ->where('tanggal', $hariIni)
+                                   ->where('tanggal', $tanggalHariIni)
                                    ->first();
 
+        // Cek Dosa Lupa CO
+        $statusLupaCO = StatusPresensi::where('name', 'Lupa Check-Out')->first();
+        $presensiGantung = null;
+        if ($statusLupaCO) {
+            $presensiGantung = Presensi::where('id_user', $user->id_user)
+                                       ->where('id_status_co', $statusLupaCO->id_status_presensi)
+                                       ->whereNull('alasan')
+                                       ->orderBy('tanggal', 'asc')
+                                       ->first();
+        }
+
+        $isWeekend = in_array($hariIniIso, [6, 7]);
+        $hariLiburIni = HariLibur::where('tanggal_mulai', '<=', $tanggalHariIni)
+                                 ->where('tanggal_selesai', '>=', $tanggalHariIni)
+                                 ->first();
+        $belumBuka = $jamSekarang < '06:00:00';
+
+        $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
+        $lewatJamCo = $jamSekarang > $batasBatasCo;
+
+        $batasBlokirMasuk = ($hariIniIso == 5) ? '16:30:00' : '16:00:00';
+        $lewatBatasMasuk = ($jamSekarang >= $batasBlokirMasuk && (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))));
+
         return view('tendik.dashboard.index', compact(
-            'tendik', 'isProfilLengkap', 'agama', 'pendidikan', 'hadir', 'tepatWaktu', 'telat', 'alpa', 'presensiHariIni'
+            'tendik', 'isProfilLengkap', 'agama', 'pendidikan', 'hadir', 'tepatWaktu', 'telat', 'alpa',
+            'presensiHariIni', 'isWeekend', 'hariLiburIni', 'belumBuka', 'lewatJamCo', 'lewatBatasMasuk', 'presensiGantung'
         ));
     }
 

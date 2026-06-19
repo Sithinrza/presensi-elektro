@@ -39,16 +39,20 @@ class ProfilController extends Controller
         $user = Auth::user();
         $siswa = SiswaMagang::where('id_user', $user->id_user)->firstOrFail();
 
-        // Validasi semua form KECUALI NIS (karena NIS sifatnya disabled/dikunci)
+        // 🚨 PERBAIKAN: Semua form biodata sekarang REQUIRED
         $request->validate([
             'email'         => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
-            'no_hp'         => 'required|string|max:20', // Dibuat required agar data tidak kosong
-            'tempat_lahir'  => 'nullable|string|max:50',
-            'tanggal_lahir' => 'nullable|date',
-            'id_agama'      => 'required|exists:agama,id_agama', // Dibuat required
-            'jk'            => 'required|in:L,P', // Dibuat required
-            'alamat'        => 'nullable|string',
+            'no_hp'         => 'required|string|max:20',
+            'tempat_lahir'  => 'required|string|max:50', // 👈 REQUIRED
+            'tanggal_lahir' => 'required|date',          // 👈 REQUIRED
+            'id_agama'      => 'required|exists:agama,id_agama',
+            'jk'            => 'required|in:L,P',
+            'alamat'        => 'required|string',        // 👈 REQUIRED
             'jurusan'       => 'required|string|max:100',
+        ], [
+            'tempat_lahir.required'  => 'Tempat lahir wajib diisi.',
+            'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
+            'alamat.required'        => 'Alamat domisili lengkap wajib diisi.',
         ]);
 
         // 1. Update email di tabel users
@@ -71,7 +75,6 @@ class ProfilController extends Controller
 
     public function updateFoto(Request $request)
     {
-        // 🚨 PERBAIKAN: Validasi Foto Max 3MB (3072 KB)
         $request->validate([
             'foto' => 'required|image|mimes:jpeg,png,jpg|max:3072',
         ], [
@@ -89,7 +92,7 @@ class ProfilController extends Controller
                 Storage::disk('public')->delete($siswa->foto_profil);
             }
 
-            // 🚨 PERBAIKAN: Simpan ke folder yang rapi (profil/siswa)
+            // Simpan ke folder yang rapi
             $path = $request->file('foto')->store('profil/siswa', 'public');
             $siswa->update(['foto_profil' => $path]);
 
