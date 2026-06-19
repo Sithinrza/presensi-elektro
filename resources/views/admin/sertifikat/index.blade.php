@@ -77,8 +77,8 @@
                                 @php
                                     $nomor_db = $p->nomor_sertifikat ?? '';
 
-                                    // Setelan Default jika masih kosong
-                                    $noUrut = '';
+                                    // 👈 PERBAIKAN: Gunakan $nextUrut jika data di DB masih kosong
+                                    $noUrut = $nextUrut;
                                     $tahunSertif = date('Y');
                                     $middlePart = '/DST/PL18.3/DV.01.10/';
 

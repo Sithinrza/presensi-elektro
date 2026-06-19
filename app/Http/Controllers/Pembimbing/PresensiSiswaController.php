@@ -19,10 +19,19 @@ class PresensiSiswaController extends Controller
         $pembimbing = Pembimbing::where('id_user', Auth::id())->first();
 
         // 1. Ambil data siswa
-        $query = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing)->with('user');
+        $query = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing)
+                            ->with('user')
+                            ->orderBy('status', 'asc') 
+                            ->orderBy('nama_lengkap', 'asc');
+
         if ($request->has('search')) {
             $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
         }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
         $anakBimbingan = $query->get();
         $idUsers = $anakBimbingan->pluck('id_user')->toArray();
 

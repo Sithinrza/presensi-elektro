@@ -10,19 +10,36 @@ use App\Models\Tendik;
 use App\Models\Agama;
 use App\Models\UnitKerja;
 use App\Models\PangkatGolongan;
-use App\Models\PendidikanTerakhir; // Model Baru
-use App\Models\Jabatan; // Model Baru
+use App\Models\PendidikanTerakhir;
+use App\Models\Jabatan;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage; // Untuk Foto
+use Illuminate\Support\Facades\Storage;
 
 class TendikController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tendik = Tendik::with(['user', 'agama', 'unitKerja', 'pangkatGolongan.pangkat', 'pangkatGolongan.golongan'])->get();
-        $totalTendik = $tendik->count();
-        $tendikAktif = $tendik->where('status', 'Aktif')->count();
+        $query = Tendik::with(['user', 'agama', 'unitKerja', 'pangkatGolongan.pangkat', 'pangkatGolongan.golongan']);
+
+        // Filter Pencarian (Nama / NIP)
+        if ($request->filled('search')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                  ->orWhere('nip', 'like', '%' . $request->search . '%');
+        }
+
+        // Filter Status Aktif/Nonaktif
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Urutkan Aktif duluan, lalu nama, lalu Pagination
+        $tendik = $query->orderBy('status', 'asc')
+                        ->orderBy('nama_lengkap', 'asc')
+                        ->paginate(10)->withQueryString();
+
+        $totalTendik = Tendik::count();
+        $tendikAktif = Tendik::where('status', 'Aktif')->count();
 
         return view('admin.data.tendik.index', compact('tendik', 'totalTendik', 'tendikAktif'));
     }
@@ -48,8 +65,9 @@ class TendikController extends Controller
             'id_unit_kerja'       => 'required|integer|exists:unit_kerja,id_unit_kerja',
             'id_pangkat_golongan' => 'required|integer|exists:pangkat_golongan,id_pangkat_golongan',
 
-            // OPSIONAL
-            'nip'                 => 'nullable|string|max:50',
+            // OPSIONAL (DIBERI VALIDASI UNIQUE UNTUK NIP)
+            'nip'                 => 'nullable|string|max:50|unique:tendik,nip',
+
             'id_jabatan'          => 'nullable|integer',
             'id_agama'            => 'nullable|integer',
             'id_pend_terakhir'    => 'nullable|integer',
@@ -58,7 +76,11 @@ class TendikController extends Controller
             'tanggal_lahir'       => 'nullable|date',
             'no_hp'               => 'nullable|string|max:20',
             'alamat'              => 'nullable|string',
-            'foto_profil'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_profil'         => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
+        ], [
+            'nip.unique' => 'NIP / NIDN tersebut sudah terdaftar di sistem!',
+            'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
+             'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
         ]);
 
         DB::beginTransaction();
@@ -71,7 +93,6 @@ class TendikController extends Controller
             $roleTendik = Role::firstOrCreate(['name' => 'tendik']);
             $user->roles()->attach($roleTendik->getKey());
 
-            // Handle Foto Profil
             $fotoPath = null;
             if ($request->hasFile('foto_profil')) {
                 $fotoPath = $request->file('foto_profil')->store('profil/tendik', 'public');
@@ -80,13 +101,9 @@ class TendikController extends Controller
             Tendik::create([
                 'id_user'             => $user->id_user,
                 'status'              => 'Aktif',
-
-                // Wajib
                 'nama_lengkap'        => $request->nama_lengkap,
                 'id_unit_kerja'       => $request->id_unit_kerja,
                 'id_pangkat_golongan' => $request->id_pangkat_golongan,
-
-                // Opsional
                 'nip'                 => $request->nip,
                 'id_jabatan'          => $request->id_jabatan,
                 'id_agama'            => $request->id_agama,
@@ -111,7 +128,6 @@ class TendikController extends Controller
     public function edit($id)
     {
         $tendik = Tendik::findOrFail($id);
-
         $agama = Agama::all();
         $unit_kerja = UnitKerja::all();
         $pangkat_golongan = PangkatGolongan::with(['pangkat', 'golongan'])->get();
@@ -135,8 +151,8 @@ class TendikController extends Controller
             'id_unit_kerja'       => 'required|integer|exists:unit_kerja,id_unit_kerja',
             'id_pangkat_golongan' => 'required|integer|exists:pangkat_golongan,id_pangkat_golongan',
 
-            // OPSIONAL
-            'nip'                 => 'nullable|string|max:50',
+            'nip'                 => 'nullable|numeric|max:50|unique:tendik,nip,' . $tendik->id_tendik . ',id_tendik',
+
             'id_jabatan'          => 'nullable|integer',
             'id_agama'            => 'nullable|integer',
             'id_pend_terakhir'    => 'nullable|integer',
@@ -145,7 +161,13 @@ class TendikController extends Controller
             'tanggal_lahir'       => 'nullable|date',
             'no_hp'               => 'nullable|string|max:20',
             'alamat'              => 'nullable|string',
-            'foto_profil'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_profil'         => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
+        ], [
+            'nip.unique' => 'NIP / NIDN tersebut sudah digunakan oleh staf lain!',
+            'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
+             'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).',
+
+             'nip.numeric'       => 'NIP hanya boleh berisi karakter angka numerik.',
         ]);
 
         DB::beginTransaction();
@@ -156,7 +178,6 @@ class TendikController extends Controller
             }
             $user->update($userData);
 
-            // Handle Update Foto Profil
             $fotoPath = $tendik->foto_profil;
             if ($request->hasFile('foto_profil')) {
                 if ($fotoPath && Storage::disk('public')->exists($fotoPath)) {
@@ -170,7 +191,6 @@ class TendikController extends Controller
                 'nama_lengkap'        => $request->nama_lengkap,
                 'id_unit_kerja'       => $request->id_unit_kerja,
                 'id_pangkat_golongan' => $request->id_pangkat_golongan,
-
                 'nip'                 => $request->nip,
                 'id_jabatan'          => $request->id_jabatan,
                 'id_agama'            => $request->id_agama,

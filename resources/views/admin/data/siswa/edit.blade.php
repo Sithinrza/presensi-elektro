@@ -10,10 +10,8 @@
             </a>
             <div>
                 <h1 class="text-xl sm:text-2xl font-black text-maroon-950 tracking-tight italic leading-none">Edit Data Siswa</h1>
-                {{-- <p class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest mt-1 sm:mt-1.5">Pembaruan  Data</p> --}}
             </div>
         </div>
-
     </div>
 
     @if(session('error') || $errors->any())
@@ -23,7 +21,6 @@
         </div>
     @endif
 
-    <!-- FORM EDIT DENGAN ID DAN ONSUBMIT JS -->
     <form id="formEditSiswa" action="{{ route('admin.data.siswa.update', $siswa->id_siswa ?? 1) }}" method="POST" enctype="multipart/form-data" onsubmit="confirmUpdate(event)" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
         @method('PUT')
@@ -116,14 +113,14 @@
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Tanggal Mulai <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
                         </label>
-                        <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai', $siswa->tanggal_mulai ?? '') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
+                        <input type="date" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai', $siswa->tanggal_mulai ?? '') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
                     </div>
 
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Tanggal Selesai <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
                         </label>
-                        <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai', $siswa->tanggal_selesai ?? '') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
+                        <input type="date" id="tanggal_selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai', $siswa->tanggal_selesai ?? '') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
                     </div>
                 </div>
             </div>
@@ -160,7 +157,7 @@
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Agama</label>
                         <select name="id_agama" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                            <option value="" disabled selected>Belum diisi...</option>
+                            <option value="" disabled {{ empty(old('id_agama', $siswa->id_agama ?? '')) ? 'selected' : '' }}>Belum diisi...</option>
                             @foreach($agama ?? [] as $item)
                                 <option value="{{ $item->id_agama }}" {{ (old('id_agama', $siswa->id_agama ?? '') == $item->id_agama) ? 'selected' : '' }}>
                                     {{ $item->name }}
@@ -203,7 +200,6 @@
                         <textarea name="alamat" rows="3" placeholder="Masukkan alamat lengkap..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">{{ old('alamat', $siswa->alamat ?? '') }}</textarea>
                     </div>
                 </div>
-
             </div>
 
         </div>
@@ -235,12 +231,10 @@
         }
     }
 
-    // FUNGSI KONFIRMASI UPDATE DENGAN SWEETALERT2
     function confirmUpdate(event) {
-        event.preventDefault(); // Cegah submit otomatis
+        event.preventDefault();
         const form = document.getElementById('formEditSiswa');
 
-        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
@@ -252,13 +246,12 @@
                 text: "Pastikan data siswa yang diperbarui sudah benar.",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
-                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonColor: '#4d182b',
+                cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Simpan!',
                 cancelButtonText: 'Batal',
-                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                reverseButtons: true,
                 customClass: {
-                    // Kelas khusus agar responsive di HP
                     popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
                     title: 'text-lg sm:text-xl font-black text-maroon-950',
                     confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
@@ -266,15 +259,34 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                    form.submit();
                 }
             });
         } else {
-            // Fallback jika CDN SweetAlert gagal dimuat
             if (confirm('Apakah Anda yakin ingin menyimpan perubahan data siswa ini?')) {
                 form.submit();
             }
         }
     }
+
+    // PERBAIKAN: Kunci kalender di frontend (Form Edit)
+    document.getElementById('tanggal_mulai').addEventListener('change', function() {
+        const tglMulai = this.value;
+        const inputSelesai = document.getElementById('tanggal_selesai');
+
+        inputSelesai.min = tglMulai;
+
+        if (inputSelesai.value && inputSelesai.value < tglMulai) {
+            inputSelesai.value = tglMulai;
+        }
+    });
+
+    // Jalankan sekali saat halaman load agar input selesai langsung terkunci sesuai data yang sudah ada
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const tglMulai = document.getElementById('tanggal_mulai').value;
+        if(tglMulai) {
+            document.getElementById('tanggal_selesai').min = tglMulai;
+        }
+    });
 </script>
 @endsection

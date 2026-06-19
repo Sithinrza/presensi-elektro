@@ -24,14 +24,15 @@ class KajurController extends Controller
 
     public function store(Request $request)
     {
-        // VALIDASI KETAT NIP DAN TAHUN
+        // VALIDASI KETAT NIP (ANTI DOBEL) DAN TAHUN
         $request->validate([
             'nama_lengkap' => 'required|string',
-            'nip' => 'required|numeric', // Harus murni angka
-            'tahun_mulai' => 'required|numeric|digits:4',
-            'tahun_selesai' => 'required|numeric|digits:4|gte:tahun_mulai', // Selesai >= Mulai
+            'nip'          => 'required|numeric|unique:kajurs,nip', // 👈 Ditambah unique
+            'tahun_mulai'  => 'required|numeric|digits:4',
+            'tahun_selesai'=> 'required|numeric|digits:4|gte:tahun_mulai', // Selesai >= Mulai
         ], [
-            'nip.numeric' => 'NIP hanya boleh berisi karakter angka numerik.',
+            'nip.numeric'       => 'NIP hanya boleh berisi karakter angka numerik.',
+            'nip.unique'        => 'NIP tersebut sudah terdaftar di dalam sistem!', // 👈 Pesan error kustom
             'tahun_selesai.gte' => 'Tahun Selesai tidak boleh lebih kecil dari Tahun Mulai.'
         ]);
 
@@ -44,8 +45,8 @@ class KajurController extends Controller
 
         Kajur::create([
             'nama_lengkap' => $request->nama_lengkap,
-            'nip' => $request->nip,
-            'periode' => $periodeGabungan,
+            'nip'          => $request->nip,
+            'periode'      => $periodeGabungan,
             'status_aktif' => $isAktif,
         ]);
 
@@ -54,14 +55,16 @@ class KajurController extends Controller
 
     public function update(Request $request, $id_kajur)
     {
-        // VALIDASI KETAT NIP DAN TAHUN
+        // VALIDASI KETAT NIP (ANTI DOBEL) DAN TAHUN
         $request->validate([
             'nama_lengkap' => 'required|string',
-            'nip' => 'required|numeric', // Harus murni angka
-            'tahun_mulai' => 'required|numeric|digits:4',
-            'tahun_selesai' => 'required|numeric|digits:4|gte:tahun_mulai', // Selesai >= Mulai
+            // 👈 Ditambah unique tapi kecualikan ID dia sendiri
+            'nip'          => 'required|numeric|unique:kajurs,nip,' . $id_kajur . ',id_kajur',
+            'tahun_mulai'  => 'required|numeric|digits:4',
+            'tahun_selesai'=> 'required|numeric|digits:4|gte:tahun_mulai', // Selesai >= Mulai
         ], [
-            'nip.numeric' => 'NIP hanya boleh berisi karakter angka numerik.',
+            'nip.numeric'       => 'NIP hanya boleh berisi karakter angka numerik.',
+            'nip.unique'        => 'NIP tersebut sudah digunakan oleh Kajur lain!', // 👈 Pesan error kustom
             'tahun_selesai.gte' => 'Tahun Selesai tidak boleh lebih kecil dari Tahun Mulai.'
         ]);
 
@@ -70,8 +73,8 @@ class KajurController extends Controller
         $kajur = Kajur::findOrFail($id_kajur);
         $kajur->update([
             'nama_lengkap' => $request->nama_lengkap,
-            'nip' => $request->nip,
-            'periode' => $periodeGabungan,
+            'nip'          => $request->nip,
+            'periode'      => $periodeGabungan,
         ]);
 
         return back()->with('success', 'Data Kajur berhasil diperbarui!');

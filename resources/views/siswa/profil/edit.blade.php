@@ -29,9 +29,9 @@
             <span>{{ session('success') }}</span>
         </div>
     @endif
-    @if(session('error'))
+    @if($errors->any() || session('error'))
         <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center justify-between">
-            <span>{{ session('error') }}</span>
+            <span>{{ session('error') ?? $errors->first() }}</span>
         </div>
     @endif
 
@@ -51,7 +51,7 @@
             <div>
                 <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-tight leading-none">{{ $siswa->nama_lengkap }}</h3>
                 <p class="text-xs sm:text-sm font-bold text-gold mt-1.5">NIS: {{ $siswa->nis ?? '-' }}</p>
-                <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2.5 uppercase tracking-widest">Format: JPG, PNG. Ukuran maksimal 2MB.</p>
+                <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2.5 uppercase tracking-widest">Format: JPG, JPEG, PNG. Ukuran maksimal 3 MB.</p>
             </div>
 
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3">
@@ -80,7 +80,6 @@
         </div>
     </section>
 
-    <!-- FORM EDIT PROFIL -->
     <form id="formEditProfil" onsubmit="confirmUpdate(event)" action="{{ route('siswa.profil.update') }}" method="POST" class="space-y-6 sm:space-y-8">
         @csrf
         @method('PUT')
@@ -98,13 +97,13 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Email Akun</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Email Akun <span class="text-rose-500">*</span></label>
                     <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">No. Handphone / WhatsApp</label>
-                    <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $siswa->no_hp) }}" placeholder="08..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">No. Handphone / WhatsApp <span class="text-rose-500">*</span></label>
+                    <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $siswa->no_hp) }}" required placeholder="08..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">
@@ -118,9 +117,9 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama</label>
-                    <select name="id_agama" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                        <option value="" disabled>Pilih Agama...</option>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama <span class="text-rose-500">*</span></label>
+                    <select name="id_agama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                        <option value="" disabled {{ empty(old('id_agama', $siswa->id_agama)) ? 'selected' : '' }}>Pilih Agama...</option>
                         @foreach($agama ?? [] as $a)
                             <option value="{{ $a->id_agama }}" {{ old('id_agama', $siswa->id_agama) == $a->id_agama ? 'selected' : '' }}>{{ $a->name }}</option>
                         @endforeach
@@ -128,17 +127,16 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jenis Kelamin</label>
-                    <select name="jk" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                        <option value="" disabled>Pilih...</option>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jenis Kelamin <span class="text-rose-500">*</span></label>
+                    <select name="jk" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                        <option value="" disabled {{ empty(old('jk', $siswa->jk)) ? 'selected' : '' }}>Pilih...</option>
                         <option value="L" {{ old('jk', $siswa->jk) == 'L' ? 'selected' : '' }}>Laki-laki</option>
                         <option value="P" {{ old('jk', $siswa->jk) == 'P' ? 'selected' : '' }}>Perempuan</option>
                     </select>
                 </div>
 
-                <!-- KOLOM JURUSAN BARU DITAMBAHKAN -->
                 <div class="space-y-1.5 sm:col-span-2">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jurusan / Kelas</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jurusan / Kelas <span class="text-rose-500">*</span></label>
                     <input type="text" name="jurusan" value="{{ old('jurusan', $siswa->jurusan) }}" placeholder="Contoh: Teknik Komputer dan Jaringan / XII" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     <p class="text-[8px] sm:text-[9px] text-maroon-500 font-bold uppercase tracking-wider ml-1 mt-1 italic">* Jika Nama Jurusan Salah/Belum Lengkap Harap dirubah</p>
                 </div>
@@ -166,7 +164,6 @@
     </form>
 </main>
 
-<!-- TAMBAHKAN LIBRARY SWEETALERT 2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
@@ -234,7 +231,6 @@
                 }
             });
         } else {
-            // Fallback jika CDN SweetAlert gagal dimuat
             if (confirm('Apakah Anda yakin ingin menyimpan perubahan profil ini?')) {
                 form.submit();
             }

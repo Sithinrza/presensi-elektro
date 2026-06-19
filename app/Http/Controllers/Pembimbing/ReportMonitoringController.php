@@ -11,86 +11,75 @@ use Illuminate\Support\Facades\Auth;
 class ReportMonitoringController extends Controller
 {
     public function index(Request $request)
-{
-    // 1. Ambil ID User pembimbing yang sedang login
-    $userId = Auth::id();
+    {
+        $userId = Auth::id();
+        $pembimbing = Pembimbing::where('id_user', $userId)->first();
 
-    // 2. Cari detail data pembimbing untuk mendapatkan id_pembimbing-nya
-    $pembimbing = Pembimbing::where('id_user', $userId)->first();
-
-    if (!$pembimbing) {
-        return redirect()->back()->with('error', 'Profil pembimbing Anda belum terdaftar!');
-    }
-
-    // 3. Mulai query SiswaMagang, TAPI kunci hanya yang id_pembimbing-nya sesuai
-    $query = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing);
-
-    // 4. Fitur pencarian nama siswa jika pembimbing mengetik di input search
-    if ($request->has('search') && $request->search != '') {
-        $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
-    }
-
-    // 5. Hitung total logbook menggunakan relasi yang baru kita buat tadi
-    $anakBimbingan = $query->withCount([
-        'logbook', // ini akan menghasilkan kolom 'logbook_count' otomatis di blade
-        'logbook as belum_divalidasi' => function($query) {
-            $query->where('status', 'pending');
+        if (!$pembimbing) {
+            return redirect()->back()->with('error', 'Profil pembimbing Anda belum terdaftar!');
         }
-    ])->get();
 
-    // 6. Ambil data logbook terakhir untuk masing-masing anak bimbingan
-    foreach ($anakBimbingan as $s) {
-        $s->log_terakhir = \App\Models\Log::where('id_user', $s->id_user)
-                                          ->orderBy('report_date', 'desc')
-                                          ->first();
+        $query = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing);
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
+        }
+
+        // 👈 TAMBAHAN: Logika Filter Status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        // 👈 TAMBAHAN: Pengurutan Aktif ke atas
+        $query->orderBy('status', 'asc')->orderBy('nama_lengkap', 'asc');
+
+        $anakBimbingan = $query->withCount([
+            'logbook',
+            'logbook as belum_divalidasi' => function($query) {
+                $query->where('status', 'pending');
+            }
+        ])->get();
+
+        foreach ($anakBimbingan as $s) {
+            $s->log_terakhir = \App\Models\Log::where('id_user', $s->id_user)
+                                              ->orderBy('report_date', 'desc')
+                                              ->first();
+        }
+
+        return view('pembimbing.monitoring.index', compact('anakBimbingan'));
     }
 
-    return view('pembimbing.monitoring.index', compact('anakBimbingan'));
-}
+    public function show($id)
+    {
+        $siswa = SiswaMagang::where('id_siswa', $id)->firstOrFail();
 
+        $riwayatLog = \App\Models\Log::where('id_user', $siswa->id_user)
+                                     ->orderBy('report_date', 'desc')
+                                     ->get();
 
+        $belum_divalidasi = $riwayatLog->where('status', 'pending')->count();
 
-public function show($id)
-{
-    // 1. Ambil data siswa berdasarkan id_siswa asli database kamu
-    $siswa = SiswaMagang::where('id_siswa', $id)->firstOrFail();
+        return view('pembimbing.monitoring.show', compact('siswa', 'riwayatLog', 'belum_divalidasi'));
+    }
 
-    // 2. Ambil riwayat logbook milik siswa ini berdasarkan id_user-nya
-    $riwayatLog = \App\Models\Log::where('id_user', $siswa->id_user)
-                                 ->orderBy('report_date', 'desc')
-                                 ->get();
+    public function validasi(Request $request, $id_log)
+    {
+        $request->validate([
+            'status'             => 'required|in:diterima,ditolak',
+            'catatan_pembimbing' => 'nullable|string'
+        ]);
 
-    // 3. Hitung berapa logbook yang statusnya masih 'pending' (belum divalidasi)
-    $belum_divalidasi = $riwayatLog->where('status', 'pending')->count();
+        $log = \App\Models\Log::findOrFail($id_log);
 
-    // 4. Kirim semua variabel ke halaman view detail pembimbing
-    return view('pembimbing.monitoring.show', compact('siswa', 'riwayatLog', 'belum_divalidasi'));
-}
+        $log->update([
+            'status'             => $request->status,
+            'catatan_pembimbing' => $request->catatan_pembimbing
+        ]);
 
-public function validasi(Request $request, $id_log)
-{
-    // 1. Validasi inputan dari form pembimbing
-    $request->validate([
-        'status'             => 'required|in:diterima,ditolak',
-        'catatan_pembimbing' => 'nullable|string'
-    ]);
+        $pesan = $request->status == 'diterima'
+            ? 'Logbook harian berhasil diterima dan diverifikasi!'
+            : 'Logbook harian telah ditolak untuk direvisi siswa.';
 
-    // 2. Cari data logbook yang mau divalidasi
-    $log = \App\Models\Log::findOrFail($id_log);
-
-    // 3. Update status dan catatannya ke database
-    $log->update([
-        'status'             => $request->status,
-        'catatan_pembimbing' => $request->catatan_pembimbing
-    ]);
-
-    // 4. Bikin pesan sukses dinamis berdasarkan tombol yang diklik bapaknya
-    $pesan = $request->status == 'diterima'
-        ? 'Logbook harian berhasil diterima dan diverifikasi!'
-        : 'Logbook harian telah ditolak untuk direvisi siswa.';
-
-    // 5. Kembalikan ke halaman sebelumnya dengan aman bawa status sukses
-    return redirect()->back()->with('success', $pesan);
-}
-
+        return redirect()->back()->with('success', $pesan);
+    }
 }

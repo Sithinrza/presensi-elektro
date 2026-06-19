@@ -2,6 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
+// 🚨 TAMBAHAN: Import Middleware PreventBackHistory
+use App\Http\Middleware\PreventBackHistory;
+
 // Import Controller Global
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Auth\AuthController;
@@ -33,6 +36,7 @@ use App\Http\Controllers\Pembimbing\PresensiSiswaController;
 use App\Http\Controllers\Pembimbing\ReportMonitoringController;
 use App\Http\Controllers\Pembimbing\NilaiController;
 use App\Http\Controllers\Pembimbing\ProfilController as PembimbingProfil;
+use App\Http\Controllers\Pembimbing\DataSiswaController;
 
 // Import Controller Tendik
 use App\Http\Controllers\Tendik\RiwayatController as TendikRiwayat;
@@ -62,7 +66,7 @@ Route::middleware(['guest'])->group(function () {
 // ==========================================
 // JALUR TERPROTEKSI (PAGAR UTAMA: WAJIB LOGIN)
 // ==========================================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/logout', function () {
         return redirect('/login');
@@ -78,16 +82,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profil/password/reset', [ProfilePasswordController::class, 'showResetForm'])->name('profile.password.reset');
     Route::post('/profil/password/update', [ProfilePasswordController::class, 'updatePassword'])->name('profile.password.update');
 
-
-
     Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi.index');
     Route::post('/presensi-submit', [PresensiController::class, 'store'])->name('presensi.store');
     Route::post('/presensi/simpan-alasan', [PresensiController::class, 'simpanAlasan'])->name('presensi.simpan_alasan');
 
     Route::get('/riwayat', [RiwayatController::class, 'index'])->name('presensi.riwayat-presensi');
 
-
     Route::get('/presensi/{id}/detail', [PresensiController::class, 'show'])->name('presensi.detail');
+
     // ------------------------------------------
     // AREA ADMIN
     // ------------------------------------------
@@ -133,7 +135,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/log', [SiswaLog::class, 'index'])->name('log');
         Route::post('/log', [SiswaLog::class, 'store'])->name('log.store');
 
-
         Route::get('/profil', [SiswaProfil::class, 'index'])->name('profil.index');
         Route::put('/profil/update', [SiswaProfil::class, 'update'])->name('profil.update');
         Route::put('/profil/update-foto', [SiswaProfil::class, 'updateFoto'])->name('profil.update-foto');
@@ -153,6 +154,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/monitoring/validasi/{id}', [ReportMonitoringController::class, 'validasi'])->name('monitoring.validasi');
 
         // Presensi Siswa (Dibuat eksplisit agar rutenya terdaftar dengan pasti)
+        Route::get('/data-siswa', [DataSiswaController::class, 'index'])->name('data-siswa.index');
+        Route::get('/data-siswa/{id}', [DataSiswaController::class, 'show'])->name('data-siswa.show');
+
         Route::get('/presensi-siswa', [PresensiSiswaController::class, 'index'])->name('presensi-siswa.index');
         Route::get('/presensi-siswa/{id}', [PresensiSiswaController::class, 'show'])->name('presensi-siswa.show');
 
@@ -163,13 +167,12 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/nilai/update/{id_siswa}', [NilaiController::class, 'update'])->name('nilai.update');
         Route::get('/nilai/cetak/{id_siswa}', [NilaiController::class, 'cetakSertifikat'])->name('nilai.cetak');
 
-
         Route::get('/profil', [PembimbingProfil::class, 'index'])->name('profil.index');
         Route::put('/profil/update', [PembimbingProfil::class, 'update'])->name('profil.update');
         Route::put('/profil/update-foto', [PembimbingProfil::class, 'updateFoto'])->name('profil.update-foto');
         Route::delete('/profil/hapus-foto', [PembimbingProfil::class, 'deleteFoto'])->name('profil.delete-foto');
         Route::get('/profil/edit', [PembimbingProfil::class, 'edit'])->name('profil.edit');
-        });
+    });
 
     // ------------------------------------------
     // AREA TENDIK
@@ -183,6 +186,5 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/tendik/profil/hapus-foto', [TendikProfil::class, 'deleteFoto'])->name('profil.delete-foto');
 
         Route::get('/profil/edit', [TendikProfil::class, 'edit'])->name('profil.edit');
-        });
-
+    });
 });

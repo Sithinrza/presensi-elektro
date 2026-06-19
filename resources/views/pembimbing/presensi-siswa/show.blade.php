@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <!-- Box Statistik (Bisa di-scroll nyamping di HP) -->
+            <!-- Box Statistik -->
             <div class="grid grid-cols-4 sm:flex sm:items-center sm:justify-start gap-y-3 gap-x-1 sm:gap-4 lg:gap-5 w-full lg:w-auto shrink-0 mt-3 sm:mt-0 bg-maroon-950/50 border border-maroon-800/50 p-3 sm:p-4 rounded-xl sm:rounded-2xl backdrop-blur-sm">
 
                 <div class="text-center shrink-0">
@@ -49,7 +49,6 @@
                     <p class="text-sm sm:text-lg font-black text-emerald-400 leading-none">{{ $statistik['Tepat CI'] ?? 0 }}</p>
                 </div>
 
-                <!-- Garis Pemisah (Hanya muncul di Layar Besar) -->
                 <div class="hidden sm:block w-[1px] h-8 bg-maroon-800 shrink-0"></div>
 
                 <div class="text-center shrink-0">
@@ -128,14 +127,14 @@
         </div>
 
         <div class="overflow-x-auto custom-scroll pb-2">
-            <table class="w-full text-left border-collapse min-w-[550px] lg:min-w-[600px]">
+            <table class="w-full text-left border-collapse min-w-[550px] lg:min-w-[650px]">
                 <thead class="bg-slate-50/80 border-b border-slate-100">
                     <tr>
                         <th class="px-4 sm:px-6 lg:px-8 py-3 lg:py-5 text-[8px] sm:text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest">Hari & Tanggal</th>
                         <th class="px-4 sm:px-6 lg:px-8 py-3 lg:py-5 text-[8px] sm:text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Masuk</th>
                         <th class="px-4 sm:px-6 lg:px-8 py-3 lg:py-5 text-[8px] sm:text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Pulang</th>
                         <th class="px-4 sm:px-6 lg:px-8 py-3 lg:py-5 text-[8px] sm:text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status Kehadiran</th>
-                        <th class="px-4 sm:px-6 lg:px-8 py-3 lg:py-5"></th>
+                        <th class="px-4 sm:px-6 lg:px-8 py-3 lg:py-5 text-[8px] sm:text-[9px] lg:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Opsi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
@@ -144,19 +143,20 @@
                     @if($p->id_presensi)
                         <tr onclick="window.location.href='{{ route('presensi.detail', $p->id_presensi) }}'" class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
                     @else
-                        <tr class="hover:bg-slate-50/50 transition-colors group">
+                        <!-- 🚨 BARIS KOSONG -->
+                        <tr class="bg-slate-50/30 transition-colors">
                     @endif
                         <td class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5">
-                            <p class="font-bold text-slate-800 text-[10px] sm:text-xs lg:text-sm group-hover:text-maroon-800 transition-colors">{{ \Carbon\Carbon::parse($p->tanggal)->translatedFormat('l, d M Y') }}</p>
+                            <p class="font-bold {{ isset($p->id_presensi) ? 'text-slate-800 group-hover:text-maroon-800' : 'text-slate-400' }} text-[10px] sm:text-xs lg:text-sm transition-colors">{{ \Carbon\Carbon::parse($p->tanggal)->translatedFormat('l, d M Y') }}</p>
                         </td>
-                        <td class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 text-center text-slate-500 text-[10px] sm:text-xs lg:text-sm font-semibold font-mono">
+                        <td class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 text-center {{ isset($p->id_presensi) ? 'text-slate-500' : 'text-slate-300' }} text-[10px] sm:text-xs lg:text-sm font-semibold font-mono">
                             {{ $p->jam_masuk ?? '--:--' }}
                         </td>
-                        <td class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 text-center text-slate-500 text-[10px] sm:text-xs lg:text-sm font-semibold font-mono">
+                        <td class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 text-center {{ isset($p->id_presensi) ? 'text-slate-500' : 'text-slate-300' }} text-[10px] sm:text-xs lg:text-sm font-semibold font-mono">
                             {{ $p->jam_pulang ?? '--:--' }}
                         </td>
                         <td class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 text-center">
-                            <div class="flex flex-col gap-1 lg:flex-row lg:gap-1.5 items-center justify-center">
+                            <div class="flex flex-col gap-1 lg:flex-row lg:gap-1.5 items-center justify-center {{ isset($p->id_presensi) ? '' : 'opacity-60' }}">
 
                                 @php
                                     $ciName = isset($p->statusCi) ? $p->statusCi->name : 'Alpa';
@@ -193,9 +193,17 @@
                                 </div>
                             @endif
                         </td>
-                        <td class="pr-4 sm:pr-6 lg:pr-8 text-right">
-                            @if($p->id_presensi)
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-300 opacity-0 group-hover:opacity-100 group-hover:text-maroon-600 transition-all translate-x-2 group-hover:translate-x-0 ml-auto lg:w-4 lg:h-4"><path d="m9 18 6-6-6-6"/></svg>
+                        <td class="pr-4 sm:pr-6 lg:pr-8 py-3 sm:py-4 lg:py-5 text-center">
+                            @if(isset($p->id_presensi))
+                                <span class="inline-flex items-center justify-center gap-1 text-[9px] lg:text-[10px] font-black text-maroon-700 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 cursor-pointer">
+                                    Detail
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </span>
+                            @else
+                                <span class="inline-flex items-center justify-center gap-1 text-[9px] lg:text-[10px] font-black text-slate-300 uppercase tracking-widest cursor-not-allowed">
+                                    Detail
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </span>
                             @endif
                         </td>
                     </tr>

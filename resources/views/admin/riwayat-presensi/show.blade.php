@@ -21,7 +21,6 @@
                     @if(isset($foto_profil) && $foto_profil)
                         <img src="{{ asset('storage/' . $foto_profil) }}" alt="Foto Profil" class="w-full h-full object-cover">
                     @else
-                        {{-- Jika tidak ada foto, tampilkan inisial huruf depan --}}
                         {{ substr($nama_lengkap ?? 'A', 0, 1) }}
                     @endif
                 </div>
@@ -39,7 +38,6 @@
                     <p class="text-lg sm:text-xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CI'] ?? 0 }}</p>
                 </div>
 
-                <!-- Garis Pemisah (Disembunyikan di HP) -->
                 <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
 
                 <div class="text-center shrink-0">
@@ -135,13 +133,14 @@
         </div>
 
         <div class="overflow-x-auto no-scrollbar">
-            <table class="w-full text-left border-collapse min-w-[600px]">
+            <table class="w-full text-left border-collapse min-w-[700px]">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tanggal</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Tap In</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Tap Out</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status Kehadiran</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Opsi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
@@ -150,30 +149,30 @@
                         @if(isset($r->id_presensi))
                             <tr onclick="window.location.href='{{ route('presensi.detail', $r->id_presensi) }}'" class="hover:bg-slate-50/80 transition-colors group cursor-pointer">
                         @else
-                            <tr class="hover:bg-slate-50/80 transition-colors group">
+                            <tr class="bg-slate-50/30 transition-colors">
                         @endif
 
-                            <td class="px-8 py-4 text-xs font-bold text-slate-700 group-hover:text-maroon-800 transition-colors">
+                            <td class="px-8 py-4 text-xs font-bold {{ isset($r->id_presensi) ? 'text-slate-700 group-hover:text-maroon-800' : 'text-slate-400' }} transition-colors">
                                 {{ \Carbon\Carbon::parse($r->tanggal)->translatedFormat('l, d F Y') }}
                             </td>
-                            <td class="px-8 py-4 text-center text-xs font-bold text-slate-500 font-mono">
+                            <td class="px-8 py-4 text-center text-xs font-bold {{ isset($r->id_presensi) ? 'text-slate-500' : 'text-slate-300' }} font-mono">
                                 {{ $r->jam_masuk ?? '--:--' }}
                             </td>
-                            <td class="px-8 py-4 text-center text-xs font-bold text-slate-500 font-mono">
+                            <td class="px-8 py-4 text-center text-xs font-bold {{ isset($r->id_presensi) ? 'text-slate-500' : 'text-slate-300' }} font-mono">
                                 {{ $r->jam_pulang ?? '--:--' }}
                             </td>
                             <td class="px-8 py-4 text-center">
-                                <div class="flex flex-col sm:flex-row gap-1.5 items-center justify-center">
+                                <div class="flex flex-col sm:flex-row gap-1.5 items-center justify-center {{ isset($r->id_presensi) ? '' : 'opacity-60' }}">
 
                                     @php
-                                        // LOGIKA WARNA (Cukup urus warna saja, teks murni dari DB)
+                                        // LOGIKA WARNA
                                         $ciName = isset($r->statusCi) ? $r->statusCi->name : 'Alpa';
                                         $colorCi = match($ciName) {
                                             'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                             'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
                                             'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
                                             'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
-                                            default => 'bg-rose-50 text-rose-600 border-rose-200' // Alpa
+                                            default => 'bg-rose-50 text-rose-600 border-rose-200'
                                         };
 
                                         $coName = isset($r->statusCo) ? $r->statusCo->name : 'Belum CO';
@@ -183,7 +182,7 @@
                                             'Belum CO' => 'bg-slate-50 text-slate-500 border-slate-200',
                                             'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
                                             'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
-                                            default => 'bg-rose-50 text-rose-600 border-rose-200' // Lupa CO
+                                            default => 'bg-rose-50 text-rose-600 border-rose-200'
                                         };
                                     @endphp
 
@@ -201,10 +200,25 @@
                                     </div>
                                 @endif
                             </td>
+
+                            <td class="px-8 py-4 text-center">
+                                @if(isset($r->id_presensi))
+                                    <a href="{{ route('presensi.detail', $r->id_presensi) }}" class="inline-flex items-center justify-center gap-1 text-[10px] font-black text-maroon-700 uppercase tracking-widest hover:text-maroon-900 transition-colors">
+                                        Detail
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                    </a>
+                                @else
+                                    <span class="inline-flex items-center justify-center gap-1 text-[10px] font-black text-slate-300 uppercase tracking-widest cursor-not-allowed">
+                                        Detail
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                    </span>
+                                @endif
+                            </td>
+
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center py-10 font-bold text-slate-400 text-sm">Belum ada riwayat presensi yang tercatat pada filter ini.</td>
+                            <td colspan="5" class="text-center py-10 font-bold text-slate-400 text-sm">Belum ada riwayat presensi yang tercatat pada filter ini.</td>
                         </tr>
                     @endforelse
 

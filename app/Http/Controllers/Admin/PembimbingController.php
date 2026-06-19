@@ -12,16 +12,29 @@ use App\Models\SiswaMagang;
 use App\Models\PendidikanTerakhir;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage; // 👈 Wajib ditambah untuk menghandle file
 
 class PembimbingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $pembimbing = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir'])
-            ->withCount('siswaMagang')
-            ->get();
+        $query = Pembimbing::with(['user', 'agama', 'pendidikanTerakhir'])
+                           ->withCount('siswaMagang');
 
-        $totalPembimbing = $pembimbing->count();
+        if ($request->filled('search')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                  ->orWhere('no_induk', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $pembimbing = $query->orderBy('status', 'asc')
+                            ->orderBy('nama_lengkap', 'asc')
+                            ->paginate(10)->withQueryString();
+
+        $totalPembimbing = Pembimbing::count();
         $totalBimbingan = SiswaMagang::whereNotNull('id_pembimbing')->count();
 
         return view('admin.data.pembimbing.index', compact('pembimbing', 'totalPembimbing', 'totalBimbingan'));
@@ -37,16 +50,22 @@ class PembimbingController extends Controller
 
     public function store(Request $request)
     {
-        // SEMUA DIBUAT REQUIRED
         $request->validate([
             'nama_lengkap'     => 'required|string|max:100',
             'email'            => 'required|email|unique:users,email',
             'password'         => 'required|min:6',
-            'no_induk'         => 'required|string|max:50',
+            'no_induk'         => 'required|numeric|max:50|unique:pembimbing,no_induk',
             'jabatan'          => 'required|string|max:100',
             'no_telp'          => 'required|string|max:20',
             'id_agama'         => 'required|integer',
             'id_pend_terakhir' => 'required|integer',
+            // 🚨 VALIDASI FOTO PROFIL MAX 3MB
+            'foto_profil'      => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
+        ], [
+            'no_induk.unique'  => 'NIP / Nomor Induk tersebut sudah terdaftar di sistem!',
+            'no_induk.numeric' => 'No Induk hanya boleh berisi karakter angka numerik.',
+            'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
+            'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
         ]);
 
         DB::beginTransaction();
@@ -59,6 +78,12 @@ class PembimbingController extends Controller
             $rolePembimbing = Role::firstOrCreate(['name' => 'Pembimbing']);
             $user->roles()->attach($rolePembimbing->getKey());
 
+            // Handle Upload Foto Profil
+            $fotoPath = null;
+            if ($request->hasFile('foto_profil')) {
+                $fotoPath = $request->file('foto_profil')->store('profil/pembimbing', 'public');
+            }
+
             Pembimbing::create([
                 'id_user'          => $user->id_user,
                 'nama_lengkap'     => $request->nama_lengkap,
@@ -68,6 +93,7 @@ class PembimbingController extends Controller
                 'no_telp'          => $request->no_telp,
                 'id_agama'         => $request->id_agama,
                 'id_pend_terakhir' => $request->id_pend_terakhir,
+                'foto_profil'      => $fotoPath, // 👈 Simpan path foto ke database
             ]);
 
             DB::commit();
@@ -93,17 +119,23 @@ class PembimbingController extends Controller
         $pembimbing = Pembimbing::findOrFail($id);
         $user = User::findOrFail($pembimbing->id_user);
 
-        // SEMUA DIBUAT REQUIRED KECUALI PASSWORD
         $request->validate([
             'nama_lengkap'     => 'required|string|max:100',
             'email'            => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
             'password'         => 'nullable|min:6',
             'status'           => 'required|in:Aktif,Nonaktif',
-            'no_induk'         => 'required|string|max:50',
+            'no_induk'         => 'required|numeric|max:50|unique:pembimbing,no_induk,' . $pembimbing->id_pembimbing . ',id_pembimbing',
             'jabatan'          => 'required|string|max:100',
             'no_telp'          => 'required|string|max:20',
             'id_agama'         => 'required|integer',
             'id_pend_terakhir' => 'required|integer',
+            
+            'foto_profil'      => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
+        ], [
+             'no_induk.unique'  => 'NIP / Nomor Induk tersebut sudah terdaftar di sistem!',
+             'no_induk.numeric' => 'No Induk hanya boleh berisi karakter angka numerik.',
+             'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
+             'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
         ]);
 
         DB::beginTransaction();
@@ -114,6 +146,17 @@ class PembimbingController extends Controller
             }
             $user->save();
 
+            // Handle Update Foto Profil
+            $fotoPath = $pembimbing->foto_profil;
+            if ($request->hasFile('foto_profil')) {
+                // Hapus foto lama jika ada
+                if ($fotoPath && Storage::disk('public')->exists($fotoPath)) {
+                    Storage::disk('public')->delete($fotoPath);
+                }
+                // Simpan foto baru
+                $fotoPath = $request->file('foto_profil')->store('profil/pembimbing', 'public');
+            }
+
             $pembimbing->update([
                 'nama_lengkap'     => $request->nama_lengkap,
                 'status'           => $request->status,
@@ -122,6 +165,7 @@ class PembimbingController extends Controller
                 'no_telp'          => $request->no_telp,
                 'id_agama'         => $request->id_agama,
                 'id_pend_terakhir' => $request->id_pend_terakhir,
+                'foto_profil'      => $fotoPath, // 👈 Update path foto
             ]);
 
             if ($request->status === 'Nonaktif') {
@@ -146,6 +190,11 @@ class PembimbingController extends Controller
 
         DB::beginTransaction();
         try {
+            // Hapus foto dari storage saat akun dihapus
+            if ($pembimbing->foto_profil && Storage::disk('public')->exists($pembimbing->foto_profil)) {
+                Storage::disk('public')->delete($pembimbing->foto_profil);
+            }
+
             $pembimbing->delete();
             $user->delete();
 
