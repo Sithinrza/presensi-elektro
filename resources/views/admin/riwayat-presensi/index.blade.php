@@ -30,9 +30,18 @@
                     <h3 id="list-title" class="text-lg lg:text-xl font-black text-slate-800 tracking-tight leading-none">Daftar Siswa Magang</h3>
                     <p class="text-[9px] lg:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5 lg:mt-2">Klik baris tabel untuk detail</p>
                 </div>
-                <div class="relative group w-full md:max-w-sm">
-                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nama atau ID..." class="bg-slate-50 border border-slate-200 rounded-xl px-10 py-2.5 lg:py-3 text-[11px] lg:text-xs font-medium w-full focus:ring-2 focus:ring-maroon-500 focus:border-maroon-500 outline-none transition-all placeholder:text-slate-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-maroon-600 transition-colors lg:w-4 lg:h-4"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <select id="statusFilter" onchange="filterTable()" class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 lg:py-3 text-[11px] lg:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 cursor-pointer shadow-sm w-full sm:w-auto">
+                        <option value="all">Semua Status</option>
+                        <option value="aktif">Hanya Aktif</option>
+                        <option value="nonaktif">Nonaktif / Selesai</option>
+                    </select>
+
+                    <div class="relative group w-full md:max-w-sm">
+                        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nama atau ID..." class="bg-slate-50 border border-slate-200 rounded-xl px-10 py-2.5 lg:py-3 text-[11px] lg:text-xs font-medium w-full focus:ring-2 focus:ring-maroon-500 focus:border-maroon-500 outline-none transition-all placeholder:text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-maroon-600 transition-colors lg:w-4 lg:h-4"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </div>
                 </div>
             </div>
 
@@ -50,7 +59,7 @@
                     <tbody id="list-body" class="divide-y divide-slate-100">
 
                         @foreach($siswa as $s)
-                        <tr onclick="window.location.href='{{ url('/admin/riwayat-presensi/detail/' . $s->id_user) }}'" class="row-item type-siswa hover:bg-slate-50/80 transition-all cursor-pointer group">
+                        <tr data-status="{{ strtolower($s->status ?? 'aktif') }}" onclick="window.location.href='{{ url('/admin/riwayat-presensi/detail/' . $s->id_user) }}'" class="row-item type-siswa hover:bg-slate-50/80 transition-all cursor-pointer group">
                             <td class="px-4 lg:px-8 py-3 lg:py-4">
                                 <div class="flex items-center gap-3 lg:gap-4">
                                     <div class="w-8 h-8 lg:w-11 lg:h-11 rounded-lg lg:rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
@@ -75,6 +84,7 @@
                                         'Terlambat', 'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
                                         'Alpa', 'Lupa Check-Out' => 'bg-rose-50 text-rose-600 border-rose-200',
+                                        'Nonaktif' => 'bg-slate-100 text-slate-400 border-slate-200',
                                         default => 'bg-slate-50 text-slate-500 border-slate-200'
                                     };
                                 @endphp
@@ -90,12 +100,11 @@
                         @endforeach
 
                         @foreach($tendik as $t)
-                        <tr onclick="window.location.href='{{ url('/admin/riwayat-presensi/detail/' . $t->id_user) }}'" class="row-item type-tendik hover:bg-slate-50/80 transition-all cursor-pointer group" style="display: none;">
+                        <tr data-status="{{ strtolower($t->status ?? 'aktif') }}" onclick="window.location.href='{{ url('/admin/riwayat-presensi/detail/' . $t->id_user) }}'" class="row-item type-tendik hover:bg-slate-50/80 transition-all cursor-pointer group" style="display: none;">
                             <td class="px-4 lg:px-8 py-3 lg:py-4">
                                 <div class="flex items-center gap-3 lg:gap-4">
                                     <div class="w-8 h-8 lg:w-11 lg:h-11 rounded-lg lg:rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm flex-shrink-0">
                                         @if($t->foto_profil)
-                                            <!-- PERBAIKAN: Menghilangkan teks 'profil/' agar image bisa dimuat dengan benar -->
                                             <img src="{{ asset('storage/' . $t->foto_profil) }}" class="w-full h-full object-cover">
                                         @else
                                             <img src="https://ui-avatars.com/api/?name={{ urlencode($t->nama_lengkap) }}&background=0f172a&color=fff" class="w-full h-full object-cover">
@@ -116,6 +125,7 @@
                                         'Terlambat', 'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
                                         'Alpa', 'Lupa Check-Out' => 'bg-rose-50 text-rose-600 border-rose-200',
+                                        'Nonaktif' => 'bg-slate-100 text-slate-400 border-slate-200',
                                         default => 'bg-slate-50 text-slate-500 border-slate-200'
                                     };
                                 @endphp
@@ -138,7 +148,6 @@
 
 </main>
 
-<!-- MODAL CETAK DIKEMBALIKAN -->
 <div id="modal-cetak" class="fixed inset-0 modal-backdrop z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
     <div class="bg-white rounded-3xl p-6 lg:p-8 w-full max-w-md shadow-2xl transform scale-95 transition-transform duration-300" id="modal-cetak-content">
         <div class="flex justify-between items-center mb-5 lg:mb-6">
@@ -206,7 +215,6 @@
             title.textContent = "Daftar Siswa Magang";
             colExtra.textContent = "Instansi Sekolah";
 
-            rowsSiswa.forEach(row => row.style.display = '');
             rowsTendik.forEach(row => row.style.display = 'none');
         } else {
             btnTendik.className = activeClass;
@@ -215,20 +223,29 @@
             colExtra.textContent = "Unit Kerja / Prodi";
 
             rowsSiswa.forEach(row => row.style.display = 'none');
-            rowsTendik.forEach(row => row.style.display = '');
         }
+
+        // Jalankan ulang fungsi filter agar tabel beradaptasi dengan kategori baru
+        filterTable();
     }
 
     function filterTable() {
         const input = document.getElementById('searchInput').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
         const rows = document.querySelectorAll('.row-item');
 
         rows.forEach(row => {
+            // Hanya periksa baris yang sesuai dengan tab kategori (Siswa / Tendik) yang sedang aktif
             if(row.classList.contains('type-' + currentCategory)) {
                 const name = row.querySelector('.search-name').textContent.toLowerCase();
                 const id = row.querySelector('.search-id').textContent.toLowerCase();
+                const status = row.getAttribute('data-status'); // Ambil status asli dari attribute HTML
 
-                if (name.includes(input) || id.includes(input)) {
+                // Cek apakah teks cocok dan status cocok
+                const matchText = name.includes(input) || id.includes(input);
+                const matchStatus = (statusFilter === 'all') || (status === statusFilter);
+
+                if (matchText && matchStatus) {
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';

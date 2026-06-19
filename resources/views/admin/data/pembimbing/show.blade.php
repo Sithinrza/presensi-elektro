@@ -98,6 +98,9 @@
                     <p class="text-sm font-bold text-slate-800">{{ $pembimbing->user->email ?? 'Belum ada email yang ditautkan.' }}</p>
                 </div>
                 <div>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase">No. HP / WhatsApp</p><p class="text-sm font-bold text-slate-800">{{ $pembimbing->no_telp ?? '-' }}</p>
+                </div>
+                <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Agama</p>
                     <p class="text-sm font-bold text-slate-800">{{ $pembimbing->agama->name ?? 'Belum Diatur' }}</p>
                 </div>

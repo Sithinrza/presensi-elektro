@@ -91,7 +91,8 @@
             <tr>
                 <td style="text-align: center; vertical-align: middle;">{{ $index + 1 }}</td>
                 <td style="vertical-align: middle;">{{ $row['nama'] }}</td>
-                <td style="text-align: center; vertical-align: middle; font-family: monospace;">{{ $row['identitas'] }}</td>
+                <!-- 🚨 PERBAIKAN: Tambahkan CSS mso-number-format di bawah ini agar Excel membaca sebagai TEKS -->
+                <td style="text-align: center; vertical-align: middle; font-family: monospace; mso-number-format:'\@';">{{ $row['identitas'] }}</td>
                 <td style="vertical-align: middle;">{{ $row['instansi'] }}</td>
 
                 @foreach($hariInMonth as $date)
@@ -158,7 +159,8 @@
             <tr>
                 <td style="text-align: center; vertical-align: middle;">{{ $index + 1 }}</td>
                 <td style="vertical-align: middle;">{{ $row['nama'] }}</td>
-                <td style="text-align: center; vertical-align: middle; font-family: monospace;">{{ $row['identitas'] }}</td>
+                <!-- 🚨 PERBAIKAN DI SINI JUGA UNTUK TABEL CO -->
+                <td style="text-align: center; vertical-align: middle; font-family: monospace; mso-number-format:'\@';">{{ $row['identitas'] }}</td>
                 <td style="vertical-align: middle;">{{ $row['instansi'] }}</td>
 
                 @foreach($hariInMonth as $date)

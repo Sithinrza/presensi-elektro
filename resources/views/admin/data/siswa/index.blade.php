@@ -7,22 +7,22 @@
         background: rgba(43, 11, 22, 0.4);
         backdrop-filter: blur(4px);
     }
-    
+
     /* Custom Scrollbar untuk Tabel yang Responsif */
     .custom-scrollbar::-webkit-scrollbar {
         height: 6px;
         width: 6px;
     }
     .custom-scrollbar::-webkit-scrollbar-track {
-        background: #f8fafc; 
+        background: #f8fafc;
         border-radius: 8px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #cbd5e1; 
+        background: #cbd5e1;
         border-radius: 8px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8; 
+        background: #94a3b8;
     }
 </style>
 
@@ -67,13 +67,28 @@
 
     <!-- DATA TABLE SECTION -->
     <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-        
+
         <!-- HEADER TABEL & SEARCH BAR -->
-        <div class="px-6 md:px-8 py-5 sm:py-6 border-b border-slate-100 flex justify-end bg-white shrink-0">
-            <div class="relative w-full md:w-80 group">
-                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari Nama atau NIS..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-10 py-2.5 sm:py-3 text-[10px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 transition-all shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[16px] sm:h-[16px] absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-maroon-500 transition-colors"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            </div>
+        <div class="px-6 md:px-8 py-5 sm:py-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between sm:justify-end items-center gap-3 bg-white shrink-0">
+            <form method="GET" action="{{ route('admin.data.siswa.index') }}" class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
+
+                <select name="status" onchange="this.form.submit()" class="w-full sm:w-auto bg-slate-50 border border-slate-200 text-slate-700 text-[10px] sm:text-xs font-bold rounded-xl px-4 py-2.5 sm:py-3 outline-none focus:ring-2 focus:ring-maroon-500 cursor-pointer shadow-sm">
+                    <option value="">Semua Status</option>
+                    <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Hanya Aktif</option>
+                    <option value="Nonaktif" {{ request('status') == 'Nonaktif' ? 'selected' : '' }}>Nonaktif / Selesai</option>
+                </select>
+
+                <div class="relative w-full md:w-80 group">
+                    <input type="text" id="searchInput" name="search" value="{{ request('search') }}" onkeyup="filterTable()" placeholder="Cari Nama atau NIS..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-10 py-2.5 sm:py-3 text-[10px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 transition-all shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[16px] sm:h-[16px] absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-maroon-500 transition-colors"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+
+                    @if(request('search') || request('status'))
+                        <a href="{{ route('admin.data.siswa.index') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition-colors" title="Reset Filter">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
 
         <!-- MENGGUNAKAN custom-scrollbar -->
@@ -133,7 +148,7 @@
                         </td>
                         <td class="px-6 sm:px-8 py-4 text-center">
                             <div class="flex justify-center gap-1.5 sm:gap-2 opacity-100 lg:opacity-60 lg:group-hover:opacity-100 transition-opacity">
-                                
+
                                 <!-- Tombol Detail (Ikon Mata) dengan Tooltip Kustom -->
                                 <div class="relative group/tooltip">
                                     <a href="{{ route('admin.data.siswa.show', $s->id_siswa) }}" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg sm:rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all shadow-sm active:scale-95">
@@ -151,7 +166,7 @@
                                     <!-- Tooltip Label -->
                                     <span class="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[9px] font-bold px-2.5 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-sm z-10">Edit Data</span>
                                 </div>
-                                
+
                                 <!-- Tombol Hapus dengan Tooltip Kustom -->
                                 <div class="relative group/tooltip">
                                     <button type="button"
@@ -162,7 +177,7 @@
                                     <!-- Tooltip Label -->
                                     <span class="absolute -top-9 left-1/2 -translate-x-1/2 bg-rose-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-md opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-sm z-10">Hapus Data</span>
                                 </div>
-                                
+
                             </div>
                         </td>
                     </tr>
@@ -204,7 +219,7 @@
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center sm:text-left">
                     Menampilkan {{ $siswa->firstItem() }} - {{ $siswa->lastItem() }} dari {{ $siswa->total() }} data siswa
                 </p>
-                
+
                 <div class="flex items-center gap-1.5">
                     {{-- Previous Page Link --}}
                     @if ($siswa->onFirstPage())
@@ -284,7 +299,7 @@
         rows.forEach(row => {
             const name = row.querySelector(".student-name").textContent.toLowerCase();
             const nis = row.querySelector(".student-nis").textContent.toLowerCase();
-            
+
             if (name.includes(input) || nis.includes(input)) {
                 row.style.display = "";
                 hasVisibleRow = true;

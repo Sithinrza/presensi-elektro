@@ -104,14 +104,14 @@
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Tanggal Mulai <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
                         </label>
-                        <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
+                        <input type="date" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
                     </div>
 
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Tanggal Selesai <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
                         </label>
-                        <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
+                        <input type="date" id="tanggal_selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
                     </div>
                 </div>
             </div>
@@ -216,12 +216,10 @@
         }
     }
 
-    // FUNGSI KONFIRMASI SIMPAN DENGAN SWEETALERT2
     function confirmSave(event) {
-        event.preventDefault(); // Cegah submit otomatis
+        event.preventDefault();
         const form = document.getElementById('formTambahSiswa');
 
-        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
@@ -233,13 +231,12 @@
                 text: "Pastikan semua data yang dimasukkan sudah benar.",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
-                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonColor: '#4d182b',
+                cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Simpan!',
                 cancelButtonText: 'Batal',
-                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                reverseButtons: true,
                 customClass: {
-                    // Kelas khusus agar responsive di HP
                     popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
                     title: 'text-lg sm:text-xl font-black text-maroon-950',
                     confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
@@ -247,15 +244,26 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                    form.submit();
                 }
             });
         } else {
-            // Fallback jika CDN SweetAlert gagal dimuat
             if (confirm('Apakah Anda yakin ingin menyimpan data siswa ini?')) {
                 form.submit();
             }
         }
     }
+
+    // PERBAIKAN: Kunci kalender di frontend
+    document.getElementById('tanggal_mulai').addEventListener('change', function() {
+        const tglMulai = this.value;
+        const inputSelesai = document.getElementById('tanggal_selesai');
+
+        inputSelesai.min = tglMulai;
+
+        if (inputSelesai.value && inputSelesai.value < tglMulai) {
+            inputSelesai.value = tglMulai;
+        }
+    });
 </script>
 @endsection

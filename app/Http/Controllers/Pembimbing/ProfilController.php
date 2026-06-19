@@ -44,27 +44,23 @@ class ProfilController extends Controller
         $user = Auth::user();
         $pembimbing = Pembimbing::where('id_user', $user->id_user)->firstOrFail();
 
-        // Validasi input sesuai dengan kolom yang ada di skema database
+        // 🚨 PERBAIKAN: Hanya validasi data yang benar-benar ada di form Blade Edit Mandiri
         $request->validate([
-            'email'            => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
-            'no_telp'          => 'nullable|string|max:20',
-            'id_agama'         => 'nullable|exists:agama,id_agama',
-            'jk'               => 'nullable|in:L,P',
-            'id_pend_terakhir' => 'nullable|exists:pendidikan_terakhir,id_pend_terakhir',
-            'jabatan'          => 'nullable|string|max:100',
+            'email'    => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
+            'no_telp'  => 'required|string|max:20',
+            'id_agama' => 'required|exists:agama,id_agama',
+            'jk'       => 'required|in:L,P',
         ]);
 
         // 1. Update email di tabel users
         $userObj = User::find($user->id_user);
         $userObj->update(['email' => $request->email]);
 
-        // 2. Update data di tabel pembimbing
+        // 2. Update data di tabel pembimbing (JABATAN & PENDIDIKAN TIDAK IKUT DIUPDATE DI SINI)
         $pembimbing->update([
-            'no_telp'          => $request->no_telp,
-            'id_agama'         => $request->id_agama,
-            'jk'               => $request->jk,
-            'id_pend_terakhir' => $request->id_pend_terakhir,
-            'jabatan'          => $request->jabatan,
+            'no_telp'  => $request->no_telp,
+            'id_agama' => $request->id_agama,
+            'jk'       => $request->jk,
         ]);
 
         return redirect()->route('pembimbing.profil.index')->with('success', 'Profil berhasil diperbarui!');
@@ -72,10 +68,14 @@ class ProfilController extends Controller
 
     public function updateFoto(Request $request)
     {
+        // 🚨 PERBAIKAN: Validasi Foto Max 3MB (3072 KB)
         $request->validate([
-            'foto' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:3072',
         ], [
-            'foto.max' => 'Ukuran foto maksimal 5MB.',
+            'foto.required' => 'Silakan pilih foto terlebih dahulu.',
+            'foto.image'    => 'File harus berupa gambar.',
+            'foto.mimes'    => 'Format gambar harus JPG, JPEG, atau PNG.',
+            'foto.max'      => 'Ukuran foto maksimal adalah 3 MB.',
         ]);
 
         $user = Auth::user();
@@ -87,8 +87,8 @@ class ProfilController extends Controller
                 Storage::disk('public')->delete($pembimbing->foto_profil);
             }
 
-            // Simpan file baru
-            $path = $request->file('foto')->store('profil', 'public');
+            // Simpan file baru (Disamakan dengan folder admin: profil/pembimbing)
+            $path = $request->file('foto')->store('profil/pembimbing', 'public');
             $pembimbing->update(['foto_profil' => $path]);
 
             return redirect()->back()->with('success', 'Foto profil berhasil diperbarui!');

@@ -22,8 +22,7 @@
         </div>
     @endif
 
-    <!-- FORM EDIT DENGAN ID DAN ONSUBMIT JS -->
-    <form id="formEditPembimbing" onsubmit="confirmUpdate(event)" action="{{ route('admin.data.pembimbing.update', $pembimbing->id_pembimbing) }}" method="POST" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
+    <form id="formEditPembimbing" onsubmit="confirmUpdate(event)" action="{{ route('admin.data.pembimbing.update', $pembimbing->id_pembimbing) }}" method="POST" enctype="multipart/form-data" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
         @method('PUT')
 
@@ -42,7 +41,6 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 bg-slate-50/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-100">
 
-                    <!-- Baris 1: Status (Full Width) -->
                     <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Status Kepegawaian <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -53,7 +51,6 @@
                         </select>
                     </div>
 
-                    <!-- Baris 2: Nama & NIP -->
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Nama Lengkap & Gelar <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -68,7 +65,6 @@
                         <input type="text" name="no_induk" value="{{ old('no_induk', $pembimbing->no_induk) }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
-                    <!-- Baris 3: Email & Telepon -->
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Email Institusi <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -83,7 +79,6 @@
                         <input type="tel" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="no_telp" value="{{ old('no_telp', $pembimbing->no_telp) }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
-                    <!-- Baris 4: Jabatan & Pendidikan Terakhir -->
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Jabatan Fungsional <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -105,7 +100,6 @@
                         </select>
                     </div>
 
-                    <!-- Baris 5: Agama -->
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Agama <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -120,7 +114,6 @@
                         </select>
                     </div>
 
-                    <!-- Baris 6: Update Password (Full Width) -->
                     <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update Password</label>
                         <div class="relative group">
@@ -131,6 +124,22 @@
                         </div>
                         <p class="text-[8px] sm:text-[9px] font-bold text-amber-500 ml-1 mt-1 uppercase tracking-widest">* Hanya isi jika ingin mereset password pengguna.</p>
                     </div>
+
+                    <div class="space-y-1.5 sm:space-y-2 md:col-span-2 border-t border-slate-100 pt-4 mt-2">
+                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Foto Profil (Opsional)
+                        </label>
+
+                        @if($pembimbing->foto_profil)
+                            <div class="mb-3">
+                                <img src="{{ asset('storage/' . $pembimbing->foto_profil) }}" alt="Foto Lama" class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover border border-slate-200 shadow-sm">
+                            </div>
+                        @endif
+
+                        <input type="file" name="foto_profil" accept="image/jpeg,image/png,image/jpg" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-md sm:file:rounded-lg file:border-0 file:text-[10px] sm:file:text-xs file:font-black file:bg-maroon-50 file:text-maroon-700 hover:file:bg-maroon-100 cursor-pointer">
+                        <p class="text-[9px] font-bold text-slate-400 ml-1">Biarkan kosong jika tidak ingin mengubah foto. Maksimal: 3 MB.</p>
+                    </div>
+
                 </div>
 
             </div>
@@ -163,12 +172,10 @@
         }
     }
 
-    // FUNGSI KONFIRMASI UPDATE DENGAN SWEETALERT2
     function confirmUpdate(event) {
-        event.preventDefault(); // Cegah submit otomatis
+        event.preventDefault();
         const form = document.getElementById('formEditPembimbing');
 
-        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
@@ -180,13 +187,12 @@
                 text: "Pastikan data pembimbing yang diperbarui sudah benar.",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
-                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonColor: '#4d182b',
+                cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Simpan!',
                 cancelButtonText: 'Batal',
-                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                reverseButtons: true,
                 customClass: {
-                    // Kelas khusus agar responsive di HP
                     popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
                     title: 'text-lg sm:text-xl font-black text-maroon-950',
                     confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
@@ -194,11 +200,10 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                    form.submit();
                 }
             });
         } else {
-            // Fallback jika CDN SweetAlert gagal dimuat
             if (confirm('Apakah Anda yakin ingin menyimpan perubahan data pembimbing ini?')) {
                 form.submit();
             }

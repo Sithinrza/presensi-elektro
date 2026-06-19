@@ -69,11 +69,26 @@
     <section class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col">
 
         <!-- HEADER TABEL & SEARCH BAR -->
-        <div class="px-6 md:px-8 py-5 sm:py-6 border-b border-slate-100 flex justify-end bg-white shrink-0">
-            <div class="relative w-full md:w-80 group">
-                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari Nama atau NIP..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-10 py-2.5 sm:py-3 text-[10px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 transition-all shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[16px] sm:h-[16px] absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-maroon-500 transition-colors"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            </div>
+        <div class="px-6 md:px-8 py-5 sm:py-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between sm:justify-end items-center gap-3 bg-white shrink-0">
+            <form method="GET" action="{{ route('admin.data.pembimbing.index') }}" class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
+
+                <select name="status" onchange="this.form.submit()" class="w-full sm:w-auto bg-slate-50 border border-slate-200 text-slate-700 text-[10px] sm:text-xs font-bold rounded-xl px-4 py-2.5 sm:py-3 outline-none focus:ring-2 focus:ring-maroon-500 cursor-pointer shadow-sm">
+                    <option value="">Semua Status</option>
+                    <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Hanya Aktif</option>
+                    <option value="Nonaktif" {{ request('status') == 'Nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                </select>
+
+                <div class="relative w-full md:w-80 group">
+                    <input type="text" id="searchInput" name="search" value="{{ request('search') }}" onkeyup="filterTable()" placeholder="Cari Nama atau NIP..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-10 py-2.5 sm:py-3 text-[10px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 transition-all shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[16px] sm:h-[16px] absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-maroon-500 transition-colors"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+
+                    @if(request('search') || request('status'))
+                        <a href="{{ route('admin.data.pembimbing.index') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-600 transition-colors" title="Reset Filter">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
 
         <!-- MENGGUNAKAN custom-scrollbar -->

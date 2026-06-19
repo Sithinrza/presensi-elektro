@@ -38,15 +38,15 @@ class ProfilController extends Controller
         $user = Auth::user();
         $tendik = Tendik::where('id_user', $user->id_user)->firstOrFail();
 
-        // Validasi semua form KECUALI NIP (karena NIP sifatnya disabled/dikunci)
+        // 🚨 PERBAIKAN: Dikembalikan menjadi nullable (opsional)
         $request->validate([
             'email'         => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
-            'no_hp'         => 'nullable|string|max:20',
-            'tempat_lahir'  => 'nullable|string|max:40', // Di skema Tendik tempat_lahir max 40
-            'tanggal_lahir' => 'nullable|date',
-            'id_agama'      => 'nullable|exists:agama,id_agama',
-            'jk'            => 'nullable|in:L,P',
-            'alamat'        => 'nullable|string',
+            'no_hp'         => 'nullable|string|max:20', // Opsional
+            'tempat_lahir'  => 'nullable|string|max:40', // Opsional
+            'tanggal_lahir' => 'nullable|date', // Opsional
+            'id_agama'      => 'nullable|exists:agama,id_agama', // Opsional
+            'jk'            => 'nullable|in:L,P', // Opsional
+            'alamat'        => 'nullable|string', // Opsional
         ]);
 
         // 1. Update email di tabel users
@@ -69,7 +69,12 @@ class ProfilController extends Controller
     public function updateFoto(Request $request)
     {
         $request->validate([
-            'foto' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:3072',
+        ], [
+            'foto.required' => 'Silakan pilih foto terlebih dahulu.',
+            'foto.image'    => 'File harus berupa gambar.',
+            'foto.mimes'    => 'Format gambar harus JPG, JPEG, atau PNG.',
+            'foto.max'      => 'Ukuran foto maksimal adalah 3 MB.',
         ]);
 
         $tendik = Tendik::where('id_user', Auth::user()->id_user)->firstOrFail();
@@ -79,7 +84,7 @@ class ProfilController extends Controller
                 Storage::disk('public')->delete($tendik->foto_profil);
             }
 
-            $path = $request->file('foto')->store('profil', 'public');
+            $path = $request->file('foto')->store('profil/tendik', 'public');
             $tendik->update(['foto_profil' => $path]);
 
             return redirect()->back()->with('success', 'Foto profil berhasil diperbarui!');

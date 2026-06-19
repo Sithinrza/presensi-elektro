@@ -29,9 +29,9 @@
             <span>{{ session('success') }}</span>
         </div>
     @endif
-    @if(session('error'))
+    @if($errors->any() || session('error'))
         <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center justify-between">
-            <span>{{ session('error') }}</span>
+            <span>{{ session('error') ?? $errors->first() }}</span>
         </div>
     @endif
 
@@ -55,7 +55,7 @@
                 <!-- NAMA DAN NIP DIMASUKKAN KE SINI -->
                 <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-tight leading-none">{{ $tendik->nama_lengkap }}</h3>
                 <p class="text-xs sm:text-sm font-bold text-gold mt-1 sm:mt-1.5">NIP. {{ $tendik->nip ?? '-' }}</p>
-                <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2 sm:mt-2.5 uppercase tracking-widest">Format: JPG, PNG. Ukuran maksimal 2MB.</p>
+                <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2 sm:mt-2.5 uppercase tracking-widest">Format: JPG, JPEG, PNG. Ukuran maksimal 3 MB.</p>
             </div>
 
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3">
@@ -136,10 +136,11 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Email Akun</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Email Akun <span class="text-rose-500">*</span></label>
                     <input type="email" name="email" value="{{ old('email', $tendik->user->email) }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
+                <!-- 🚨 PERBAIKAN: Hapus required dan bintang merah -->
                 <div class="space-y-1.5">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">No. Handphone / WhatsApp</label>
                     <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $tendik->no_hp) }}" placeholder="08..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
@@ -155,20 +156,22 @@
                     <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $tendik->tanggal_lahir) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
+                <!-- 🚨 PERBAIKAN: Hapus required dan bintang merah -->
                 <div class="space-y-1.5">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama</label>
-                    <select name="id_agama" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                        <option value="" disabled>Pilih Agama...</option>
+                    <select name="id_agama" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                        <option value="" disabled {{ empty(old('id_agama', $tendik->id_agama)) ? 'selected' : '' }}>Pilih Agama...</option>
                         @foreach($agama ?? [] as $a)
                             <option value="{{ $a->id_agama }}" {{ old('id_agama', $tendik->id_agama) == $a->id_agama ? 'selected' : '' }}>{{ $a->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
+                <!-- 🚨 PERBAIKAN: Hapus required dan bintang merah -->
                 <div class="space-y-1.5">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jenis Kelamin</label>
-                    <select name="jk" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                        <option value="" disabled>Pilih...</option>
+                    <select name="jk" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                        <option value="" disabled {{ empty(old('jk', $tendik->jk)) ? 'selected' : '' }}>Pilih...</option>
                         <option value="L" {{ old('jk', $tendik->jk) == 'L' ? 'selected' : '' }}>Laki-laki</option>
                         <option value="P" {{ old('jk', $tendik->jk) == 'P' ? 'selected' : '' }}>Perempuan</option>
                     </select>
@@ -192,6 +195,8 @@
     </form>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     // Konfirmasi Hapus Foto
     function confirmDeleteFoto(event) {
@@ -208,7 +213,6 @@
                 confirmButtonText: 'Ya, Hapus!',
                 cancelButtonText: 'Batal',
                 customClass: {
-                    // Kelas khusus agar responsive di HP
                     popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
                     title: 'text-lg sm:text-xl font-black text-maroon-950',
                     confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
@@ -249,7 +253,6 @@
                 cancelButtonText: 'Batal',
                 reverseButtons: true, // Tombol batal di kiri, simpan di kanan
                 customClass: {
-                    // Kelas khusus agar responsive di HP
                     popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
                     title: 'text-lg sm:text-xl font-black text-maroon-950',
                     confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
@@ -261,7 +264,6 @@
                 }
             });
         } else {
-            // Fallback jika CDN SweetAlert gagal dimuat
             if (confirm('Apakah Anda yakin ingin menyimpan perubahan profil ini?')) {
                 form.submit();
             }

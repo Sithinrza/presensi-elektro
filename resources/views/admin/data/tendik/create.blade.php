@@ -13,12 +13,6 @@
                 <h1 class="text-xl sm:text-2xl font-black text-maroon-950 tracking-tight italic leading-none">Tambah Tendik</h1>
             </div>
         </div>
-        {{-- <div class="px-3 py-2 sm:px-4 sm:py-2 bg-emerald-50 border border-emerald-100 rounded-lg sm:rounded-xl w-fit">
-            <span class="text-[9px] sm:text-[10px] font-black text-emerald-600 uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
-                <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                Mode Tambah Aktif
-            </span>
-        </div> --}}
     </div>
 
     @if(session('error') || $errors->any())

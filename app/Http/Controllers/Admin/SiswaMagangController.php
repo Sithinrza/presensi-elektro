@@ -15,11 +15,29 @@ use Illuminate\Support\Facades\Storage;
 
 class SiswaMagangController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $siswa = SiswaMagang::with('user', 'agama')->get();
-        $totalSiswa = $siswa->count();
-        $siswaAktif = $siswa->where('status', 'Aktif')->count();
+        $query = SiswaMagang::with('user', 'agama');
+
+        // 1. Tangkap Filter Pencarian (Search)
+        if ($request->filled('search')) {
+            $query->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                  ->orWhere('nis', 'like', '%' . $request->search . '%');
+        }
+
+        // 2. Tangkap Filter Status (Aktif/Nonaktif)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // 3. Urutkan Aktif duluan, lalu abjad, lalu gunakan Pagination!
+        $siswa = $query->orderBy('status', 'asc')
+                       ->orderBy('nama_lengkap', 'asc')
+                       ->paginate(10)->withQueryString(); // Membawa query URL saat pindah halaman
+
+        // Hitung total murni (tanpa filter) untuk widget kotak atas
+        $totalSiswa = SiswaMagang::count();
+        $siswaAktif = SiswaMagang::where('status', 'Aktif')->count();
 
         $agama = Agama::all();
         $pembimbing = Pembimbing::all();
@@ -44,10 +62,11 @@ class SiswaMagangController extends Controller
             'no_hp'           => 'nullable|string|max:20',
             'id_pembimbing'   => 'nullable|integer',
             'tanggal_mulai'   => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
 
-            // Data Opsional Tambahan
-            'nis'             => 'nullable|string|max:50',
+            'nis'             => 'nullable|string|max:50|unique:siswa_magang,nis',
+
+
             'id_agama'        => 'nullable|integer',
             'sekolah_asal'    => 'nullable|string|max:100',
             'jurusan'         => 'nullable|string|max:100',
@@ -55,7 +74,13 @@ class SiswaMagangController extends Controller
             'tempat_lahir'    => 'nullable|string|max:50',
             'tanggal_lahir'   => 'nullable|date',
             'alamat'          => 'nullable|string',
-            'foto_profil'     => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Maksimal 2MB
+            'foto_profil'     => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
+        ], [
+            'tanggal_selesai.after_or_equal' => 'Tanggal Selesai magang tidak boleh lebih lampau dari Tanggal Mulai!',
+            'nis.unique'                     => 'NIS / Nomor Induk tersebut sudah terdaftar di sistem!',
+            'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
+             'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
+
         ]);
 
         DB::beginTransaction();
@@ -68,7 +93,6 @@ class SiswaMagangController extends Controller
             $roleSiswa = Role::where('name', 'siswa')->first();
             $user->roles()->attach($roleSiswa->getKey());
 
-            // Handle Upload Foto Profil
             $fotoPath = null;
             if ($request->hasFile('foto_profil')) {
                 $fotoPath = $request->file('foto_profil')->store('profil/siswa', 'public');
@@ -82,7 +106,6 @@ class SiswaMagangController extends Controller
                 'id_pembimbing'   => $request->id_pembimbing,
                 'tanggal_mulai'   => $request->tanggal_mulai,
                 'tanggal_selesai' => $request->tanggal_selesai,
-
                 'nis'             => $request->nis,
                 'id_agama'        => $request->id_agama,
                 'sekolah_asal'    => $request->sekolah_asal,
@@ -103,11 +126,9 @@ class SiswaMagangController extends Controller
         }
     }
 
-
     public function edit($id)
     {
         $siswa = SiswaMagang::findOrFail($id);
-
         $agama = Agama::all();
         $pembimbing = Pembimbing::where('status', 'Aktif')->get();
 
@@ -126,11 +147,11 @@ class SiswaMagangController extends Controller
             'status'          => 'required|in:Aktif,Nonaktif',
             'id_pembimbing'   => 'nullable|integer',
             'tanggal_mulai'   => 'nullable|date',
-            'tanggal_selesai' => 'nullable|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
             'no_hp'           => 'nullable|string|max:20',
 
-            // Data Opsional Tambahan
-            'nis'             => 'nullable|string|max:50',
+            'nis'             => 'nullable|string|max:50|unique:siswa_magang,nis,' . $siswa->id_siswa . ',id_siswa',
+
             'id_agama'        => 'nullable|integer',
             'sekolah_asal'    => 'nullable|string|max:100',
             'jurusan'         => 'nullable|string|max:100',
@@ -138,7 +159,14 @@ class SiswaMagangController extends Controller
             'tempat_lahir'    => 'nullable|string|max:50',
             'tanggal_lahir'   => 'nullable|date',
             'alamat'          => 'nullable|string',
-            'foto_profil'     => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'foto_profil'     => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
+        ], [
+            'tanggal_selesai.after_or_equal' => 'Tanggal Selesai magang tidak boleh lebih lampau dari Tanggal Mulai!',
+
+            'nis.unique'                     => 'NIS / Nomor Induk tersebut sudah digunakan oleh siswa lain!',
+            'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
+             'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
+           // 'no_telp.numeric'       => 'No Telp hanya boleh berisi karakter angka numerik.',
         ]);
 
         DB::beginTransaction();
@@ -149,10 +177,8 @@ class SiswaMagangController extends Controller
             }
             $user->update($userData);
 
-            // Handle Upload Foto Profil Baru
             $fotoPath = $siswa->foto_profil;
             if ($request->hasFile('foto_profil')) {
-                // Hapus foto lama jika ada
                 if ($fotoPath && Storage::disk('public')->exists($fotoPath)) {
                     Storage::disk('public')->delete($fotoPath);
                 }
@@ -166,7 +192,6 @@ class SiswaMagangController extends Controller
                 'id_pembimbing'   => $request->id_pembimbing,
                 'tanggal_mulai'   => $request->tanggal_mulai,
                 'tanggal_selesai' => $request->tanggal_selesai,
-
                 'nis'             => $request->nis,
                 'id_agama'        => $request->id_agama,
                 'sekolah_asal'    => $request->sekolah_asal,
@@ -194,7 +219,6 @@ class SiswaMagangController extends Controller
 
         DB::beginTransaction();
         try {
-            // Hapus profil siswa dulu, baru akun user-nya
             $siswa->delete();
             $user->delete();
 
@@ -205,9 +229,9 @@ class SiswaMagangController extends Controller
             return back()->with('error', 'Gagal menghapus data: ' . $e->getMessage());
         }
     }
+
     public function show($id)
     {
-        // Cari data siswa berdasarkan ID, beserta data user/akun-nya
         $siswa = SiswaMagang::with(['user', 'agama', 'pembimbing'])->where('id_siswa', $id)->firstOrFail();
         return view('admin.data.siswa.show', compact('siswa'));
     }

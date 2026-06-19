@@ -17,12 +17,26 @@
                 </div>
             </div>
 
-            <form action="{{ route('pembimbing.presensi-siswa.index') }}" method="GET" class="relative group w-full md:w-auto">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama siswa..." class="w-full md:w-80 bg-white border-2 border-slate-100 rounded-2xl px-10 sm:px-12 py-3 sm:py-3.5 text-xs font-bold text-maroon-950 shadow-sm hover:border-maroon-200 focus:border-maroon-500 focus:ring-4 focus:ring-maroon-500/10 outline-none transition-all duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-maroon-500 transition-colors duration-300"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                <button type="submit" class="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 bg-maroon-950 text-white p-2 rounded-xl hover:bg-maroon-800 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
-                </button>
+            <form method="GET" action="{{ route('pembimbing.presensi-siswa.index') }}" class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <!-- Filter Status -->
+                <select name="status" onchange="this.form.submit()" class="bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-maroon-500 cursor-pointer shadow-sm">
+                    <option value="">Semua Status</option>
+                    <option value="Aktif" {{ request('status') == 'Aktif' ? 'selected' : '' }}>Hanya Aktif</option>
+                    <option value="Nonaktif" {{ request('status') == 'Nonaktif' ? 'selected' : '' }}>Hanya Nonaktif / Lulus</option>
+                </select>
+
+                <!-- Kolom Pencarian -->
+                <div class="flex gap-2">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama siswa..." class="bg-white border border-slate-200 text-slate-700 text-xs font-bold rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-maroon-500 shadow-sm w-full sm:w-48">
+                    <button type="submit" class="bg-maroon-900 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:bg-maroon-800 transition-all">
+                        Cari
+                    </button>
+                    @if(request('search') || request('status'))
+                        <a href="{{ route('pembimbing.presensi-siswa.index') }}" class="bg-slate-100 text-slate-500 px-3 py-2.5 rounded-xl hover:bg-slate-200 transition-all flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        </a>
+                    @endif
+                </div>
             </form>
         </div>
 
@@ -54,6 +68,11 @@
 
                     <div class="mb-3 sm:mb-4">
                         <h4 class="text-base sm:text-xl font-black text-maroon-950 truncate tracking-tight group-hover:text-maroon-700 transition-colors">{{ $s->nama_lengkap }}</h4>
+                        @if($s->status == 'Aktif')
+                            <span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Aktif</span>
+                        @else
+                            <span class="bg-rose-100 text-rose-700 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest">Selesai/Nonaktif</span>
+                        @endif
                         <p class="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] truncate mt-0.5 sm:mt-1">{{ $s->sekolah_asal ?? 'Instansi Tidak Diisi' }}</p>
                     </div>
 

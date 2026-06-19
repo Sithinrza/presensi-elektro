@@ -46,23 +46,27 @@ class RiwayatController extends Controller
         $hadir = 0; $telat = 0; $alpa = 0; $libur = 0;
         $tepat_co = 0; $telat_co = 0; $lupa_co = 0;
 
+        // PENGAMAN: Batas Selesai Magang
+        $batasLoopUser = $batasLoop->copy();
+        if (($role == 'siswa' || $role == 'siswa magang') && $user->siswaMagang && $user->siswaMagang->tanggal_selesai) {
+            $ts = Carbon::parse($user->siswaMagang->tanggal_selesai)->timezone('Asia/Makassar')->startOfDay();
+            $batasLoopUser = $batasLoopUser->min($ts);
+        }
+
         for ($date = $mulaiLoop->copy(); $date->lte($endOfMonth); $date->addDay()) {
             $dateString = $date->format('Y-m-d');
 
             if ($dbRiwayat->has($dateString)) {
                 $presensi = $dbRiwayat->get($dateString);
 
-                // jIKA ALPA CI = MAKA WAJIB ALPA CO
                 if ($presensi->statusCi && $presensi->statusCi->name == 'Alpa') {
                     $statusAlpaCo = new StatusPresensi(['name' => 'Alpa']);
                     $presensi->setRelation('statusCo', $statusAlpaCo);
                 }
-                // JIKA BUKAN ALPA, BARU BOLEH JADI LUPA CHECK-OUT (UNTUK HARI KEMARIN)
                 elseif ($dateString != $todayString && !is_null($presensi->jam_masuk) && is_null($presensi->jam_pulang)) {
                     $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
                     $presensi->setRelation('statusCo', $statusLupa);
                 }
-                // =======================================================
 
                 $riwayatFinal->push($presensi);
 
@@ -75,8 +79,8 @@ class RiwayatController extends Controller
                 elseif ($presensi->statusCo && $presensi->statusCo->name == 'Terlambat CO') $telat_co++;
                 elseif ($presensi->statusCo && $presensi->statusCo->name == 'Lupa Check-Out') $lupa_co++;
             } else {
-                if ($date->lte($batasLoop)) {
-                    // SABTU DAN MINGGU LIBUR
+                // HANYA EKSEKUSI JIKA BELUM MELEWATI MASA LULUS
+                if ($date->lte($batasLoopUser)) {
                     $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
 
                     foreach ($hariLibur as $hl) {
@@ -89,14 +93,11 @@ class RiwayatController extends Controller
                         $libur++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        // CEK JIKA TANGGAL ADALAH HARI INI DAN MASIH PAGI
                         $batasAlpaHariIni = Carbon::now('Asia/Makassar')->startOfDay()->setTime(8, 30, 0);
 
                         if ($date->isSameDay($waktuSekarang) && $waktuSekarang->lessThan($batasAlpaHariIni)) {
-                            // Masih jam aman, jangan dicap Alpa
                             $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
                         } else {
-                            // Sudah lewat jam 8.30 atau hari-hari sebelumnya
                             $alpa++;
                             $statusMock = new StatusPresensi(['name' => 'Alpa']);
                         }

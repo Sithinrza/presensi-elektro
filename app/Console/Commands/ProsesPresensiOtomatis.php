@@ -15,8 +15,6 @@ class ProsesPresensiOtomatis extends Command
     protected $signature = 'presensi:otomatis';
     protected $description = 'Sapu bersih Alpa, Lupa CO, dan set otomatis Libur tepat sebelum ganti hari';
 
-
-
     public function handle()
     {
         //Carbon::setTestNow(Carbon::create(2026, 6, 8, 23, 59, 0, 'Asia/Makassar'));
@@ -35,9 +33,16 @@ class ProsesPresensiOtomatis extends Command
             return;
         }
 
-        // Ambil semua id_user dari anak magang dan tendik
-        $idSiswa = SiswaMagang::pluck('id_user')->toArray();
-        $idTendik = Tendik::pluck('id_user')->toArray();
+
+        // Ambil id_user Siswa Magang (Akun Aktif & Tanggal Selesai >= Hari Ini)
+        $idSiswa = SiswaMagang::where('status', 'Aktif')
+                    ->whereDate('tanggal_selesai', '>=', $tanggalHariIni)
+                    ->pluck('id_user')->toArray();
+
+        // Ambil id_user Tendik (Akun Aktif)
+        $idTendik = Tendik::where('status', 'Aktif')
+                    ->pluck('id_user')->toArray();
+
         $semuaIdTarget = array_merge($idSiswa, $idTendik);
 
         // =========================================================
@@ -111,8 +116,8 @@ class ProsesPresensiOtomatis extends Command
                     $jumlahAlpa++;
                 }
             }
-            // KONDISI B: SUDAH MASUK TAPI BELUM PULANG SAMPAI 23:59
-           else if ($presensiHariIni->jam_pulang == null) {
+            // KONDISI B: SUDAH MASUK TAPI BELUM PULANG SAMPAI 23:50
+            else if ($presensiHariIni->jam_pulang == null) {
 
                 $batasLupaCo = Carbon::createFromTime(23, 50, 0, 'Asia/Makassar');
 
