@@ -13,14 +13,11 @@
     </div>
 
     <section class="bg-maroon-900 rounded-[1.5rem] sm:rounded-[2.5rem] p-4 sm:p-6 lg:p-8 border border-maroon-800 shadow-premium relative overflow-hidden">
-        <!-- Efek Cahaya Latar -->
         <div class="absolute -top-12 -right-12 w-48 sm:w-64 h-48 sm:h-64 bg-gold/10 rounded-full blur-[60px] pointer-events-none"></div>
 
         <div class="relative z-10 flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 items-start lg:items-center">
 
-            <!-- Profil Ringkas -->
             <div class="flex items-center gap-3 sm:gap-5 flex-1 w-full">
-                <!-- Frame Foto -->
                 <div class="w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-[1.5rem] bg-white border-2 border-gold flex items-center justify-center text-xl sm:text-3xl lg:text-4xl font-black text-maroon-900 shrink-0 shadow-md p-0.5 overflow-hidden">
                     <div class="w-full h-full rounded-[0.6rem] sm:rounded-[1.2rem] overflow-hidden bg-slate-100 flex items-center justify-center">
                         @if(isset($siswa->foto_profil) && $siswa->foto_profil)
@@ -31,7 +28,6 @@
                     </div>
                 </div>
 
-                <!-- Teks Info -->
                 <div>
                     <h2 class="text-lg sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-none">{{ $siswa->nama_lengkap }}</h2>
                     <p class="text-[9px] sm:text-[10px] lg:text-xs font-bold text-maroon-200/80 uppercase tracking-widest mt-1 lg:mt-1.5 line-clamp-1">{{ $siswa->sekolah_asal }}</p>
@@ -41,7 +37,6 @@
                 </div>
             </div>
 
-            <!-- Box Statistik -->
             <div class="grid grid-cols-4 sm:flex sm:items-center sm:justify-start gap-y-3 gap-x-1 sm:gap-4 lg:gap-5 w-full lg:w-auto shrink-0 mt-3 sm:mt-0 bg-maroon-950/50 border border-maroon-800/50 p-3 sm:p-4 rounded-xl sm:rounded-2xl backdrop-blur-sm">
 
                 <div class="text-center shrink-0">
@@ -96,7 +91,6 @@
         </div>
     </section>
 
-    <!-- TABEL RIWAYAT PRESENSI -->
     <section class="bg-white rounded-[1.5rem] sm:rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
         <div class="px-4 sm:px-6 lg:px-8 py-4 sm:py-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
             <h3 class="text-sm sm:text-base lg:text-lg font-black text-slate-800 tracking-tight">Data Riwayat Presensi</h3>
@@ -140,10 +134,10 @@
                 <tbody class="divide-y divide-slate-50">
 
                     @forelse($riwayatPresensi as $p)
+
                     @if($p->id_presensi)
                         <tr onclick="window.location.href='{{ route('presensi.detail', $p->id_presensi) }}'" class="hover:bg-slate-50/50 transition-colors group cursor-pointer">
                     @else
-                        <!-- 🚨 BARIS KOSONG -->
                         <tr class="bg-slate-50/30 transition-colors">
                     @endif
                         <td class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5">

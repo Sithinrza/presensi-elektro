@@ -54,16 +54,17 @@ class PembimbingController extends Controller
             'nama_lengkap'     => 'required|string|max:100',
             'email'            => 'required|email|unique:users,email',
             'password'         => 'required|min:6',
-            'no_induk'         => 'required|numeric|max:50|unique:pembimbing,no_induk',
+            // 🚨 PERBAIKAN: Ubah numeric menjadi string & tambah regex untuk angka
+            'no_induk'         => 'required|string|regex:/^[0-9]+$/|max:50|unique:pembimbing,no_induk',
             'jabatan'          => 'required|string|max:100',
             'no_telp'          => 'required|string|max:20',
             'id_agama'         => 'required|integer',
             'id_pend_terakhir' => 'required|integer',
-            // 🚨 VALIDASI FOTO PROFIL MAX 3MB
             'foto_profil'      => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
         ], [
             'no_induk.unique'  => 'NIP / Nomor Induk tersebut sudah terdaftar di sistem!',
-            'no_induk.numeric' => 'No Induk hanya boleh berisi karakter angka numerik.',
+            // 🚨 PERBAIKAN: Ubah error key dari numeric menjadi regex
+            'no_induk.regex'   => 'No Induk hanya boleh berisi karakter angka numerik.',
             'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
             'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
         ]);
@@ -124,16 +125,18 @@ class PembimbingController extends Controller
             'email'            => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
             'password'         => 'nullable|min:6',
             'status'           => 'required|in:Aktif,Nonaktif',
-            'no_induk'         => 'required|numeric|max:50|unique:pembimbing,no_induk,' . $pembimbing->id_pembimbing . ',id_pembimbing',
+            // 🚨 PERBAIKAN: Ubah numeric menjadi string & tambah regex untuk angka
+            'no_induk'         => 'required|string|regex:/^[0-9]+$/|max:50|unique:pembimbing,no_induk,' . $pembimbing->id_pembimbing . ',id_pembimbing',
             'jabatan'          => 'required|string|max:100',
             'no_telp'          => 'required|string|max:20',
             'id_agama'         => 'required|integer',
             'id_pend_terakhir' => 'required|integer',
-            
+
             'foto_profil'      => 'nullable|image|mimes:jpeg,png,jpg|max:3072',
         ], [
              'no_induk.unique'  => 'NIP / Nomor Induk tersebut sudah terdaftar di sistem!',
-             'no_induk.numeric' => 'No Induk hanya boleh berisi karakter angka numerik.',
+             // 🚨 PERBAIKAN: Ubah error key dari numeric menjadi regex
+             'no_induk.regex'   => 'No Induk hanya boleh berisi karakter angka numerik.',
              'foto_profil.max'  => 'Ukuran foto profil maksimal 3 MB!',
              'foto_profil.image'=> 'File yang diupload harus berupa gambar (JPEG, PNG, JPG).'
         ]);
