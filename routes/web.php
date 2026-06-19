@@ -59,8 +59,10 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/forgot-password', [ResetPasswordOtpController::class, 'sendOtp'])->name('password.email');
     Route::get('/verify-otp', [ResetPasswordOtpController::class, 'showVerifyForm'])->name('password.otp.verify');
     Route::post('/verify-otp', [ResetPasswordOtpController::class, 'verifyOtp'])->name('password.otp.submit');
+    Route::post('/forgot-password/resend-otp', [ResetPasswordOtpController::class, 'resendOtp'])->name('password.otp.resend');
     Route::get('/reset-password', [ResetPasswordOtpController::class, 'showResetForm'])->name('password.otp.reset');
     Route::post('/reset-password', [ResetPasswordOtpController::class, 'resetPassword'])->name('password.update');
+    Route::post('/profile/password/resend-otp', [ProfilePasswordController::class, 'resendOtp'])->name('profile.password.resend');
 });
 
 // ==========================================

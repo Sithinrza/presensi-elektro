@@ -9,6 +9,7 @@ use App\Models\SiswaMagang;
 use App\Models\Agama;
 use App\Models\Presensi;
 use App\Models\StatusPresensi;
+use App\Models\HariLibur;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -37,44 +38,61 @@ class DashboardController extends Controller
         $bulanIni = Carbon::now('Asia/Makassar')->month;
         $tahunIni = Carbon::now('Asia/Makassar')->year;
 
-        // Ambil ID secara dinamis dari database agar tidak pernah salah
         $idTepatWaktu = StatusPresensi::where('name', 'Tepat Waktu')->value('id_status_presensi');
         $idTerlambat  = StatusPresensi::where('name', 'Terlambat')->value('id_status_presensi');
         $idAlpa       = StatusPresensi::where('name', 'Alpa')->value('id_status_presensi');
 
-        // Tarik semua data presensi bulan ini
         $presensiBulanIni = Presensi::where('id_user', $user->id_user)
                                     ->whereMonth('tanggal', $bulanIni)
                                     ->whereYear('tanggal', $tahunIni)
                                     ->get();
 
-        // 1. Tepat Waktu
         $tepatWaktu = $presensiBulanIni->where('id_status_ci', $idTepatWaktu)->count();
-
-        // 2. Terlambat
         $telat = $presensiBulanIni->where('id_status_ci', $idTerlambat)->count();
-
-        // 3. Total Hadir (Tepat Waktu + Terlambat)
         $hadir = $tepatWaktu + $telat;
-
-        // 4. Alfa
         $alpa = $presensiBulanIni->where('id_status_ci', $idAlpa)->count();
 
-        // Anggap total hari kerja magang 20 hari (Senin-Jumat)
         $total_hari_kerja = 20;
 
         // ==========================================
-        // FITUR BARU: CEK STATUS PRESENSI HARI INI
+        // LOGIKA STATUS TOMBOL PRESENSI
         // ==========================================
-        $hariIni = Carbon::now('Asia/Makassar')->format('Y-m-d');
+        $waktuSekarang = Carbon::now('Asia/Makassar');
+        $tanggalHariIni = $waktuSekarang->format('Y-m-d');
+        $jamSekarang = $waktuSekarang->format('H:i:s');
+        $hariIniIso = $waktuSekarang->dayOfWeekIso;
+
         $presensiHariIni = Presensi::where('id_user', $user->id_user)
-                                   ->where('tanggal', $hariIni)
+                                   ->where('tanggal', $tanggalHariIni)
                                    ->first();
+
+        // Cek Dosa Lupa CO
+        $statusLupaCO = StatusPresensi::where('name', 'Lupa Check-Out')->first();
+        $presensiGantung = null;
+        if ($statusLupaCO) {
+            $presensiGantung = Presensi::where('id_user', $user->id_user)
+                                       ->where('id_status_co', $statusLupaCO->id_status_presensi)
+                                       ->whereNull('alasan')
+                                       ->orderBy('tanggal', 'asc')
+                                       ->first();
+        }
+
+        $isWeekend = in_array($hariIniIso, [6, 7]);
+        $hariLiburIni = HariLibur::where('tanggal_mulai', '<=', $tanggalHariIni)
+                                 ->where('tanggal_selesai', '>=', $tanggalHariIni)
+                                 ->first();
+        $belumBuka = $jamSekarang < '06:00:00';
+
+        $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
+        $lewatJamCo = $jamSekarang > $batasBatasCo;
+
+        $batasBlokirMasuk = ($hariIniIso == 5) ? '16:30:00' : '16:00:00';
+        $lewatBatasMasuk = ($jamSekarang >= $batasBlokirMasuk && (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))));
 
         return view('siswa.dashboard.index', compact(
             'siswa', 'isProfilLengkap', 'agama',
             'hadir', 'tepatWaktu', 'telat', 'alpa', 'total_hari_kerja',
-            'presensiHariIni'
+            'presensiHariIni', 'isWeekend', 'hariLiburIni', 'belumBuka', 'lewatJamCo', 'lewatBatasMasuk', 'presensiGantung'
         ));
     }
 

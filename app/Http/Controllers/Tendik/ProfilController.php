@@ -38,15 +38,22 @@ class ProfilController extends Controller
         $user = Auth::user();
         $tendik = Tendik::where('id_user', $user->id_user)->firstOrFail();
 
-        // 🚨 PERBAIKAN: Dikembalikan menjadi nullable (opsional)
+        // 🚨 PERBAIKAN: Semua form biodata sekarang REQUIRED
         $request->validate([
             'email'         => 'required|email|unique:users,email,' . $user->id_user . ',id_user',
-            'no_hp'         => 'nullable|string|max:20', // Opsional
-            'tempat_lahir'  => 'nullable|string|max:40', // Opsional
-            'tanggal_lahir' => 'nullable|date', // Opsional
-            'id_agama'      => 'nullable|exists:agama,id_agama', // Opsional
-            'jk'            => 'nullable|in:L,P', // Opsional
-            'alamat'        => 'nullable|string', // Opsional
+            'no_hp'         => 'required|string|max:20',
+            'tempat_lahir'  => 'required|string|max:40',
+            'tanggal_lahir' => 'required|date',
+            'id_agama'      => 'required|exists:agama,id_agama',
+            'jk'            => 'required|in:L,P',
+            'alamat'        => 'required|string',
+        ], [
+            'no_hp.required'         => 'Nomor Handphone wajib diisi.',
+            'tempat_lahir.required'  => 'Tempat lahir wajib diisi.',
+            'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
+            'id_agama.required'      => 'Agama wajib dipilih.',
+            'jk.required'            => 'Jenis kelamin wajib dipilih.',
+            'alamat.required'        => 'Alamat domisili lengkap wajib diisi.',
         ]);
 
         // 1. Update email di tabel users

@@ -18,7 +18,40 @@ class ProfilePasswordController extends Controller
     public function sendOtp()
     {
         $user = Auth::user();
-        $email = $user->email;
+        $this->generateAndSendOtp($user->email);
+
+        // Tandai session bahwa OTP sedang berjalan untuk profil ini
+        session(['profile_otp_sent' => true]);
+
+        return redirect()->route('profile.password.verify')->with('success', 'Kode Keamanan (OTP) telah dikirim ke email Anda.');
+    }
+
+    // 1.b Fungsi Kirim Ulang OTP
+    public function resendOtp()
+    {
+        if (!session('profile_otp_sent')) {
+            return redirect()->back();
+        }
+
+        $email = Auth::user()->email;
+
+        // Cek jeda pengiriman (1 menit)
+        $lastRecord = DB::table('password_reset_tokens')->where('email', $email)->first();
+        if ($lastRecord) {
+            $waktuDibuat = Carbon::parse($lastRecord->created_at, 'Asia/Makassar');
+            if (Carbon::now('Asia/Makassar')->diffInMinutes($waktuDibuat) < 1) {
+                return redirect()->back()->withErrors(['otp' => 'Harap tunggu 1 menit sebelum mengirim ulang OTP.']);
+            }
+        }
+
+        $this->generateAndSendOtp($email);
+
+        return redirect()->route('profile.password.verify')->with('success', 'Kode OTP baru telah berhasil dikirim ulang ke email Anda.');
+    }
+
+    // Fungsi Pembantu Generate & Kirim
+    private function generateAndSendOtp($email)
+    {
         $otp = rand(100000, 999990);
 
         DB::table('password_reset_tokens')->updateOrInsert(
@@ -30,11 +63,6 @@ class ProfilePasswordController extends Controller
         );
 
         Mail::to($email)->send(new SendOtpMail($otp));
-
-        // Tandai session bahwa OTP sedang berjalan untuk profil ini
-        session(['profile_otp_sent' => true]);
-
-        return redirect()->route('profile.password.verify')->with('success', 'Kode Keamanan (OTP) telah dikirim ke email Anda.');
     }
 
     // 2. Tampilkan Halaman Input OTP
@@ -43,7 +71,16 @@ class ProfilePasswordController extends Controller
         if (!session('profile_otp_sent')) {
             return redirect()->back();
         }
-        return view('auth.reset-password.verify-otp-profile');
+
+        $record = DB::table('password_reset_tokens')->where('email', Auth::user()->email)->first();
+        if (!$record) {
+            return redirect()->back();
+        }
+
+        // Ambil waktu OTP dibuat untuk dikirim ke Blade
+        $createdAt = Carbon::parse($record->created_at, 'Asia/Makassar');
+
+        return view('auth.reset-password.verify-otp-profile', compact('createdAt'));
     }
 
     // 3. Validasi Kode OTP

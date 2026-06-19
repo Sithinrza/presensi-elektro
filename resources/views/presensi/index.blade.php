@@ -78,6 +78,25 @@
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
 
+    {{-- 🚨 KONDISI BLOKIR PRIORITAS 3: LEWAT JAM PULANG TAPI BELUM CHECK IN --}}
+    @elseif($lewatBatasMasuk)
+        <div class="card-presensi animate-in">
+            <div class="flex items-center gap-4 mb-5">
+                <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </a>
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Sistem Ditutup</h2>
+            </div>
+            <div class="p-8 bg-rose-50 border border-rose-200 rounded-xl mb-6">
+                <div class="w-20 h-20 bg-white text-rose-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm border border-rose-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h3 class="text-xl font-black text-rose-800 tracking-tight leading-none mb-3">Waktu Presensi Habis</h3>
+                <p class="text-rose-700 text-sm">Anda melewatkan jam kerja. Batas waktu untuk melakukan presensi masuk telah habis karena saat ini sudah memasuki jadwal Check-Out. Anda tercatat <span class="font-bold text-rose-900">Alpa</span>.</p>
+            </div>
+            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+        </div>
+
     @elseif($presensiSelesai)
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
@@ -251,7 +270,7 @@
 </div>
 
 {{-- PASTIKAN SCRIPT AI DIBLOKIR JIKA ADA SALAH SATU KONDISI DI BAWAH INI --}}
-@if(!$isNonaktif && !$presensiGantung && !$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni && !$isWeekend && !$belumBuka && !$lewatJamCo)
+@if(!$isNonaktif && !$presensiGantung && !$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni && !$isWeekend && !$belumBuka && !$lewatJamCo && !($lewatBatasMasuk ?? false))
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
