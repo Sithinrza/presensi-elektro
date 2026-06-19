@@ -186,7 +186,7 @@
                                         };
                                     @endphp
 
-                                    <span class="inline-flex items-center px-3 py-1.5 {{ $colorCi }} border rounded-md text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap">
+                                    <span class="inline-flex items-center px-3 py-1.5 {{ $colorCi }} border rounded-md text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full lg:w-auto">
                                         IN: {{ $ciName }}
                                     </span>
 
@@ -195,7 +195,7 @@
                                     </span>
                                 </div>
                                 @if(isset($r->alasan) && $r->alasan)
-                                    <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[180px] md:max-w-[250px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $r->alasan }}">
+                                    <div class="mt-1.5 text-[10px] text-amber-600 font-bold italic max-w-[180px] md:max-w-[250px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded" title="{{ $r->alasan }}">
                                         💬 Alasan: {{ $r->alasan }}
                                     </div>
                                 @endif
@@ -203,10 +203,10 @@
 
                             <td class="px-8 py-4 text-center">
                                 @if(isset($r->id_presensi))
-                                    <a href="{{ route('presensi.detail', $r->id_presensi) }}" class="inline-flex items-center justify-center gap-1 text-[10px] font-black text-maroon-700 uppercase tracking-widest hover:text-maroon-900 transition-colors">
+                                    <span class="inline-flex items-center justify-center gap-1 text-[10px] font-black text-maroon-700 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 cursor-pointer">
                                         Detail
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-                                    </a>
+                                    </span>
                                 @else
                                     <span class="inline-flex items-center justify-center gap-1 text-[10px] font-black text-slate-300 uppercase tracking-widest cursor-not-allowed">
                                         Detail
