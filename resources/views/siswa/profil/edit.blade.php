@@ -75,7 +75,7 @@
             <form id="form-foto" action="{{ route('siswa.profil.update-foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
                 @csrf
                 @method('PUT')
-                <input type="file" id="input-foto" name="foto" accept="image/png, image/jpeg, image/jpg" onchange="document.getElementById('form-foto').submit()">
+                <input type="file" id="input-foto" name="foto" accept=".png, .jpeg, .jpg" onchange="validateAndSubmitPhoto(this)">
             </form>
         </div>
     </section>
@@ -167,6 +167,52 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // 🚨 TAMBAHAN JS: Validasi Foto Sebelum Submit
+    function validateAndSubmitPhoto(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            const maxSize = 3 * 1024 * 1024; // 3 MB
+
+            if (!validTypes.includes(file.type)) {
+                Swal.fire({
+                    title: 'Format Tidak Sesuai!',
+                    text: 'Silakan unggah file gambar (JPG, JPEG, atau PNG). Dokumen seperti PDF tidak diperbolehkan.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                        title: 'text-lg sm:text-xl font-black text-maroon-950',
+                        confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg'
+                    }
+                });
+                input.value = ''; // Kosongkan file yang dipilih
+                return false;
+            }
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Ukuran Terlalu Besar!',
+                    text: 'Ukuran foto maksimal adalah 3 MB. Silakan kompres foto Anda terlebih dahulu.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                        title: 'text-lg sm:text-xl font-black text-maroon-950',
+                        confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg'
+                    }
+                });
+                input.value = ''; // Kosongkan file yang dipilih
+                return false;
+            }
+
+            // Jika valid, submit form
+            document.getElementById('form-foto').submit();
+        }
+    }
+
     function confirmDeleteFoto(event) {
         event.preventDefault();
         if (typeof Swal !== 'undefined') {

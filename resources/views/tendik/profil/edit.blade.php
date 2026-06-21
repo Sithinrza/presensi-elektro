@@ -25,12 +25,14 @@
     </div>
 
     @if(session('success'))
-        <div class="bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center justify-between">
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             <span>{{ session('success') }}</span>
         </div>
     @endif
     @if($errors->any() || session('error'))
-        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center justify-between">
+        <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             <span>{{ session('error') ?? $errors->first() }}</span>
         </div>
     @endif
@@ -76,7 +78,7 @@
             <form id="form-foto" action="{{ route('tendik.profil.update-foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
                 @csrf
                 @method('PUT')
-                <input type="file" id="input-foto" name="foto" accept="image/png, image/jpeg, image/jpg" onchange="document.getElementById('form-foto').submit()">
+                <input type="file" id="input-foto" name="foto" accept=".png, .jpeg, .jpg" onchange="validateAndSubmitPhoto(this)">
             </form>
         </div>
     </section>
@@ -191,7 +193,52 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    // Konfirmasi Hapus Foto
+    // 🚨 PERBAIKAN: JS Untuk Cek Ekstensi/Ukuran File SEBELUM Submit
+    function validateAndSubmitPhoto(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            const maxSize = 3 * 1024 * 1024; // 3 MB
+
+            if (!validTypes.includes(file.type)) {
+                Swal.fire({
+                    title: 'Format Tidak Sesuai!',
+                    text: 'Silakan unggah file gambar (JPG, JPEG, atau PNG). Dokumen seperti PDF tidak diperbolehkan.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                        title: 'text-lg sm:text-xl font-black text-maroon-950',
+                        confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg'
+                    }
+                });
+                input.value = ''; // Kosongkan pilihan file
+                return false;
+            }
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Ukuran Terlalu Besar!',
+                    text: 'Ukuran foto maksimal adalah 3 MB. Silakan kompres foto Anda terlebih dahulu.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                        title: 'text-lg sm:text-xl font-black text-maroon-950',
+                        confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg'
+                    }
+                });
+                input.value = ''; // Kosongkan pilihan file
+                return false;
+            }
+
+            // Jika lolos semua validasi di browser, langsung submit otomatis
+            document.getElementById('form-foto').submit();
+        }
+    }
+
     function confirmDeleteFoto(event) {
         event.preventDefault();
 
@@ -223,12 +270,10 @@
         }
     }
 
-    // FUNGSI KONFIRMASI SIMPAN PROFIL DENGAN SWEETALERT2
     function confirmUpdate(event) {
-        event.preventDefault(); // Cegah submit otomatis
+        event.preventDefault();
         const form = document.getElementById('formEditProfil');
 
-        // Pastikan HTML5 validation bawaan browser berjalan
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
@@ -240,11 +285,11 @@
                 text: "Pastikan biodata Anda yang diperbarui sudah benar.",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
-                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonColor: '#4d182b',
+                cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Simpan!',
                 cancelButtonText: 'Batal',
-                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                reverseButtons: true,
                 customClass: {
                     popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
                     title: 'text-lg sm:text-xl font-black text-maroon-950',
@@ -253,7 +298,7 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                    form.submit();
                 }
             });
         } else {
