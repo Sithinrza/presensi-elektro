@@ -98,6 +98,7 @@
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Siswa Magang</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">NIS / ID</th>
+                        <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Sekolah Asal</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Pembimbing</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
@@ -126,6 +127,11 @@
                         <td class="px-6 sm:px-8 py-4">
                             <span class="student-nis inline-flex items-center px-2 sm:px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-[10px] sm:text-xs font-bold font-mono border border-slate-200">
                                 {{ $s->nis }}
+                            </span>
+                        </td>
+                        <td class="px-6 sm:px-8 py-4">
+                            <span class="student-email text-[10px] sm:text-xs font-bold text-slate-700 leading-tight line-clamp-2">
+                                {{ $s->user->email ?? 'Tidak ada email' }}
                             </span>
                         </td>
                         <td class="px-6 sm:px-8 py-4">

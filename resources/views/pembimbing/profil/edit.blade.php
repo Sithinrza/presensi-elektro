@@ -44,7 +44,7 @@
             <div>
                 <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-tight leading-none">{{ $pembimbing->nama_lengkap }}</h3>
                 <p class="text-xs sm:text-sm font-bold text-gold mt-1.5">No. Induk: {{ $pembimbing->no_induk ?? '-' }}</p>
-                <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2.5 uppercase tracking-widest">Format: JPG, PNG. Ukuran maksimal 3MB.</p>
+                <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2.5 uppercase tracking-widest">Format: JPG, JPEG, PNG. Ukuran maksimal 3MB.</p>
             </div>
 
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3">
@@ -68,7 +68,8 @@
             <form id="form-foto" action="{{ route('pembimbing.profil.update-foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
                 @csrf
                 @method('PUT')
-                <input type="file" id="input-foto" name="foto" accept="image/png, image/jpeg, image/jpg" onchange="document.getElementById('form-foto').submit()">
+                <!-- 🚨 PERBAIKAN: Fungsi onchange diubah memanggil fungsi JS validateAndSubmitPhoto -->
+                <input type="file" id="input-foto" name="foto" accept=".png, .jpeg, .jpg" onchange="validateAndSubmitPhoto(this)">
             </form>
         </div>
     </section>
@@ -90,19 +91,19 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Email Akun</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Email Akun <span class="text-rose-500">*</span></label>
                     <input type="email" name="email" value="{{ old('email', $pembimbing->user->email) }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">No. Handphone / WhatsApp</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">No. Handphone / WhatsApp <span class="text-rose-500">*</span></label>
                     <input type="tel" inputmode="numeric" name="no_telp" value="{{ old('no_telp', $pembimbing->no_telp) }}" required placeholder="08..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama <span class="text-rose-500">*</span></label>
                     <select name="id_agama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                        <option value="" disabled>Pilih Agama...</option>
+                        <option value="" disabled {{ empty(old('id_agama', $pembimbing->id_agama)) ? 'selected' : '' }}>Pilih Agama...</option>
                         @foreach($agama ?? [] as $a)
                             <option value="{{ $a->id_agama }}" {{ old('id_agama', $pembimbing->id_agama) == $a->id_agama ? 'selected' : '' }}>{{ $a->name }}</option>
                         @endforeach
@@ -110,9 +111,9 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jenis Kelamin</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jenis Kelamin <span class="text-rose-500">*</span></label>
                     <select name="jk" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                        <option value="" disabled>Pilih...</option>
+                        <option value="" disabled {{ empty(old('jk', $pembimbing->jk)) ? 'selected' : '' }}>Pilih...</option>
                         <option value="L" {{ old('jk', $pembimbing->jk) == 'L' ? 'selected' : '' }}>Laki-laki</option>
                         <option value="P" {{ old('jk', $pembimbing->jk) == 'P' ? 'selected' : '' }}>Perempuan</option>
                     </select>
@@ -139,6 +140,52 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // 🚨 TAMBAHAN JS: Validasi Foto Sebelum Submit
+    function validateAndSubmitPhoto(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            const maxSize = 3 * 1024 * 1024; // 3 MB
+
+            if (!validTypes.includes(file.type)) {
+                Swal.fire({
+                    title: 'Format Tidak Sesuai!',
+                    text: 'Silakan unggah file gambar (JPG, JPEG, atau PNG). Dokumen seperti PDF tidak diperbolehkan.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                        title: 'text-lg sm:text-xl font-black text-maroon-950',
+                        confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg'
+                    }
+                });
+                input.value = ''; // Kosongkan file yang dipilih
+                return false;
+            }
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Ukuran Terlalu Besar!',
+                    text: 'Ukuran foto maksimal adalah 3 MB. Silakan kompres foto Anda terlebih dahulu.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                        title: 'text-lg sm:text-xl font-black text-maroon-950',
+                        confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg'
+                    }
+                });
+                input.value = ''; // Kosongkan file yang dipilih
+                return false;
+            }
+
+            // Jika valid, submit form otomatis
+            document.getElementById('form-foto').submit();
+        }
+    }
+
     function confirmDeleteFoto(event) {
         event.preventDefault();
         if (typeof Swal !== 'undefined') {
