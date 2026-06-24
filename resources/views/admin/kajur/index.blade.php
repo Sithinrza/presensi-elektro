@@ -34,7 +34,7 @@
                 </div>
                 <div class="space-y-1.5 sm:space-y-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">NIP</label>
-                    <input type="text" name="nip" required placeholder="19750507 200012 1 001" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 transition-all shadow-sm">
+                    <input type="text" name="nip" required placeholder="123456789" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-maroon-500 transition-all shadow-sm">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3 sm:gap-4">

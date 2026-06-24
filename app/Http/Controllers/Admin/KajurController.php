@@ -27,7 +27,7 @@ class KajurController extends Controller
         // VALIDASI KETAT NIP (ANTI DOBEL) DAN TAHUN
         $request->validate([
             'nama_lengkap' => 'required|string',
-            'nip'          => 'required|numeric|unique:kajurs,nip', // 👈 Ditambah unique
+            'nip'          => 'required|numeric|unique:kajur,nip',
             'tahun_mulai'  => 'required|numeric|digits:4',
             'tahun_selesai'=> 'required|numeric|digits:4|gte:tahun_mulai', // Selesai >= Mulai
         ], [
@@ -59,7 +59,7 @@ class KajurController extends Controller
         $request->validate([
             'nama_lengkap' => 'required|string',
             // 👈 Ditambah unique tapi kecualikan ID dia sendiri
-            'nip'          => 'required|numeric|unique:kajurs,nip,' . $id_kajur . ',id_kajur',
+            'nip'          => 'required|numeric|unique:kajur,nip,' . $id_kajur . ',id_kajur',
             'tahun_mulai'  => 'required|numeric|digits:4',
             'tahun_selesai'=> 'required|numeric|digits:4|gte:tahun_mulai', // Selesai >= Mulai
         ], [
