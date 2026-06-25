@@ -275,8 +275,8 @@
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const KORDINAT_TARGET = [-3.2762178, 114.5968513];
-    const RADIUS_AMAN = 4000;
+    const KORDINAT_TARGET = [-3.296868, 114.581400];
+    const RADIUS_AMAN = 50;
 
     let userLat = 0; let userLng = 0;
     let faceLandmarker, objectDetector, drawingUtils;
@@ -290,6 +290,10 @@
     const map = L.map('map').setView(KORDINAT_TARGET, 17);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
     const areaKantor = L.circle(KORDINAT_TARGET, { radius: RADIUS_AMAN, color: '#10b981', fillColor: '#10b981', fillOpacity: 0.2 }).addTo(map);
+
+    // ini kalau mau ad titiknya
+    const markerKantor = L.marker(KORDINAT_TARGET).addTo(map);
+    markerKantor.bindPopup("🏢 <b>Titik Pusat Kantor</b>");
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((pos) => {
