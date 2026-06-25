@@ -273,16 +273,25 @@
 @if(!$isNonaktif && !$presensiGantung && !$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni && !$isWeekend && !$belumBuka && !$lewatJamCo && !($lewatBatasMasuk ?? false))
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
+    // IMPORT MODUL AI DARI GOOGLE MEDIAPIPE (Diambil via CDN agar tidak membebani server)
+    // - FaceLandmarker: AI spesialis pemetaan titik wajah (untuk deteksi jarak & kedipan mata).
+    // - ObjectDetector: AI spesialis deteksi benda (sebagai satpam anti-spoofing / anti pakai HP lain).
+    // - FilesetResolver: Asisten pemuat mesin AI (WebAssembly/WASM) agar bisa jalan langsung di browser.
+    // - DrawingUtils: Tukang gambar visual (jaring wajah hijau & kotak merah) ke atas elemen Canvas HTML.
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const KORDINAT_TARGET = [-3.2762178, 114.5968513];
-    const RADIUS_AMAN = 4000;
+    // Titik pusat koordinat kantor dan batas radius maksimal yang diizinkan (dalam meter)
+    const KORDINAT_TARGET = [-3.296867, 114.5813285];
+    const RADIUS_AMAN = 50;
 
-    let userLat = 0; let userLng = 0;
-    let faceLandmarker, objectDetector, drawingUtils;
-    const video = document.getElementById("video");
-    const canvasElement = document.getElementById("canvas");
+    // PERSIAPAN VARIABEL & ELEMEN ANTARMUKA (Wadah Data)
+    let userLat = 0; let userLng = 0; //Tempat menyimpan hasil titik koordinat GPS pengguna.
+    let faceLandmarker, objectDetector, drawingUtils; // Wadah untuk menampung mesin AI setelah berhasil dimuat.
+    const video = document.getElementById("video"); //Elemen untuk menampilkan kamera asli (video)
+    const canvasElement = document.getElementById("canvas"); // lapisan transparan (canvas) tempat AI menggambar efek visual (jaring wajah/kotak merah).
     const canvasCtx = canvasElement.getContext("2d");
+
+    // panduan, ovalGuide, debugInfo: Elemen UI untuk menampilkan teks instruksi, lingkaran pemandu posisi wajah, dan angka indikator teknis AI.
     const panduan = document.getElementById("teks-panduan");
     const ovalGuide = document.getElementById("oval-guide");
     const debugInfo = document.getElementById("debug-info");
@@ -291,6 +300,7 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
     const areaKantor = L.circle(KORDINAT_TARGET, { radius: RADIUS_AMAN, color: '#10b981', fillColor: '#10b981', fillOpacity: 0.2 }).addTo(map);
 
+    //Memeriksa apakah browser HP/Laptop mendukung fitur lokasi (GPS)
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((pos) => {
             userLat = pos.coords.latitude; userLng = pos.coords.longitude;
@@ -313,7 +323,12 @@
             alert("Izinkan akses lokasi GPS.");
             document.getElementById('status-global').innerText = "Gagal Mendapatkan GPS!";
             document.getElementById('status-global').className = "status-badge bg-danger";
-        }, { enableHighAccuracy: true });
+        }, {
+            //baru ditambah ini
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+         });
     } else {
         alert("Browser kamu tidak mendukung fitur GPS.");
     }
@@ -322,23 +337,35 @@
         document.getElementById('kamera-container').style.display = "block";
         try {
             panduan.innerText = "Meminta izin kamera...";
+            // Minta izin ke browser untuk menyalakan kamera depan (selfie) dengan resolusi 640x480
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640, height: 480 } });
-            video.srcObject = stream; video.play();
+            // Memasukkan aliran gambar dari kamera (stream) ke dalam tag <video id="video"> di HTML
+            video.srcObject = stream;
+            // Memutar videonya agar tangkapan kamera tampil bergerak (real-time) di layar
+            video.play();
 
+            // Fungsi: Memuat mesin WebAssembly (WASM) milik MediaPipe agar AI bisa
+            // berjalan sangat cepat secara lokal di browser HP/Laptop pengguna, tanpa perlu membebani server backend Laravel.
             panduan.innerText = "Kamera aktif. Memuat file AI...";
             const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
 
+            // Fungsi: Mengunduh model AI bernama 'efficientdet_lite0.tflite' dari server Google.
+            // Model 'lite0' dipilih karena ukurannya kecil dan ringan untuk HP.
             objectDetector = await ObjectDetector.createFromOptions(vision, {
-                baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/float16/1/efficientdet_lite0.tflite", delegate: "CPU" },
-                scoreThreshold: 0.3, runningMode: "VIDEO"
+                baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/object_detector/efficientdet_lite0/float16/1/efficientdet_lite0.tflite",
+                delegate: "CPU" // Menggunakan CPU HP untuk memproses AI karena lebih stabil di semua browser
+            },
+                scoreThreshold: 0.3, // AI harus minimal yakin 30% untuk menganggap objek tersebut adalah HP/Laptop
+                runningMode: "VIDEO" // Disetel ke VIDEO karena memproses tangkapan kamera yang bergerak
             });
 
             faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
                 baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task", delegate: "CPU" },
-                runningMode: "VIDEO", numFaces: 1
+                runningMode: "VIDEO", numFaces: 1 // Dibatasi 1 agar AI hanya fokus ke wajah user yang sedang presensi (mengabaikan wajah bocor di belakang)
             });
 
             drawingUtils = new DrawingUtils(canvasCtx);
+            // Fungsi: Alat bantu untuk menggambar visualisasi jaring wajah (Face Mesh) ke atas canvas.
             if (video.readyState >= 2) jalankanLoopDeteksi();
             else video.addEventListener("loadeddata", jalankanLoopDeteksi);
         } catch (error) {
