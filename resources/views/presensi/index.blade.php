@@ -276,7 +276,7 @@
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
     const KORDINAT_TARGET = [-3.296868, 114.581400];
-    const RADIUS_AMAN = 50;
+    const RADIUS_AMAN = 2000;
 
     let userLat = 0; let userLng = 0;
     let faceLandmarker, objectDetector, drawingUtils;
