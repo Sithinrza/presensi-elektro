@@ -83,7 +83,9 @@ class PresensiController extends Controller
         $lewatJamCo = false;
         $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
         if ($jamSekarang > $batasBatasCo) {
-            $lewatJamCo = true;
+            if (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))) {
+                $lewatJamCo = true;
+            }
         }
 
         $presensiSelesai = $presensiHariIni && !is_null($presensiHariIni->jam_pulang);
