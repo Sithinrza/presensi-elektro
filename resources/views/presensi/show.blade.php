@@ -178,8 +178,8 @@
     document.addEventListener("DOMContentLoaded", function() {
 
         // --- PENGATURAN KANTOR PUSAT ---
-        const officeLat = -3.296867;
-        const officeLng = 114.5813285;
+        const officeLat = -3.296887;
+        const officeLng = 114.581389;
         const radiusAman = 50; // Radius batas aman dalam meter
 
         // Ikon Custom Titik Kantor & User
