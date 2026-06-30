@@ -83,8 +83,9 @@ class DashboardController extends Controller
                                  ->first();
         $belumBuka = $jamSekarang < '06:00:00';
 
+        // 🚨 PERBAIKAN LOGIKA TOMBOL BLOKIR
         $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
-        $lewatJamCo = $jamSekarang > $batasBatasCo;
+        $lewatJamCo = ($jamSekarang > $batasBatasCo) && (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan)));
 
         $batasBlokirMasuk = ($hariIniIso == 5) ? '16:30:00' : '16:00:00';
         $lewatBatasMasuk = ($jamSekarang >= $batasBlokirMasuk && (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))));

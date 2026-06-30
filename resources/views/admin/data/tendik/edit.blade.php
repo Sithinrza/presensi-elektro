@@ -82,7 +82,11 @@
                             </option>
                             @foreach($pangkat_golongan ?? [] as $pg)
                                 <option value="{{ $pg->id_pangkat_golongan }}" {{ (old('id_pangkat_golongan', $tendik->id_pangkat_golongan ?? '') == $pg->id_pangkat_golongan) ? 'selected' : '' }}>
-                                    {{ $pg->pangkat->nama_pangkat ?? 'Unknown' }} - {{ $pg->golongan->ruang ?? 'Unknown' }}
+                                    @if(($pg->golongan->jenis ?? '') == '-')
+                                        Honorer / Tanpa Golongan
+                                    @else
+                                        [{{ $pg->golongan->jenis ?? '' }}] {{ $pg->pangkat->nama_pangkat ?? 'Unknown' }} - Gol. {{ $pg->golongan->ruang ?? 'Unknown' }}
+                                    @endif
                                 </option>
                             @endforeach
                         </select>

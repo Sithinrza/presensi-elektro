@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('golongan', function (Blueprint $table) {
             $table->id('id_golongan');
             $table->string('ruang', 20); // Contoh: III/a, III/b
+            $table->enum('jenis', ['PNS', 'PPPK', '-'])->default('-');
             $table->timestamps();
         });
     }

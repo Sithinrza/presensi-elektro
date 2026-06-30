@@ -8,6 +8,8 @@ use App\Models\StatusPresensi;
 use App\Models\HariLibur;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Tendik;
+use App\Models\SiswaMagang;
 use Carbon\Carbon;
 
 class PresensiController extends Controller
@@ -27,10 +29,10 @@ class PresensiController extends Controller
         // =========================================================================
         $statusAkun = 'aktif';
         if ($role == 'tendik') {
-            $dataTendik = \App\Models\Tendik::where('id_user', $user->id_user)->first();
+            $dataTendik = Tendik::where('id_user', $user->id_user)->first();
             $statusAkun = $dataTendik->status ?? 'aktif';
         } elseif ($role == 'siswa' || $role == 'siswa magang') {
-            $dataSiswa = \App\Models\SiswaMagang::where('id_user', $user->id_user)->first();
+            $dataSiswa = SiswaMagang::where('id_user', $user->id_user)->first();
             $statusAkun = $dataSiswa->status ?? 'aktif';
         }
 
@@ -40,7 +42,7 @@ class PresensiController extends Controller
         }
 
         // =========================================================================
-        // CEK "DOSA MASA LALU" (Lupa CO dan Belum Isi Alasan)
+        // CEK  (Lupa CO dan Belum Isi Alasan)
         // =========================================================================
         $statusLupaCO = StatusPresensi::where('name', 'Lupa Check-Out')->first();
         $presensiGantung = null;
@@ -48,7 +50,7 @@ class PresensiController extends Controller
         if ($statusLupaCO) {
             $presensiGantung = Presensi::where('id_user', $user->id_user)
                                        ->where('id_status_co', $statusLupaCO->id_status_presensi)
-                                       ->whereNull('alasan')
+                                       ->whereNull('alasan')->orWhere('alasan', '')
                                        ->orderBy('tanggal', 'asc')
                                        ->first();
         }
@@ -75,7 +77,9 @@ class PresensiController extends Controller
         if ($jamSekarang >= $batasBlokirMasuk) {
             // Jika dia belum absen masuk sama sekali sampai jadwal pulang tiba
             if (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))) {
-                $lewatBatasMasuk = true;
+                if (!$hariLiburIni && !$isWeekend) {
+                    $lewatBatasMasuk = true;
+                }
             }
         }
 
@@ -84,7 +88,9 @@ class PresensiController extends Controller
         $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
         if ($jamSekarang > $batasBatasCo) {
             if (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))) {
-                $lewatJamCo = true;
+                if (!$hariLiburIni && !$isWeekend) {
+                    $lewatJamCo = true;
+                }
             }
         }
 
@@ -128,10 +134,10 @@ class PresensiController extends Controller
 
         $statusAkun = 'aktif';
         if ($role == 'tendik') {
-            $dataTendik = \App\Models\Tendik::where('id_user', $user->id_user)->first();
+            $dataTendik = Tendik::where('id_user', $user->id_user)->first();
             $statusAkun = $dataTendik->status ?? 'aktif';
         } elseif ($role == 'siswa' || $role == 'siswa magang') {
-            $dataSiswa = \App\Models\SiswaMagang::where('id_user', $user->id_user)->first();
+            $dataSiswa = SiswaMagang::where('id_user', $user->id_user)->first();
             $statusAkun = $dataSiswa->status ?? 'aktif';
         }
 
@@ -164,6 +170,23 @@ class PresensiController extends Controller
 
         if ($jamSekarang < '06:00:00') {
             return response()->json(['status' => 'error', 'message' => 'Sistem presensi baru dibuka pukul 06:00 WITA.']);
+        }
+
+        $statusLupaCO = StatusPresensi::where('name', 'Lupa Check-Out')->first();
+        if ($statusLupaCO) {
+            $adaHutangAlasan = Presensi::where('id_user', $user->id_user)
+                                       ->where('id_status_co', $statusLupaCO->id_status_presensi)
+                                       ->where(function($query) {
+                                           $query->whereNull('alasan')->orWhere('alasan', '');
+                                       })
+                                       ->exists();
+
+            if ($adaHutangAlasan) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Anda belum mengisi alasan Lupa Check-Out pada hari sebelumnya! Silakan isi terlebih dahulu.'
+                ]);
+            }
         }
 
         $img = $request->image_base64;

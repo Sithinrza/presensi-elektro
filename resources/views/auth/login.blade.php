@@ -39,7 +39,7 @@
   <style>
     body {
       background-color: #fcfaf8;
-      background-image: 
+      background-image:
         radial-gradient(at 0% 0%, rgba(188, 90, 117, 0.08) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(216, 185, 139, 0.1) 0px, transparent 50%);
     }
@@ -73,7 +73,7 @@
       box-shadow: 0 0 0 4px rgba(188, 90, 117, 0.1);
       transform: translateY(-1px);
     }
-    
+
     ::-webkit-scrollbar {
       width: 6px;
     }
@@ -94,7 +94,7 @@
   <div class="fixed bottom-[-10%] left-[-5%] w-[40%] h-[40%] bg-gold-light/40 rounded-full blur-[120px] pointer-events-none"></div>
 
   <main class="relative z-10 w-full max-w-5xl grid lg:grid-cols-10 glass-effect rounded-3xl lg:rounded-[3rem] overflow-hidden shadow-premium border border-white my-auto">
-    
+
     <!-- LEFT SIDE: BRANDING & INFO (Hidden on Mobile) -->
     <div class="hidden lg:flex lg:col-span-4 relative bg-maroon-950 p-10 lg:p-12 flex-col justify-between overflow-hidden min-h-[600px]">
         <!-- Overlay Decorative -->
@@ -102,10 +102,10 @@
         <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-gold/20 rounded-full blur-3xl"></div>
 
         <div class="relative z-10">
-            <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png" 
-                 alt="Logo Elektro" 
+            <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png"
+                 alt="Logo Elektro"
                  class="w-16 h-16 lg:w-20 lg:h-20 object-contain animate-float drop-shadow-lg">
-            
+
             <div class="mt-10 lg:mt-12 space-y-4">
                 <h2 class="font-display text-3xl lg:text-4xl text-white leading-tight">Sistem Presensi<br><span class="text-gold italic">Teknik Elektro.</span></h2>
                 <div class="w-12 h-1 bg-gold rounded-full"></div>
@@ -134,14 +134,29 @@
 
     <!-- RIGHT SIDE: LOGIN FORM -->
     <div class="lg:col-span-6 p-6 sm:p-10 md:p-16 flex flex-col justify-center bg-white/60 min-h-full">
-        
+
         <div class="max-w-md mx-auto w-full">
             <!-- Mobile Header Logo -->
             <div class="lg:hidden flex flex-col items-center justify-center mb-8">
-                <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png" 
-                     alt="Logo Elektro" 
+                <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png"
+                     alt="Logo Elektro"
                      class="w-16 h-16 object-contain drop-shadow-md mb-4">
                 <h2 class="font-display text-2xl font-bold text-maroon-950 leading-none">Sistem Presensi</h2>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6">
+                <a href="{{ url('/') }}"
+                class="w-9 h-9 flex items-center justify-center rounded-xl bg-maroon-50 text-maroon-950 hover:bg-maroon-100 transition-colors shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m15 18-6-6 6-6"/>
+                    </svg>
+                </a>
+
+                <span class="text-sm font-bold text-maroon-950">
+                    Kembali ke Landing Page
+                </span>
             </div>
 
             <div class="mb-8 sm:mb-10 text-center lg:text-left">
@@ -178,7 +193,7 @@
                 <div class="space-y-1.5 sm:space-y-2">
                     <!-- Label Kata Sandi -->
                     <label class="block text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-[0.2em] ml-1">Kata Sandi</label>
-                    
+
                     <div class="relative group">
                         <div class="absolute inset-y-0 left-0 pl-4 sm:pl-5 flex items-center pointer-events-none text-slate-300 group-focus-within:text-maroon-500 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[18px] sm:h-[18px] w-4 h-4"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>

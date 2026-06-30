@@ -106,7 +106,7 @@ class DashboardController extends Controller
     public function lengkapiProfil(Request $request)
     {
         $request->validate([
-            'nip'              => 'required|string|max:50',
+            'nip'              => 'required|string|regex:/^[0-9]+$/|max:25',
             'id_agama'         => 'required|integer',
             'id_pend_terakhir' => 'required|integer',
             'jk'               => 'required|in:L,P',
@@ -114,6 +114,8 @@ class DashboardController extends Controller
             'tanggal_lahir'    => 'required|date',
             'no_hp'            => 'required|string|max:20',
             'alamat'           => 'required|string',
+        ],[
+            'nip.regex' => 'NIP / Nomor Induk hanya boleh berisi karakter angka!',
         ]);
 
         $user = Auth::user();

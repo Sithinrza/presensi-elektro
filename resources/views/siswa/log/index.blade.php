@@ -202,13 +202,14 @@
             <div id="logbook-container" class="space-y-4 sm:space-y-6 max-h-[700px] overflow-y-auto no-scrollbar pr-1 custom-scrollbar">
 
                 @forelse($riwayatLog as $log)
-                    @php
-                        // Persiapan data untuk JS Filter (Menggunakan tanggal atau created_at sebagai default fallback)
-                        $logDate = \Carbon\Carbon::parse($log->report_date ?? $log->tanggal ?? $log->created_at);
+                   @php
+
+                        $logDate = \Carbon\Carbon::parse($log->report_date);
+                        $waktuSubmit = \Carbon\Carbon::parse($log->created_at)->timezone('Asia/Makassar');
+
                         $logMonth = $logDate->format('n');
                         $logYear = $logDate->format('Y');
                     @endphp
-
                     <!-- CARD LOGBOOK DENGAN DATA ATRIBUT -->
                     <div class="log-card group bg-white p-5 sm:p-6 rounded-3xl sm:rounded-[2.5rem] border border-maroon-50 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
                          data-status="{{ strtolower($log->status ?? 'pending') }}"
@@ -244,7 +245,7 @@
                                             {{ strtolower($log->status) == 'pending' ? 'Menunggu Validasi' : $log->status }}
                                         </span>
                                         <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
-                                        <span class="text-[8px] sm:text-[9px] font-bold text-slate-400">{{ $logDate->format('H:i') }} WITA</span>
+                                        <span class="text-[8px] sm:text-[9px] font-bold text-slate-400">{{ $waktuSubmit->format('H:i') }} WITA</span>
                                     </div>
                                 </div>
                             </div>
