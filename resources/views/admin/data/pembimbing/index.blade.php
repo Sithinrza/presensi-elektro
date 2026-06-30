@@ -119,7 +119,6 @@
                                 </div>
                                 <div>
                                     <p class="pembimbing-name text-xs sm:text-sm font-extrabold text-slate-800 leading-none tracking-tight group-hover:text-maroon-700 transition-colors">{{ $p->nama_lengkap }}</p>
-                                    <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-1 sm:mt-1.5 line-clamp-1">{{ $p->user->email ?? 'Tanpa Email' }}</p>
                                 </div>
                             </div>
                         </td>

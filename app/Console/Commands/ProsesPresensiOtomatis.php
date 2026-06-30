@@ -32,6 +32,22 @@ class ProsesPresensiOtomatis extends Command
             $this->error("Pastikan status 'Alpa', 'Lupa Check-Out', dan 'Libur' sudah ada di tabel status_presensi!");
             return;
         }
+        
+        // UPDATE OTOMATIS STATUS SISWA MAGANG JADI NONAKTIF
+        // =========================================================
+        $siswaExpired = SiswaMagang::where('status', 'Aktif')
+                                   ->whereDate('tanggal_selesai', '<', $tanggalHariIni)
+                                   ->get();
+
+        if ($siswaExpired->isNotEmpty()) {
+            // Ambil semua id_user yang masa magangnya sudah habis
+            $expiredIds = $siswaExpired->pluck('id_user')->toArray();
+
+            // Ubah status profil di tabel siswa_magang jadi Nonaktif
+            SiswaMagang::whereIn('id_user', $expiredIds)->update(['status' => 'Nonaktif']);
+
+            $this->info("Ada " . count($expiredIds) . " profil siswa magang yang dinonaktifkan karena masa magang habis.");
+        }
 
 
         // Ambil id_user Siswa Magang (Akun Aktif & Tanggal Selesai >= Hari Ini)

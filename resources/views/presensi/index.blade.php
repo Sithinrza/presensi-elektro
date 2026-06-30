@@ -41,7 +41,7 @@
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
 
-    {{-- KONDISI BLOKIR PRIORITAS 2: PUNYA DOSA LUPA CO --}}
+    {{-- KONDISI BLOKIR PRIORITAS UPA CO --}}
     @elseif($presensiGantung)
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
@@ -252,7 +252,59 @@
                 <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">
                     {{ $presensiHariIni ? 'Presensi Pulang' : 'Presensi Masuk' }}
                 </h2>
+
             </div>
+            <div class="bg-maroon-950 p-5 rounded-3xl flex items-start gap-4 shadow-xl border border-white/5">
+
+                <!-- Icon -->
+                <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0 border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-white">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </div>
+
+                <!-- Content -->
+                <div>
+                    <h3 class="text-[#e8b57d] font-semibold text-sm mb-2">
+                        Petunjuk Presensi
+                    </h3>
+
+                    <ul class="text-slate-300 text-xs space-y-2">
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                            <span>Izinkan akses kamera dan lokasi (GPS).</span>
+                        </li>
+
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                            <span class="text-left leading-relaxed">
+                                Pastikan jarak anda pada Gedung Jurusan Teknik Elektro masih dalam radius 50 meter.
+                            </span>
+                        </li>
+
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                            <span>Pastikan wajah terlihat jelas tanpa masker.</span>
+                        </li>
+
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                            <span>Ikuti instruksi gerakan yang muncul di layar.</span>
+                        </li>
+
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-rose-400 rounded-full shrink-0"></span>
+                            <span class="text-rose-200">Jangan menutup halaman sebelum proses selesai.</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div> <br>
             <div id="status-global" class="status-badge bg-warning">Menginisialisasi GPS...</div>
             <div id="map"></div>
             <div id="kamera-container">
@@ -265,9 +317,12 @@
             <div id="notif-berhasil" class="status-badge bg-success" style="display: none; margin-top: 20px;">
                 🎉 Presensi Berhasil Disimpan!
             </div>
+
+
         </div>
     @endif
 </div>
+
 
 {{-- PASTIKAN SCRIPT AI DIBLOKIR JIKA ADA SALAH SATU KONDISI DI BAWAH INI --}}
 @if(!$isNonaktif && !$presensiGantung && !$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni && !$isWeekend && !$belumBuka && !$lewatJamCo && !($lewatBatasMasuk ?? false))
@@ -297,7 +352,8 @@
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((pos) => {
-            userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+            userLat = pos.coords.latitude;
+            userLng = pos.coords.longitude;
             const userPos = L.latLng(userLat, userLng);
 
             const markerUser = L.marker(userPos).addTo(map);
@@ -326,8 +382,10 @@
         document.getElementById('kamera-container').style.display = "block";
         try {
             panduan.innerText = "Meminta izin kamera...";
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640, height: 480 } });
-            video.srcObject = stream; video.play();
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "user", width: 640, height: 480 } });
+            video.srcObject = stream;
+            video.play();
 
             panduan.innerText = "Kamera aktif. Memuat file AI...";
             const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
@@ -366,7 +424,7 @@
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
             const objRes = objectDetector.detectForVideo(video, now);
-            let adaHP = false; const bendaTerlarang = ["cell phone", "laptop", "tv", "monitor"];
+            let adaHP = false; const bendaTerlarang = ["cell phone"];
 
             for (const deteksi of objRes.detections) {
                 if (bendaTerlarang.includes(deteksi.categories[0].categoryName)) {

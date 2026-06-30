@@ -70,8 +70,21 @@
                             <option value="" disabled selected>Pilih Pangkat...</option>
                             @foreach($pangkat_golongan ?? [] as $pg)
                                 <option value="{{ $pg->id_pangkat_golongan }}" {{ old('id_pangkat_golongan') == $pg->id_pangkat_golongan ? 'selected' : '' }}>
-                                    {{ $pg->pangkat->nama_pangkat ?? 'Unknown' }} - {{ $pg->golongan->ruang ?? 'Unknown' }}
+                                    @if(($pg->golongan->jenis ?? '') == '-')
+                                        Honorer / Tanpa Golongan
+                                    @else
+                                        [{{ $pg->golongan->jenis ?? '' }}] {{ $pg->pangkat->nama_pangkat ?? 'Unknown' }} - Gol. {{ $pg->golongan->ruang ?? 'Unknown' }}
+                                    @endif
                                 </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="space-y-1.5 sm:space-y-2">
+                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jabatan Fungsional</label>  <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
+                        <select name="id_jabatan" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
+                            <option value="" disabled selected>Pilih Jabatan...</option>
+                            @foreach($jabatan as $j)
+                                <option value="{{ $j->id_jabatan }}" {{ old('id_jabatan') == $j->id_jabatan ? 'selected' : '' }}>{{ $j->nama_jabatan }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -106,15 +119,7 @@
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">NIP</label>
                         <input type="text" name="nip" value="{{ old('nip') }}" placeholder="Nomor Induk Pegawai..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
-                    <div class="space-y-1.5 sm:space-y-2">
-                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jabatan Fungsional</label>
-                        <select name="id_jabatan" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                            <option value="" disabled selected>Pilih Jabatan...</option>
-                            @foreach($jabatan as $j)
-                                <option value="{{ $j->id_jabatan }}" {{ old('id_jabatan') == $j->id_jabatan ? 'selected' : '' }}>{{ $j->nama_jabatan }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+
 
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Pendidikan Terakhir</label>

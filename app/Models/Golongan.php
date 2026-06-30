@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 class Golongan extends Model {
     protected $table = 'golongan';
     protected $primaryKey = 'id_golongan';
-    protected $fillable = ['ruang'];
+    protected $fillable = ['ruang', 'jenis'];
 }
