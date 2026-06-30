@@ -305,6 +305,20 @@
                 </div>
 
             </div> <br>
+            <div class="flex justify-center mt-3">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-maroon-100 rounded-full shadow-sm">
+                    <!-- Ikon Lokasi dengan sedikit animasi pulsing -->
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-maroon-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-maroon-600"></span>
+                    </span>
+
+                    <!-- Teks Jarak -->
+                    <span id="info-jarak" class="text-[10px] sm:text-xs font-black text-maroon-900 uppercase tracking-widest">
+                        Mencari Lokasi...
+                    </span>
+                </div>
+            </div> <br>
             <div id="status-global" class="status-badge bg-warning">Menginisialisasi GPS...</div>
             <div id="map"></div>
             <div id="kamera-container">
@@ -330,8 +344,8 @@
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const KORDINAT_TARGET = [-3.296868, 114.581400];
-    const RADIUS_AMAN = 2000;
+    const KORDINAT_TARGET = [-3.296887, 114.581389];
+    const RADIUS_AMAN = 50;
 
     let userLat = 0; let userLng = 0;
     let faceLandmarker, objectDetector, drawingUtils;
@@ -355,13 +369,16 @@
             userLat = pos.coords.latitude;
             userLng = pos.coords.longitude;
             const userPos = L.latLng(userLat, userLng);
+            const jarak = L.latLng(KORDINAT_TARGET).distanceTo(userPos);
+            document.getElementById('info-jarak').innerHTML =
+    `📍 Jarak ke titik presensi: <b>${jarak.toFixed(2)} meter</b>`;
 
             const markerUser = L.marker(userPos).addTo(map);
             markerUser.bindPopup("📍 <b>Posisi Kamu</b>").openPopup();
             const group = new L.featureGroup([areaKantor, markerUser]);
             map.fitBounds(group.getBounds(), { padding: [20, 20] });
 
-            if (L.latLng(KORDINAT_TARGET).distanceTo(userPos) <= RADIUS_AMAN) {
+            if (jarak <= RADIUS_AMAN) {
                 document.getElementById('status-global').innerText = "Lokasi Sesuai. Memuat AI...";
                 document.getElementById('status-global').className = "status-badge bg-success";
                 mulaiSistemAI();
