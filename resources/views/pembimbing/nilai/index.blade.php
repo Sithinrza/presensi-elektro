@@ -63,7 +63,7 @@
                                     Cetak Sertifikat
                                 </a>
                             @else
-                                <button disabled class="bg-slate-50 text-slate-400 border border-slate-200 px-4 py-2.5 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest cursor-not-allowed transition-colors flex-1 sm:flex-none text-center" title="Sertifikat bisa dicetak setelah Admin IT menerbitkan Nomor Surat.">
+                                <button disabled class="bg-slate-50 text-slate-400 border border-slate-200 px-4 py-2.5 rounded-xl text-[8px] sm:text-[9px] font-black uppercase tracking-widest cursor-not-allowed transition-colors flex-1 sm:flex-none text-center" title="Sertifikat bisa dicetak setelah Admin menerbitkan Nomor Surat.">
                                     Menunggu No. Surat Admin
                                 </button>
                             @endif

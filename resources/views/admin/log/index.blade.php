@@ -69,7 +69,8 @@
                                     @if($log->foto_profil)
                                         <img src="{{ asset('storage/' . $log->foto_profil) }}" alt="Foto {{ $log->nama_lengkap }}" class="w-full h-full object-cover">
                                     @else
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($log->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
+                                        <!-- Mengambil 1 huruf pertama dari nama. Jika nama kosong, default memunculkan 'U' (User) -->
+                                        {{ strtoupper(substr($log->nama_lengkap ?? 'U', 0, 1)) }}
                                     @endif
                                 </div>
                                 <div>

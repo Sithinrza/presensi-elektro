@@ -50,7 +50,7 @@
             </h3>
             <div class="space-y-5">
                 <div><p class="text-[9px] font-bold text-slate-400 uppercase">Email</p><p class="text-sm font-bold text-slate-800">{{ $siswa->user->email ?? '-' }}</p></div>
-                <div><p class="text-[9px] font-bold text-slate-400 uppercase">Tempat, Tanggal Lahir</p><p class="text-sm font-bold text-slate-800">{{ $siswa->tempat_lahir ?? '-' }}, {{ $siswa->tanggal_lahir ?? '-' }}</p></div>
+                <div><p class="text-[9px] font-bold text-slate-400 uppercase">Tempat, Tanggal Lahir</p><p class="text-sm font-bold text-slate-800">{{ $siswa->tempat_lahir ?? '-' }}, {{ $siswa->tanggal_lahir ? \Carbon\Carbon::parse($siswa->tanggal_lahir)->locale('id')->translatedFormat('d F Y') : '-' }}</p></div>
                 <div><p class="text-[9px] font-bold text-slate-400 uppercase">Agama</p><p class="text-sm font-bold text-slate-800">{{ $siswa->agama->name ?? '-' }}</p></div>
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase">Jenis Kelamin</p>

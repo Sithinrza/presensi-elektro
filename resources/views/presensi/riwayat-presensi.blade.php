@@ -38,12 +38,12 @@
         <section class="grid grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-2">
             <div class="bg-emerald-50 border border-emerald-100 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-sm">
                 <span class="text-lg sm:text-xl font-black text-emerald-600 leading-none">{{ $hadir ?? 0 }}</span>
-                <span class="text-[7px] sm:text-[8px] text-emerald-700/70 font-bold mt-1 uppercase tracking-widest text-center">Tepat CI</span>
+                <span class="text-[7px] sm:text-[8px] text-emerald-700/70 font-bold mt-1 uppercase tracking-widest text-center">Tepat Masuk</span>
             </div>
 
             <div class="bg-amber-50 border border-amber-100 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-sm">
                 <span class="text-lg sm:text-xl font-black text-amber-600 leading-none">{{ $telat ?? 0 }}</span>
-                <span class="text-[7px] sm:text-[8px] text-amber-700/70 font-bold mt-1 uppercase tracking-widest text-center">Telat CI</span>
+                <span class="text-[7px] sm:text-[8px] text-amber-700/70 font-bold mt-1 uppercase tracking-widest text-center">Terlambat Masuk</span>
             </div>
 
             <div class="bg-rose-50 border border-rose-100 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-sm">
@@ -60,17 +60,17 @@
         <section class="grid grid-cols-3 gap-1.5 sm:gap-2">
             <div class="bg-emerald-50 border border-emerald-100 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-sm">
                 <span class="text-lg sm:text-xl font-black text-emerald-600 leading-none">{{ $tepat_co ?? 0 }}</span>
-                <span class="text-[7px] sm:text-[8px] text-emerald-700/70 font-bold mt-1 uppercase tracking-widest text-center">Tepat CO</span>
+                <span class="text-[7px] sm:text-[8px] text-emerald-700/70 font-bold mt-1 uppercase tracking-widest text-center">Tepat Pulang</span>
             </div>
 
             <div class="bg-amber-50 border border-amber-100 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-sm">
                 <span class="text-lg sm:text-xl font-black text-amber-600 leading-none">{{ $telat_co ?? 0 }}</span>
-                <span class="text-[7px] sm:text-[8px] text-amber-700/70 font-bold mt-1 uppercase tracking-widest text-center">Telat CO</span>
+                <span class="text-[7px] sm:text-[8px] text-amber-700/70 font-bold mt-1 uppercase tracking-widest text-center">Terlambat Pulang</span>
             </div>
 
             <div class="bg-rose-50 border border-rose-100 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center shadow-sm">
                 <span class="text-lg sm:text-xl font-black text-rose-600 leading-none">{{ $lupa_co ?? 0 }}</span>
-                <span class="text-[7px] sm:text-[8px] text-rose-700/70 font-bold mt-1 uppercase tracking-widest text-center">Lupa CO</span>
+                <span class="text-[7px] sm:text-[8px] text-rose-700/70 font-bold mt-1 uppercase tracking-widest text-center">Lupa Pulang</span>
             </div>
         </section>
     </div>
@@ -118,10 +118,11 @@
 
                         <td class="px-4 lg:px-8 py-4 lg:py-5">
                             <div class="flex flex-col gap-1.5 items-start {{ isset($r->id_presensi) ? '' : 'opacity-60' }}">
-
                                 @php
-                                    $ciName = isset($r->statusCi) ? $r->statusCi->name : 'Alpa';
-                                    $colorCi = match($ciName) {
+                                    // 1. Tentukan Warna dan Teks untuk Presensi MASUK
+                                    $ciAsli = isset($r->statusCi) ? $r->statusCi->name : 'Alpa';
+
+                                    $colorCi = match($ciAsli) {
                                         'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                         'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
@@ -129,8 +130,17 @@
                                         default => 'bg-rose-50 text-rose-600 border-rose-200'
                                     };
 
-                                    $coName = isset($r->statusCo) ? $r->statusCo->name : 'Belum CO';
-                                    $colorCo = match($coName) {
+                                    // Ubah teks tampilan untuk Masuk
+                                    $ciDisplay = match($ciAsli) {
+                                        'Tepat Waktu' => 'Tepat Masuk',
+                                        'Terlambat' => 'Terlambat Masuk',
+                                        default => $ciAsli // Alpa, Libur, Belum Presensi biarkan sama
+                                    };
+
+                                    // 2. Tentukan Warna dan Teks untuk Presensi PULANG
+                                    $coAsli = isset($r->statusCo) ? $r->statusCo->name : 'Belum CO';
+
+                                    $colorCo = match($coAsli) {
                                         'Tepat Waktu', 'Check Out' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                         'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Belum CO' => 'bg-slate-50 text-slate-500 border-slate-200',
@@ -138,21 +148,29 @@
                                         'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         default => 'bg-rose-50 text-rose-600 border-rose-200'
                                     };
+
+                                    // Ubah teks tampilan untuk Pulang
+                                    $coDisplay = match($coAsli) {
+                                        'Tepat Waktu', 'Check Out' => 'Tepat Pulang',
+                                        'Terlambat CO' => 'Terlambat Pulang',
+                                        'Lupa Check-Out' => 'Lupa Pulang',
+                                        default => $coAsli
+                                    };
                                 @endphp
 
                                 <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCi }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full sm:w-auto">
-                                    IN: {{ $ciName }}
+                                    IN: {{ $ciDisplay }}
                                 </span>
 
                                 <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full sm:w-auto mt-0.5 lg:mt-0">
-                                    OUT: {{ $coName }}
+                                    OUT: {{ $coDisplay }}
                                 </span>
+
                                 @if(isset($r->alasan) && $r->alasan)
                                     <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[150px] sm:max-w-full text-left bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $r->alasan }}">
                                         💬 Alasan: {{ $r->alasan }}
                                     </div>
                                 @endif
-
                             </div>
                         </td>
 

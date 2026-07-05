@@ -37,7 +37,7 @@
 
     <!-- DIUBAH: Menghapus overflow-hidden dari section utama agar dropdown tidak terpotong -->
     <section class="bg-maroon-900 rounded-3xl sm:rounded-[3rem] p-6 sm:p-8 md:p-12 text-white shadow-premium border border-maroon-800 relative flex flex-col md:flex-row items-center justify-center md:justify-start gap-5 sm:gap-8">
-        
+
         <!-- Pembungkus khusus efek cahaya dengan overflow-hidden -->
         <div class="absolute inset-0 overflow-hidden rounded-3xl sm:rounded-[3rem] pointer-events-none">
             <div class="absolute -top-12 -right-12 w-48 sm:w-64 h-48 sm:h-64 bg-gold/20 rounded-full blur-[60px] sm:blur-[80px]"></div>
@@ -151,14 +151,14 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-maroon-300 group-hover:translate-x-1 transition-transform sm:w-[16px] sm:h-[16px]"><path d="m9 18 6-6-6-6"/></svg>
                         </button>
                     </form>
-                    
-                    <button class="w-full flex items-center justify-between p-3.5 sm:p-4 bg-slate-50 hover:bg-slate-100 rounded-xl sm:rounded-2xl transition-all group">
+
+                    <a href="https://wa.me/621806368653?text=Halo%20Admin,%20saya%20butuh%20bantuan%20terkait%20sistem%20presensi." target="_blank" class="w-full flex items-center justify-between p-3.5 sm:p-4 bg-slate-50 hover:bg-slate-100 rounded-xl sm:rounded-2xl transition-all group">
                         <div class="flex items-center gap-2.5 sm:gap-3">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-slate-500 sm:w-[18px] sm:h-[18px]"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                            <span class="text-xs sm:text-sm font-bold text-slate-700">Hubungi Admin IT</span>
+                            <span class="text-xs sm:text-sm font-bold text-slate-700">Hubungi Admin</span>
                         </div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="text-slate-300 group-hover:translate-x-1 transition-transform sm:w-[16px] sm:h-[16px]"><path d="m9 18 6-6-6-6"/></svg>
-                    </button>
+                    </a>
                 </div>
             </section>
 

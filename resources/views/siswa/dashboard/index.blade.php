@@ -269,7 +269,7 @@
 
                 <div class="space-y-1.5 sm:space-y-2">
                     <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Lahir</label>
-                    <input type="date" name="tanggal_lahir" required value="{{ $siswa->tanggal_lahir ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
+                    <input type="date" name="tanggal_lahir" max="{{ date('Y-m-d') }}" required value="{{ $siswa->tanggal_lahir ?? '' }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none">
                 </div>
 
                 <div class="space-y-1.5 sm:space-y-2 sm:col-span-2">

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\SiswaMagang;
 use App\Models\Pembimbing;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Log;
 
 class ReportMonitoringController extends Controller
 {
@@ -53,7 +54,7 @@ class ReportMonitoringController extends Controller
     {
         $siswa = SiswaMagang::where('id_siswa', $id)->firstOrFail();
 
-        $riwayatLog = \App\Models\Log::where('id_user', $siswa->id_user)
+        $riwayatLog = Log::where('id_user', $siswa->id_user)
                                      ->orderBy('report_date', 'desc')
                                      ->get();
 
@@ -69,7 +70,7 @@ class ReportMonitoringController extends Controller
             'catatan_pembimbing' => 'nullable|string'
         ]);
 
-        $log = \App\Models\Log::findOrFail($id_log);
+        $log = Log::findOrFail($id_log);
 
         $log->update([
             'status'             => $request->status,

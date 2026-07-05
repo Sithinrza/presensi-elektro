@@ -96,7 +96,12 @@
                         </p>
                         @if($s->log_terakhir)
                             <p class="text-[9px] sm:text-[10px] font-bold text-slate-600 leading-relaxed italic line-clamp-2">"{{ $s->log_terakhir->description ?? $s->log_terakhir->uraian }}"</p>
-                            <p class="text-[8px] font-bold text-maroon-400 mt-2 sm:mt-2.5">{{ \Carbon\Carbon::parse($s->log_terakhir->report_date ?? $s->log_terakhir->tanggal)->translatedFormat('d M Y • H:i') }} WITA</p>
+
+                            <!-- PERBAIKAN DI BARIS INI: Menggunakan created_at dan mengubah timezone ke Asia/Makassar -->
+                            <p class="text-[8px] font-bold text-maroon-400 mt-2 sm:mt-2.5">
+                                {{ \Carbon\Carbon::parse($s->log_terakhir->created_at)->timezone('Asia/Makassar')->translatedFormat('d M Y • H:i') }} WITA
+                            </p>
+
                         @else
                             <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 leading-snug italic">Belum pernah mengisi logbook harian.</p>
                         @endif

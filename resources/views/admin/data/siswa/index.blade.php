@@ -116,6 +116,7 @@
                                         <img src="{{ asset('storage/' . $s->foto_profil) }}" alt="Foto {{ $s->nama_lengkap }}" class="w-full h-full object-cover">
                                     @else
                                         <img src="https://ui-avatars.com/api/?name={{ urlencode($s->nama_lengkap) }}&background=bc5a75&color=fff" class="w-full h-full object-cover">
+                                        
                                     @endif
                                 </div>
                                 <div>
