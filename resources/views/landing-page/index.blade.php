@@ -103,8 +103,8 @@
 
       <div class="flex items-center">
         <a href="{{ url('/login') }}" class="flex items-center gap-2 bg-gold hover:bg-gold-dark text-maroon-950 px-4 py-2 sm:px-6 sm:py-2.5 rounded-full font-black text-[10px] sm:text-xs uppercase tracking-widest transition-all hover:shadow-glow hover:-translate-y-0.5 active:scale-95">
-          <span class="hidden sm:inline">Masuk Sistem</span>
-          <span class="sm:hidden">Masuk</span>
+          <span class="hidden sm:inline">Login</span>
+          <span class="sm:hidden">Login</span>
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sm:w-4 sm:h-4"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
         </a>
       </div>
@@ -121,10 +121,17 @@
 
       <div class="space-y-6 sm:space-y-8 animate-fade-up z-10 text-center lg:text-left pt-8 lg:pt-0">
 
+        <!-- Judul Utama -->
         <h2 class="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-[1.2] lg:leading-[1.15] tracking-tight">
-          Sistem Presensi Berbasis<br>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-[#f4d8a5]">Face Liveness</span> & <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-[#f4d8a5]">Validasi Lokasi</span>.
+        SIPETANG
         </h2>
+
+        <!-- Sub-judul / Penjelasan -->
+        <h3 class="mt-2 font-heading text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-white leading-snug tracking-tight">
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-[#f4d8a5]">Sistem Presensi Elektro</span>
+            <br>Tendik dan <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold to-[#f4d8a5]"> Anak Magang</span>.
+        </h3>
 
         <p class="text-maroon-100/80 text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium px-2 sm:px-0">
           Menghadirkan kemudahan dalam pencatatan kehadiran harian bagi Tenaga Kependidikan dan Siswa Magang di lingkungan Jurusan Teknik Elektro. Dirancang untuk memastikan keakuratan data secara profesional dan transparan.
@@ -221,13 +228,13 @@
         </div>
 
         <div class="bg-white rounded-[1.5rem] sm:rounded-[2rem] p-6 sm:p-8 shadow-sm border border-slate-100 hover:-translate-y-2 hover:shadow-soft transition-all duration-300 group xl:col-span-2">
-          <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-maroon-50 text-maroon-700 flex items-center justify-center mb-5 sm:mb-6 group-hover:bg-maroon-950 group-hover:text-gold transition-colors duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[32px] sm:h-[32px]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
-          <h4 class="text-lg sm:text-xl font-extrabold text-maroon-950 mb-2.5 sm:mb-3 tracking-tight">Penerbitan E-Sertifikat</h4>
-          <p class="text-xs sm:text-sm text-slate-500 leading-relaxed font-medium">
-            Menyediakan dokumen sertifikat digital beserta transkrip nilai yang dapat langsung diunduh oleh Siswa Magang saat periode praktik kerja telah selesai.
-          </p>
+            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-maroon-50 text-maroon-700 flex items-center justify-center mb-5 sm:mb-6 group-hover:bg-maroon-950 group-hover:text-gold transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[32px] sm:h-[32px]"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            </div>
+            <h4 class="text-lg sm:text-xl font-extrabold text-maroon-950 mb-2.5 sm:mb-3 tracking-tight">Penerbitan E-Sertifikat</h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed font-medium">
+                Menyediakan dokumen sertifikat digital beserta transkrip nilai siswa magang yang dapat diakses dan diunduh oleh Admin atau Pembimbing
+            </p>
         </div>
 
       </div>
@@ -241,7 +248,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
       <div class="space-y-5 sm:space-y-6 text-center lg:text-left">
-        <span class="inline-block text-[9px] sm:text-[10px] font-black text-gold uppercase tracking-[0.2em] border border-gold/30 px-3 py-1.5 rounded-full bg-gold/10">Latar Belakang</span>
+        <span class="inline-block text-[9px] sm:text-[10px] font-black text-gold uppercase tracking-[0.2em] border border-gold/30 px-3 py-1.5 rounded-full bg-gold/10">Tentang APlikasi</span>
         <h3 class="font-heading text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">Modernisasi Pengelolaan <br> <span class="font-normal opacity-90">Data Kehadiran.</span></h3>
         <div class="w-12 sm:w-16 h-1 bg-gold rounded-full mx-auto lg:mx-0"></div>
         <p class="text-maroon-100/80 leading-relaxed text-sm sm:text-base px-2 sm:px-0">

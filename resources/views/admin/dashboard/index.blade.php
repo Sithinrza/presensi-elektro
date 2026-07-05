@@ -201,23 +201,45 @@
                         <td class="px-4 py-3 lg:px-8 lg:py-4 text-center">
                             <div class="flex flex-col gap-1 lg:flex-row lg:gap-1.5 items-center justify-center">
                                 @php
+                                    // LOGIKA WARNA & TEKS MASUK
                                     $ciName = $aktivitas->statusCi ? $aktivitas->statusCi->name : 'Alpa';
-                                    $colorCi = $ciName === 'Tepat Waktu' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
-                                                ($ciName === 'Terlambat' ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                                                ($ciName === 'Libur' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-rose-50 text-rose-600 border-rose-200'));
+                                    $colorCi = match($ciName) {
+                                        'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                                        'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                        'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
+                                        default => 'bg-rose-50 text-rose-600 border-rose-200'
+                                    };
+                                    $ciDisplay = match($ciName) {
+                                        'Tepat Waktu' => 'Tepat Masuk',
+                                        'Terlambat' => 'Terlambat Masuk',
+                                        default => $ciName
+                                    };
 
+                                    // LOGIKA WARNA & TEKS PULANG
                                     $coName = $aktivitas->statusCo ? $aktivitas->statusCo->name : 'Belum CO';
-                                    $colorCo = in_array($coName, ['Tepat Waktu', 'Check Out']) ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
-                                                ($coName === 'Terlambat CO' ? 'bg-amber-50 text-amber-600 border-amber-200' :
-                                                ($coName === 'Belum CO' ? 'bg-slate-50 text-slate-500 border-slate-200' :
-                                                ($coName === 'Libur' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-rose-50 text-rose-600 border-rose-200')));
+                                    $colorCo = match($coName) {
+                                        'Tepat Waktu', 'Check Out' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                                        'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
+                                        'Belum CO' => 'bg-slate-50 text-slate-500 border-slate-200',
+                                        'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
+                                        default => 'bg-rose-50 text-rose-600 border-rose-200'
+                                    };
+                                    $coDisplay = match($coName) {
+                                        'Tepat Waktu', 'Check Out' => 'Tepat Pulang',
+                                        'Terlambat CO' => 'Terlambat Pulang',
+                                        'Lupa Check-Out' => 'Lupa Pulang',
+                                        default => $coName
+                                    };
                                 @endphp
 
-                                <span class="inline-flex items-center px-2 lg:px-2.5 py-1 {{ $colorCi }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest w-[70px] lg:w-[85px] justify-center">
-                                    IN: {{ $ciName == 'Tepat Waktu' ? 'Tepat' : $ciName }}
+                                <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCi }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full lg:w-auto">
+                                    IN: {{ $ciDisplay }}
                                 </span>
-                                <span class="inline-flex items-center px-2 lg:px-2.5 py-1 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest w-[70px] lg:w-[85px] justify-center mt-0.5 lg:mt-0">
-                                    OUT: {{ in_array($coName, ['Tepat Waktu', 'Check Out']) ? 'Tepat' : ($coName == 'Terlambat CO' ? 'Terlambat CO' : ($coName == 'Lupa Check-Out' ? 'Lupa CO' : $coName)) }}
+
+                                <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full lg:w-auto mt-0.5 lg:mt-0">
+                                    OUT: {{ $coDisplay }}
                                 </span>
                             </div>
                         </td>

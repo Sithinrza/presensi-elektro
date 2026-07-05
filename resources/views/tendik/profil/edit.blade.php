@@ -94,7 +94,7 @@
                 </div>
                 <div>
                     <h3 class="text-sm sm:text-base font-black text-slate-800 uppercase tracking-tight leading-none">Data Instansi & Kedinasan</h3>
-                    <p class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Hanya dapat diubah oleh Admin IT</p>
+                    <p class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Hanya dapat diubah oleh Admin</p>
                 </div>
             </div>
 
@@ -153,7 +153,7 @@
 
                 <div class="space-y-1.5">
                     <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tanggal Lahir <span class="text-rose-500">*</span></label>
-                    <input type="date" name="tanggal_lahir" required value="{{ old('tanggal_lahir', $tendik->tanggal_lahir) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                    <input type="date" name="tanggal_lahir" max="{{ date('Y-m-d') }}" required value="{{ old('tanggal_lahir', $tendik->tanggal_lahir) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">

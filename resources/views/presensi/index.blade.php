@@ -96,48 +96,82 @@
             </div>
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
+        @elseif($presensiSelesai)
+            <div class="card-presensi animate-in">
+                <div class="flex items-center gap-4 mb-5">
+                    <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                    </a>
+                    <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Status Presensi</h2>
+                </div>
+                <div class="p-6 bg-green-50 border border-green-200 rounded-xl mb-6">
+                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-green-800 mb-1">Presensi Selesai!</h3>
+                    <p class="text-green-700 text-sm">Anda telah menyelesaikan presensi masuk dan pulang untuk hari ini.</p>
+                </div>
 
-    @elseif($presensiSelesai)
-        <div class="card-presensi animate-in">
-            <div class="flex items-center gap-4 mb-5">
-                <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-                </a>
-                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Status Presensi</h2>
-            </div>
-            <div class="p-6 bg-green-50 border border-green-200 rounded-xl mb-6">
-                <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                </div>
-                <h3 class="text-xl font-bold text-green-800 mb-1">Presensi Selesai!</h3>
-                <p class="text-green-700 text-sm">Anda telah menyelesaikan presensi masuk dan pulang untuk hari ini.</p>
-            </div>
-            <div class="bg-slate-50 rounded-xl p-5 text-left border border-slate-200 mb-5">
-                <h4 class="font-semibold text-slate-700 mb-4 border-b pb-2">Detail Riwayat Hari Ini</h4>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-slate-500 text-sm">Jam Masuk</span>
-                    <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_masuk }} WITA</span>
-                </div>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-slate-500 text-sm">Jam Pulang</span>
-                    <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_pulang }} WITA</span>
-                </div>
-                <div class="flex justify-between items-center pt-3 border-t mb-2">
-                    <span class="text-slate-500 text-sm font-bold">Status Masuk</span>
-                    <span class="font-black {{ $presensiHariIni->statusCi->name == 'Tepat Waktu' ? 'text-emerald-600' : ($presensiHariIni->statusCi->name == 'Terlambat' ? 'text-amber-500' : 'text-rose-600') }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
-                        {{ $presensiHariIni->statusCi->name ?? 'Tidak Diketahui' }}
-                    </span>
-                </div>
-                <div class="flex justify-between items-center pt-3 border-t">
-                    <span class="text-slate-500 text-sm font-bold">Status Pulang</span>
-                    <span class="font-black {{ in_array($presensiHariIni->statusCo->name ?? '', ['Check Out', 'Tepat Waktu']) ? 'text-emerald-600' : 'text-rose-600' }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
-                        {{ $presensiHariIni->statusCo->name ?? 'Belum CO' }}
-                    </span>
-                </div>
-            </div>
-            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
-        </div>
+                <div class="bg-slate-50 rounded-xl p-5 text-left border border-slate-200 mb-5">
+                    <h4 class="font-semibold text-slate-700 mb-4 border-b pb-2">Detail Riwayat Hari Ini</h4>
 
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-slate-500 text-sm">Jam Masuk</span>
+                        <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_masuk }} WITA</span>
+                    </div>
+
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-slate-500 text-sm">Jam Pulang</span>
+                        <span class="font-bold text-slate-800 bg-white px-3 py-1 rounded border shadow-sm">{{ $presensiHariIni->jam_pulang }} WITA</span>
+                    </div>
+
+                    @php
+                        // LOGIKA STATUS MASUK
+                        $ciName = $presensiHariIni->statusCi->name ?? 'Tidak Diketahui';
+                        $ciColor = match($ciName) {
+                            'Tepat Waktu' => 'text-emerald-600',
+                            'Terlambat' => 'text-amber-500',
+                            default => 'text-rose-600'
+                        };
+                        $ciDisplay = match($ciName) {
+                            'Tepat Waktu' => 'TEPAT MASUK',
+                            'Terlambat' => 'TERLAMBAT MASUK',
+                            default => strtoupper($ciName)
+                        };
+
+                        // LOGIKA STATUS PULANG
+                        $coName = $presensiHariIni->statusCo->name ?? 'Belum CO';
+                        $coColor = match($coName) {
+                            'Check Out', 'Tepat Waktu' => 'text-emerald-600',
+                            'Terlambat CO' => 'text-amber-500',
+                            'Belum CO' => 'text-slate-500',
+                            default => 'text-rose-600'
+                        };
+                        $coDisplay = match($coName) {
+                            'Check Out', 'Tepat Waktu' => 'TEPAT PULANG',
+                            'Terlambat CO' => 'TERLAMBAT PULANG',
+                            'Lupa Check-Out' => 'LUPA PULANG',
+                            default => strtoupper($coName)
+                        };
+                    @endphp
+
+                    <div class="flex justify-between items-center pt-3 border-t mb-2">
+                        <span class="text-slate-500 text-sm font-bold">Status Masuk</span>
+                        <span class="font-black {{ $ciColor }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
+                            {{ $ciDisplay }}
+                        </span>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-3 border-t">
+                        <span class="text-slate-500 text-sm font-bold">Status Pulang</span>
+                        <span class="font-black {{ $coColor }} bg-white px-3 py-1 rounded-lg border shadow-sm uppercase tracking-wider text-xs">
+                            {{ $coDisplay }}
+                        </span>
+                    </div>
+                </div>
+
+                <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+            </div>
     @elseif($isWeekend)
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
@@ -370,8 +404,7 @@
             userLng = pos.coords.longitude;
             const userPos = L.latLng(userLat, userLng);
             const jarak = L.latLng(KORDINAT_TARGET).distanceTo(userPos);
-            document.getElementById('info-jarak').innerHTML =
-    `📍 Jarak ke titik presensi: <b>${jarak.toFixed(2)} meter</b>`;
+            document.getElementById('info-jarak').innerHTML =`📍 Jarak ke titik presensi: <b>${jarak.toFixed(2)} meter</b>`;
 
             const markerUser = L.marker(userPos).addTo(map);
             markerUser.bindPopup("📍 <b>Posisi Kamu</b>").openPopup();
@@ -461,6 +494,23 @@
                 const faceRes = faceLandmarker.detectForVideo(video, now);
                 if (faceRes.faceLandmarks && faceRes.faceLandmarks.length > 0) {
                     const landmarks = faceRes.faceLandmarks[0];
+
+                    const startX = canvasElement.width - 530;
+                    const startY = 30;
+
+                    canvasCtx.save();
+                    canvasCtx.translate(startX, startY);
+                    canvasCtx.scale(-1, 1);
+
+                    canvasCtx.fillStyle = "yellow";
+                    canvasCtx.font = "16px Arial";
+
+                    canvasCtx.fillText(`159: ${landmarks[159].y.toFixed(4)}`, 0, 0);
+                    canvasCtx.fillText(`145: ${landmarks[145].y.toFixed(4)}`, 0, 25);
+                    canvasCtx.fillText(`386: ${landmarks[386].y.toFixed(4)}`, 0, 50);
+                    canvasCtx.fillText(`374: ${landmarks[374].y.toFixed(4)}`, 0, 75);
+
+                    canvasCtx.restore();
                     drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION, { color: "rgba(110, 231, 183, 0.15)", lineWidth: 0.5 });
                     drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_LEFT_EYE, { color: "rgba(16, 185, 129, 0.8)", lineWidth: 1.5 });
                     drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_RIGHT_EYE, { color: "rgba(16, 185, 129, 0.8)", lineWidth: 1.5 });

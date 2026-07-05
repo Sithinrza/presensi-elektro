@@ -76,36 +76,38 @@
                         <p class="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] truncate mt-0.5 sm:mt-1">{{ $s->sekolah_asal ?? 'Instansi Tidak Diisi' }}</p>
                     </div>
 
-                    <div class="mt-auto space-y-1.5 sm:space-y-2">
+                    <div class="mt-auto space-y-2 sm:space-y-3">
                         <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
-                            <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl sm:rounded-2xl p-1.5 sm:p-3 text-center group-hover:bg-emerald-50 transition-colors">
-                                <p class="text-sm sm:text-xl font-black text-emerald-600 leading-none">{{ $s->stat_tepat_ci }}</p>
-                                <p class="text-[7px] sm:text-[8px] font-bold text-emerald-700/60 uppercase tracking-widest mt-1 line-clamp-1">Tepat CI</p>
+                            <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col items-center justify-center group-hover:bg-emerald-50 transition-colors">
+                                <span class="text-base sm:text-xl font-black text-emerald-600 leading-none">{{ $s->stat_tepat_ci }}</span>
+                                <span class="text-[7px] sm:text-[8px] font-bold text-emerald-700/60 uppercase tracking-widest mt-1.5 text-center leading-tight">Tepat<br>Masuk</span>
                             </div>
-                            <div class="bg-amber-50/70 border border-amber-100 rounded-xl sm:rounded-2xl p-1.5 sm:p-3 text-center group-hover:bg-amber-50 transition-colors">
-                                <p class="text-sm sm:text-xl font-black text-amber-500 leading-none">{{ $s->stat_telat_ci }}</p>
-                                <p class="text-[7px] sm:text-[8px] font-bold text-amber-700/60 uppercase tracking-widest mt-1 line-clamp-1">Telat CI</p>
+                            <div class="bg-amber-50/70 border border-amber-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col items-center justify-center group-hover:bg-amber-50 transition-colors">
+                                <span class="text-base sm:text-xl font-black text-amber-500 leading-none">{{ $s->stat_telat_ci }}</span>
+                                <span class="text-[7px] sm:text-[8px] font-bold text-amber-700/60 uppercase tracking-widest mt-1.5 text-center leading-tight">Terlambat<br>Masuk</span>
                             </div>
-                            <div class="bg-rose-50/70 border border-rose-100 rounded-xl sm:rounded-2xl p-1.5 sm:p-3 text-center group-hover:bg-rose-50 transition-colors">
-                                <p class="text-sm sm:text-xl font-black text-rose-500 leading-none">{{ $s->stat_alpa }}</p>
-                                <p class="text-[7px] sm:text-[8px] font-bold text-rose-700/60 uppercase tracking-widest mt-1 line-clamp-1">Alpa</p>
+                            <div class="bg-rose-50/70 border border-rose-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col items-center justify-center group-hover:bg-rose-50 transition-colors">
+                                <span class="text-base sm:text-xl font-black text-rose-500 leading-none">{{ $s->stat_alpa }}</span>
+                                <span class="text-[7px] sm:text-[8px] font-bold text-rose-700/60 uppercase tracking-widest mt-1.5 text-center leading-tight">Alpa<br>&nbsp;</span>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-3 gap-1 sm:gap-1.5">
-                            <div class="bg-slate-50 border border-slate-100 rounded-lg sm:rounded-xl p-1.5 sm:p-2 flex flex-col justify-center items-center group-hover:border-emerald-100 transition-colors">
-                                <span class="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase tracking-wider">Tepat CO</span>
-                                <span class="text-[10px] sm:text-sm font-black text-slate-700 mt-0.5 sm:mt-1">{{ $s->stat_tepat_co }}</span>
+                        <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col justify-center items-center group-hover:border-emerald-100 transition-colors">
+                                <span class="text-[7px] sm:text-[8px] font-black text-slate-400 uppercase tracking-widest text-center leading-tight">Tepat<br>Pulang</span>
+                                <span class="text-sm sm:text-lg font-black text-slate-700 mt-1.5 leading-none">{{ $s->stat_tepat_co }}</span>
                             </div>
-                            <div class="bg-slate-50 border border-slate-100 rounded-lg sm:rounded-xl p-1.5 sm:p-2 flex flex-col justify-center items-center group-hover:border-amber-100 transition-colors">
-                                <span class="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase tracking-wider">Telat CO</span>
-                                <span class="text-[10px] sm:text-sm font-black text-amber-500 mt-0.5 sm:mt-1">{{ $s->stat_telat_co }}</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col justify-center items-center group-hover:border-amber-100 transition-colors">
+                                <span class="text-[7px] sm:text-[8px] font-black text-slate-400 uppercase tracking-widest text-center leading-tight">Terlambat<br>Pulang</span>
+                                <span class="text-sm sm:text-lg font-black text-amber-500 mt-1.5 leading-none">{{ $s->stat_telat_co }}</span>
                             </div>
-                            <div class="bg-slate-50 border border-slate-100 rounded-lg sm:rounded-xl p-1.5 sm:p-2 flex flex-col justify-center items-center group-hover:border-rose-100 transition-colors">
-                                <span class="text-[6px] sm:text-[8px] font-black text-slate-400 uppercase tracking-wider">Lupa CO</span>
-                                <span class="text-[10px] sm:text-sm font-black text-rose-500 mt-0.5 sm:mt-1">{{ $s->stat_lupa_co }}</span>
+                            <div class="bg-slate-50 border border-slate-100 rounded-xl sm:rounded-2xl p-2 sm:p-3 flex flex-col justify-center items-center group-hover:border-rose-100 transition-colors">
+                                <span class="text-[7px] sm:text-[8px] font-black text-slate-400 uppercase tracking-widest text-center leading-tight">Lupa<br>Pulang</span>
+                                <span class="text-sm sm:text-lg font-black text-rose-500 mt-1.5 leading-none">{{ $s->stat_lupa_co }}</span>
                             </div>
                         </div>
+
+                    </div>
                     </div>
                 </div>
             </a>

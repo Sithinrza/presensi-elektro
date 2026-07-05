@@ -1,6 +1,6 @@
 @extends($layout)
 @section('page_title', 'Detail Presensi')
-
+@section('hide_nav', true)
 @section('content')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -43,12 +43,26 @@
                         <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 sm:mt-1">Check-in: {{ $presensi->jam_masuk ?? '--:--:--' }} WITA</p>
                     </div>
                 </div>
+
                 @php
-                    $ciName = $presensi->statusCi ? $presensi->statusCi->name : 'Alpa';
-                    $colorCi = $ciName === 'Tepat Waktu' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : ($ciName === 'Terlambat' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-rose-50 text-rose-600 border-rose-200');
+                    // LOGIKA STATUS MASUK
+                    $ciName = $presensi->statusCi->name ?? 'Alpa';
+                    $colorCi = match($ciName) {
+                        'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                        'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
+                        'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
+                        default => 'bg-rose-50 text-rose-600 border-rose-200'
+                    };
+                    $ciDisplay = match($ciName) {
+                        'Tepat Waktu' => 'TEPAT MASUK',
+                        'Terlambat' => 'TERLAMBAT MASUK',
+                        default => strtoupper($ciName)
+                    };
                 @endphp
+
                 <span class="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 {{ $colorCi }} border rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-center">
-                    {{ $ciName }}
+                    {{ $ciDisplay }}
                 </span>
             </div>
 
@@ -84,14 +98,17 @@
                     <div class="flex flex-col gap-0.5 sm:gap-1 text-[8px] sm:text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 w-full mt-2">
                         <span>LAT: {{ $presensi->latitude_masuk ?? '-' }}</span>
                         <span>LNG: {{ $presensi->longitude_masuk ?? '-' }}</span>
-                        <span class="{{ $presensi->latitude_masuk ? 'text-emerald-500' : 'text-slate-400' }} mt-0.5 sm:mt-1">STATUS: {{ $presensi->latitude_masuk ? 'VALID (INSIDE GEOFENCE)' : '-' }}</span>
+                        <span>📍 JARAK LOKASI MASUK:</span>
+                        <span class="{{ $presensi->latitude_masuk ? 'text-emerald-500 text-[10px] sm:text-xs' : 'text-slate-400' }}">
+                            {{ $presensi->latitude_masuk ? $jarak_masuk . ' METER' : '-' }}
+                        </span>
                     </div>
                 </div>
             </div>
         </section>
 
         <section class="space-y-4 sm:space-y-6 bg-white p-5 sm:p-6 lg:p-8 rounded-3xl lg:rounded-[3rem] border border-maroon-50 shadow-sm flex flex-col">
-            <div class="flex items-start justify-between border-b border-slate-50 pb-3 sm:pb-4">
+            <div class="flex items-start justify-between pt-3 sm:pt-4">
                 <div class="flex items-center gap-2.5 sm:gap-3">
                     <div class="w-8 h-8 sm:w-10 sm:h-10 bg-rose-100 text-rose-600 rounded-lg sm:rounded-xl flex items-center justify-center shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-5 sm:h-5"><path d="m15 18-6-6 6-6"/></svg>
@@ -103,12 +120,28 @@
                         </p>
                     </div>
                 </div>
+
                 @php
-                    $coName = $presensi->statusCo ? $presensi->statusCo->name : 'Belum CO';
-                    $colorCo = $coName === 'Tepat Waktu' || $coName === 'Check Out' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : ($coName === 'Belum CO' ? 'bg-slate-50 text-slate-500 border-slate-200' : 'bg-rose-50 text-rose-600 border-rose-200');
+                    // LOGIKA STATUS PULANG
+                    $coName = $presensi->statusCo->name ?? 'Belum CO';
+                    $colorCo = match($coName) {
+                        'Check Out', 'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
+                        'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
+                        'Lupa Check-Out' => 'bg-rose-50 text-rose-600 border-rose-200',
+                        'Belum CO', 'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
+                        'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                        default => 'bg-rose-50 text-rose-600 border-rose-200'
+                    };
+                    $coDisplay = match($coName) {
+                        'Check Out', 'Tepat Waktu' => 'TEPAT PULANG',
+                        'Terlambat CO' => 'TERLAMBAT PULANG',
+                        'Lupa Check-Out' => 'LUPA PULANG',
+                        default => strtoupper($coName)
+                    };
                 @endphp
+
                 <span class="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1.5 {{ $colorCo }} border rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-center whitespace-nowrap">
-                    {{ $coName }}
+                    {{ $coDisplay }}
                 </span>
             </div>
 
@@ -145,7 +178,10 @@
                         <div class="flex flex-col gap-0.5 sm:gap-1 text-[8px] sm:text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 w-full mt-2">
                             <span>LAT: {{ $presensi->latitude_pulang ?? '-' }}</span>
                             <span>LNG: {{ $presensi->longitude_pulang ?? '-' }}</span>
-                            <span class="{{ $presensi->latitude_pulang ? 'text-emerald-500' : 'text-slate-400' }} mt-0.5 sm:mt-1">STATUS: {{ $presensi->latitude_pulang ? 'VALID (INSIDE GEOFENCE)' : '-' }}</span>
+                            <span>📍 JARAK LOKASI PULANG:</span>
+                            <span class="{{ $presensi->latitude_pulang ? 'text-emerald-500 text-[10px] sm:text-xs' : 'text-slate-400' }}">
+                                {{ $presensi->latitude_pulang ? $jarak_pulang . ' METER' : '-' }}
+                            </span>
                         </div>
                     </div>
                 </div>

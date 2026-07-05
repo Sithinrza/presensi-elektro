@@ -14,10 +14,10 @@
     <div class="bg-maroon-900 rounded-3xl p-8 lg:p-10 text-white shadow-lg shadow-maroon-900/20 overflow-hidden border border-maroon-800 relative">
         <div class="absolute -top-20 -right-20 w-80 h-80 bg-amber-400/10 rounded-full blur-[80px] pointer-events-none"></div>
 
-        <div class="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-8">
+        <div class="relative z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-10">
 
-            <div class="flex items-center gap-6">
-                <div class="w-20 h-20 rounded-2xl border-2 border-amber-400/50 bg-white/10 backdrop-blur-md flex items-center justify-center text-4xl font-black text-amber-400 shadow-inner overflow-hidden shrink-0">
+            <div class="flex items-center gap-6 xl:w-1/3 shrink-0">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-2 border-amber-400/50 bg-white/10 backdrop-blur-md flex items-center justify-center text-4xl sm:text-5xl font-black text-amber-400 shadow-inner overflow-hidden shrink-0">
                     @if(isset($foto_profil) && $foto_profil)
                         <img src="{{ asset('storage/' . $foto_profil) }}" alt="Foto Profil" class="w-full h-full object-cover">
                     @else
@@ -25,63 +25,54 @@
                     @endif
                 </div>
                 <div>
-                    <p class="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em] mb-1.5 leading-none">{{ $role ?? 'Siswa Magang' }}</p>
-                    <h2 class="text-3xl font-black tracking-tight text-white leading-tight">{{ $nama_lengkap ?? 'Nama User' }}</h2>
-                    <p class="text-maroon-200 text-xs font-bold uppercase mt-2 tracking-widest leading-none">{{ $instansi ?? 'Instansi / Unit' }}</p>
+                    <p class="text-xs font-black text-amber-400 uppercase tracking-[0.2em] mb-1.5 leading-none">{{ $role ?? 'Siswa Magang' }}</p>
+                    <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight mb-2">{{ $nama_lengkap ?? 'Nama User' }}</h2>
+                    <div class="inline-block px-3 py-1 bg-white/10 rounded-full border border-white/20">
+                        <p class="text-maroon-100 text-[10px] sm:text-xs font-bold uppercase tracking-widest leading-none">{{ $instansi ?? 'Instansi / Unit' }}</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-4 sm:flex sm:items-center sm:justify-start gap-y-4 gap-x-1 sm:gap-4 bg-black/20 p-4 rounded-2xl border border-white/10 backdrop-blur-sm w-full xl:w-auto shrink-0">
+            {{-- <div class="xl:w-2/3 bg-black/20 p-5 sm:p-6 rounded-2xl border border-white/10 backdrop-blur-sm w-full"> --}}
+                <div class="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-4">
 
-                <div class="text-center shrink-0">
-                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Tepat CI</p>
-                    <p class="text-lg sm:text-xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CI'] ?? 0 }}</p>
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition duration-300">
+                        <p class="text-[10px] sm:text-xs font-bold text-maroon-300 uppercase tracking-widest mb-2 text-center leading-tight">Tepat<br>Masuk</p>
+                        <p class="text-2xl sm:text-3xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CI'] ?? 0 }}</p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition duration-300">
+                        <p class="text-[10px] sm:text-xs font-bold text-maroon-300 uppercase tracking-widest mb-2 text-center leading-tight">Terlambat<br>Masuk</p>
+                        <p class="text-2xl sm:text-3xl font-black text-amber-400 leading-none">{{ $statistik['Telat CI'] ?? 0 }}</p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition duration-300">
+                        <p class="text-[10px] sm:text-xs font-bold text-maroon-300 uppercase tracking-widest mb-2 text-center leading-tight">Alpa<br>&nbsp;</p>
+                        <p class="text-2xl sm:text-3xl font-black text-rose-400 leading-none">{{ $statistik['Alpa'] ?? 0 }}</p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition duration-300">
+                        <p class="text-[10px] sm:text-xs font-bold text-maroon-300 uppercase tracking-widest mb-2 text-center leading-tight">Libur<br>&nbsp;</p>
+                        <p class="text-2xl sm:text-3xl font-black text-blue-400 leading-none">{{ $statistik['Libur'] ?? 0 }}</p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition duration-300">
+                        <p class="text-[10px] sm:text-xs font-bold text-maroon-300 uppercase tracking-widest mb-2 text-center leading-tight">Tepat<br>Pulang</p>
+                        <p class="text-2xl sm:text-3xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CO'] ?? 0 }}</p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition duration-300">
+                        <p class="text-[10px] sm:text-xs font-bold text-maroon-300 uppercase tracking-widest mb-2 text-center leading-tight">Terlambat<br>Pulang</p>
+                        <p class="text-2xl sm:text-3xl font-black text-amber-400 leading-none">{{ $statistik['Telat CO'] ?? 0 }}</p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition duration-300 col-span-2 sm:col-span-1 xl:col-span-1">
+                        <p class="text-[10px] sm:text-xs font-bold text-maroon-300 uppercase tracking-widest mb-2 text-center leading-tight">Lupa<br>Pulang</p>
+                        <p class="text-2xl sm:text-3xl font-black text-rose-400 leading-none">{{ $statistik['Lupa CO'] ?? 0 }}</p>
+                    </div>
+
                 </div>
-
-                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
-
-                <div class="text-center shrink-0">
-                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Telat CI</p>
-                    <p class="text-lg sm:text-xl font-black text-amber-400 leading-none">{{ $statistik['Telat CI'] ?? 0 }}</p>
-                </div>
-
-                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
-
-                <div class="text-center shrink-0">
-                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Alpa</p>
-                    <p class="text-lg sm:text-xl font-black text-rose-400 leading-none">{{ $statistik['Alpa'] ?? 0 }}</p>
-                </div>
-
-                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
-
-                <div class="text-center shrink-0">
-                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Libur</p>
-                    <p class="text-lg sm:text-xl font-black text-blue-400 leading-none">{{ $statistik['Libur'] ?? 0 }}</p>
-                </div>
-
-                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
-
-                <div class="text-center shrink-0">
-                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Tepat CO</p>
-                    <p class="text-lg sm:text-xl font-black text-emerald-400 leading-none">{{ $statistik['Tepat CO'] ?? 0 }}</p>
-                </div>
-
-                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
-
-                <div class="text-center shrink-0">
-                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Terlambat CO</p>
-                    <p class="text-lg sm:text-xl font-black text-amber-400 leading-none">{{ $statistik['Telat CO'] ?? 0 }}</p>
-                </div>
-
-                <div class="hidden sm:block w-[1px] h-8 bg-white/10 shrink-0"></div>
-
-                <div class="text-center shrink-0">
-                    <p class="text-[7px] sm:text-[8px] font-black text-maroon-300 uppercase tracking-widest mb-1 sm:mb-1.5 line-clamp-1">Lupa CO</p>
-                    <p class="text-lg sm:text-xl font-black text-rose-400 leading-none">{{ $statistik['Lupa CO'] ?? 0 }}</p>
-                </div>
-
-            </div>
-
+            {{-- </div> --}}
         </div>
     </div>
 
@@ -137,8 +128,8 @@
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Tanggal</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Tap In</th>
-                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Tap Out</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Masuk</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Pulang</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status Kehadiran</th>
                         <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Opsi</th>
                     </tr>
@@ -165,7 +156,7 @@
                                 <div class="flex flex-col sm:flex-row gap-1.5 items-center justify-center {{ isset($r->id_presensi) ? '' : 'opacity-60' }}">
 
                                     @php
-                                        // LOGIKA WARNA
+                                        // LOGIKA WARNA & TEKS MASUK
                                         $ciName = isset($r->statusCi) ? $r->statusCi->name : 'Alpa';
                                         $colorCi = match($ciName) {
                                             'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
@@ -174,7 +165,13 @@
                                             'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                             default => 'bg-rose-50 text-rose-600 border-rose-200'
                                         };
+                                        $ciDisplay = match($ciName) {
+                                            'Tepat Waktu' => 'Tepat Masuk',
+                                            'Terlambat' => 'Terlambat Masuk',
+                                            default => $ciName
+                                        };
 
+                                        // LOGIKA WARNA & TEKS PULANG
                                         $coName = isset($r->statusCo) ? $r->statusCo->name : 'Belum CO';
                                         $colorCo = match($coName) {
                                             'Tepat Waktu', 'Check Out' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
@@ -184,16 +181,23 @@
                                             'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                             default => 'bg-rose-50 text-rose-600 border-rose-200'
                                         };
+                                        $coDisplay = match($coName) {
+                                            'Tepat Waktu', 'Check Out' => 'Tepat Pulang',
+                                            'Terlambat CO' => 'Terlambat Pulang',
+                                            'Lupa Check-Out' => 'Lupa Pulang',
+                                            default => $coName
+                                        };
                                     @endphp
 
                                     <span class="inline-flex items-center px-3 py-1.5 {{ $colorCi }} border rounded-md text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full lg:w-auto">
-                                        IN: {{ $ciName }}
+                                        IN: {{ $ciDisplay }}
                                     </span>
 
                                     <span class="inline-flex items-center px-3 py-1.5 {{ $colorCo }} border rounded-md text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap mt-1 sm:mt-0">
-                                        OUT: {{ $coName }}
+                                        OUT: {{ $coDisplay }}
                                     </span>
                                 </div>
+
                                 @if(isset($r->alasan) && $r->alasan)
                                     <div class="mt-1.5 text-[10px] text-amber-600 font-bold italic max-w-[180px] md:max-w-[250px] truncate text-center mx-auto bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded" title="{{ $r->alasan }}">
                                         💬 Alasan: {{ $r->alasan }}

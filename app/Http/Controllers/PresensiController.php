@@ -16,10 +16,22 @@ class PresensiController extends Controller
 {
     public function index()
     {
+
         $user = Auth::user();
         $role = strtolower($user->roles->first()->name);
+        // Carbon::setTestNow(
+        //      Carbon::create(2026, 7, 7, 8, 0, 0, 'Asia/Makassar')
+        // );
+        // Carbon::setTestNow(
+        //     Carbon::create(2026, 7, 7, 17, 15, 0, 'Asia/Makassar') // Selasa, Jam 17:15 Sore (Lewat batas 17:00)
+        // );
 
+        // Memaksa sistem mengira hari ini adalah Sabtu, 11 Juli 2026
+        // Carbon::setTestNow(
+        //     Carbon::create(2026, 7, 11, 8, 0, 0, 'Asia/Makassar')
+        // );
         $waktuSekarang = Carbon::now('Asia/Makassar');
+        // dd($waktuSekarang);
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
         $jamSekarang = $waktuSekarang->format('H:i:s');
         $hariIniIso = $waktuSekarang->dayOfWeekIso;
@@ -57,7 +69,7 @@ class PresensiController extends Controller
 
         // --- 1. CEK HARI LIBUR & AKHIR PEKAN ---
         $isWeekend = in_array($hariIniIso, [6, 7]);
-
+        //$isWeekend = false;
         $hariLiburIni = HariLibur::where('tanggal_mulai', '<=', $tanggalHariIni)
                                  ->where('tanggal_selesai', '>=', $tanggalHariIni)
                                  ->first();
@@ -131,6 +143,11 @@ class PresensiController extends Controller
     {
         $user = Auth::user();
         $role = strtolower($user->roles->first()->name);
+        // Taruh ini di dalam function index() dan function store()
+            // Carbon::setTestNow(
+            //     Carbon::create(2026, 7, 7, 17, 15, 0, 'Asia/Makassar') // Selasa, Jam 17:15 Sore (Lewat batas 17:00)
+            // );
+
 
         $statusAkun = 'aktif';
         if ($role == 'tendik') {
@@ -312,6 +329,26 @@ class PresensiController extends Controller
 
         $presensi = $query->firstOrFail();
 
+
+
+        $targetLat = -3.2959495;
+        $targetLng = 114.587583;
+
+        $hitungJarak = function($lat1, $lon1, $lat2, $lon2) {
+            if (!$lat1 || !$lon1) return null;
+            $earthRadius = 6371000; // Radius bumi dalam meter
+            $latDelta = deg2rad($lat2 - $lat1);
+            $lonDelta = deg2rad($lon2 - $lon1);
+            $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * pow(sin($lonDelta / 2), 2)));
+            return round($angle * $earthRadius, 2); // Hasil dalam satuan meter
+        };
+
+        // Hitung jarak presensi masuk dan pulang
+        $jarak_masuk = $hitungJarak($presensi->latitude_masuk, $presensi->longitude_masuk, $targetLat, $targetLng);
+        $jarak_pulang = $hitungJarak($presensi->latitude_pulang, $presensi->longitude_pulang, $targetLat, $targetLng);
+        // ========================================================
+
+
         if ($role == 'admin') {
             $layout = 'layouts.admin';
             $backUrl = route('admin.riwayat.detail', $presensi->id_user);
@@ -326,7 +363,7 @@ class PresensiController extends Controller
             $backUrl = route('presensi.riwayat-presensi');
         }
 
-        return view('presensi.show', compact('layout', 'backUrl', 'presensi'));
+        return view('presensi.show', compact('layout', 'backUrl', 'presensi', 'jarak_masuk', 'jarak_pulang'));
     }
 
     public function simpanAlasan(Request $request)

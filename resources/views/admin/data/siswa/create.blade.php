@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-
+@section('page_title', 'Tambah Data Siswa')
 @section('content')
 <main class="p-4 sm:p-6 md:p-10 space-y-6 sm:space-y-8 animate-in">
 
@@ -177,12 +177,12 @@
 
                     <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Tanggal Lahir</label>
-                        <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                        <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" max="{{ date('Y-m-d') }}" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
                     <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Alamat Lengkap</label>
-                        <textarea name="alamat" rows="3" placeholder="Masukkan alamat lengkap..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">{{ old('alamat') }}</textarea>
+                        <textarea name="alamat" rows="3" placeholder="Masukkan alamat lengkap..."  class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">{{ old('alamat') }}</textarea>
                     </div>
                 </div>
             </div>
