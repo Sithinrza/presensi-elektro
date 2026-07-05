@@ -204,7 +204,7 @@
               </form>
               <div class="mt-6 sm:mt-8 pt-4 sm:pt-5 border-t border-slate-200 text-center">
                   <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ada Masalah Akses?</p>
-                  <a href="https://wa.me/621806368653?text=Halo%20Admin%20Jurusan,%20saya%20butuh%20bantuan%20terkait%20sistem%20presensi." target="_blank" class="inline-block mt-1 text-[10px] sm:text-xs font-black text-maroon-700 hover:text-maroon-900 underline transition-colors">Hubungi Admin Jurusan</a>
+                  <a href="https://wa.me/6281806368653?text=Halo%20Admin%20Jurusan,%20saya%20butuh%20bantuan%20terkait%20sistem%20presensi." target="_blank" class="inline-block mt-1 text-[10px] sm:text-xs font-black text-maroon-700 hover:text-maroon-900 underline transition-colors">Hubungi Admin Jurusan</a>
               </div>
           </div>
 

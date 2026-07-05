@@ -17,6 +17,11 @@
     .bg-warning { background: #fffbeb; color: #92400e; border: 1px solid #fef3c7; }
     .bg-success { background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; }
     .bg-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
+
+    /* Menyembunyikan panah default bawaan browser pada tag summary */
+    details > summary::-webkit-details-marker {
+        display: none;
+    }
 </style>
 
 <div class="p-4 lg:p-8 w-full flex justify-center items-start min-h-screen">
@@ -290,53 +295,52 @@
             </div>
             <div class="bg-maroon-950 p-5 rounded-3xl flex items-start gap-4 shadow-xl border border-white/5">
 
-                <!-- Icon -->
-                <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0 border border-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="text-white">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                </div>
+                
 
                 <!-- Content -->
-                <div>
-                    <h3 class="text-[#e8b57d] font-semibold text-sm mb-2">
+                <details class="group">
+                    <!-- Tombol yang bisa diklik (Ikon + Teks) -->
+                    <summary class="inline-flex items-center gap-2 cursor-pointer list-none select-none text-[#e8b57d] hover:text-white transition-colors font-semibold text-sm outline-none">
+                        <!-- Ikon 'i' (Info) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 group-open:fill-white/10">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                        </svg>
                         Petunjuk Presensi
-                    </h3>
+                    </summary>
 
-                    <ul class="text-slate-300 text-xs space-y-2">
-                        <li class="flex items-start gap-2">
-                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
-                            <span>Izinkan akses kamera dan lokasi (GPS).</span>
-                        </li>
+                    <!-- Isi petunjuk yang akan muncul saat diklik -->
+                    <div class="mt-3 p-4 bg-slate-900/40 border border-white/10 rounded-xl backdrop-blur-sm shadow-lg animate-in slide-in-from-top-2 fade-in duration-200">
+                        <ul class="text-slate-300 text-xs space-y-2.5">
+                            <li class="flex items-start gap-2">
+                                <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                                <span>Izinkan akses kamera dan lokasi (GPS).</span>
+                            </li>
 
-                        <li class="flex items-start gap-2">
-                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
-                            <span class="text-left leading-relaxed">
-                                Pastikan jarak anda pada Gedung Jurusan Teknik Elektro masih dalam radius 50 meter.
-                            </span>
-                        </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                                <span class="text-left leading-relaxed">
+                                    Pastikan jarak Anda pada Gedung Jurusan Teknik Elektro masih dalam radius 50 meter.
+                                </span>
+                            </li>
 
-                        <li class="flex items-start gap-2">
-                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
-                            <span>Pastikan wajah terlihat jelas tanpa masker.</span>
-                        </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                                <span>Pastikan wajah terlihat jelas tanpa masker.</span>
+                            </li>
 
-                        <li class="flex items-start gap-2">
-                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
-                            <span>Ikuti instruksi gerakan yang muncul di layar.</span>
-                        </li>
+                            <li class="flex items-start gap-2">
+                                <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                                <span>Ikuti instruksi gerakan yang muncul di layar.</span>
+                            </li>
 
-                        <li class="flex items-start gap-2">
-                            <span class="mt-1.5 w-1.5 h-1.5 bg-rose-400 rounded-full shrink-0"></span>
-                            <span class="text-rose-200">Jangan menutup halaman sebelum proses selesai.</span>
-                        </li>
-                    </ul>
-                </div>
+                            <li class="flex items-start gap-2">
+                                <span class="mt-1.5 w-1.5 h-1.5 bg-rose-400 rounded-full shrink-0"></span>
+                                <span class="text-rose-200 font-medium">Jangan menutup halaman sebelum proses selesai.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </details>
+
 
             </div> <br>
             <div class="flex justify-center mt-3">
