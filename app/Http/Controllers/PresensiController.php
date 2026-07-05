@@ -8,6 +8,8 @@ use App\Models\StatusPresensi;
 use App\Models\HariLibur;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Tendik;
+use App\Models\SiswaMagang;
 use Carbon\Carbon;
 
 class PresensiController extends Controller
@@ -27,10 +29,10 @@ class PresensiController extends Controller
         // =========================================================================
         $statusAkun = 'aktif';
         if ($role == 'tendik') {
-            $dataTendik = \App\Models\Tendik::where('id_user', $user->id_user)->first();
+            $dataTendik = Tendik::where('id_user', $user->id_user)->first();
             $statusAkun = $dataTendik->status ?? 'aktif';
         } elseif ($role == 'siswa' || $role == 'siswa magang') {
-            $dataSiswa = \App\Models\SiswaMagang::where('id_user', $user->id_user)->first();
+            $dataSiswa = SiswaMagang::where('id_user', $user->id_user)->first();
             $statusAkun = $dataSiswa->status ?? 'aktif';
         }
 
@@ -40,7 +42,7 @@ class PresensiController extends Controller
         }
 
         // =========================================================================
-        // CEK "DOSA MASA LALU" (Lupa CO dan Belum Isi Alasan)
+        // CEK  (Lupa CO dan Belum Isi Alasan)
         // =========================================================================
         $statusLupaCO = StatusPresensi::where('name', 'Lupa Check-Out')->first();
         $presensiGantung = null;
@@ -48,7 +50,7 @@ class PresensiController extends Controller
         if ($statusLupaCO) {
             $presensiGantung = Presensi::where('id_user', $user->id_user)
                                        ->where('id_status_co', $statusLupaCO->id_status_presensi)
-                                       ->whereNull('alasan')
+                                       ->whereNull('alasan')->orWhere('alasan', '')
                                        ->orderBy('tanggal', 'asc')
                                        ->first();
         }
@@ -68,20 +70,35 @@ class PresensiController extends Controller
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
 
-        // --- 3. CEK LEWAT JAM CO UNTUK YANG BOLOS TOTAL ---
-        $lewatJamCo = false;
-        if (!$presensiHariIni) {
-            $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
-            if ($jamSekarang > $batasBatasCo) {
-                $lewatJamCo = true;
+        // --- 3. 🚨 PERBAIKAN: CEK LEWAT JAM MASUK (JAM PULANG TAPI BELUM ABSEN PAGI) ---
+        $lewatBatasMasuk = false;
+        $batasBlokirMasuk = ($hariIniIso == 5) ? '16:30:00' : '16:00:00';
+
+        if ($jamSekarang >= $batasBlokirMasuk) {
+            // Jika dia belum absen masuk sama sekali sampai jadwal pulang tiba
+            if (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))) {
+                if (!$hariLiburIni && !$isWeekend) {
+                    $lewatBatasMasuk = true;
+                }
             }
         }
 
-        $presensiSelesai = $presensiHariIni && $presensiHariIni->jam_pulang != null;
+        // --- 4. CEK LEWAT JAM CO (Sistem Ditutup Total Malam Hari) ---
+        $lewatJamCo = false;
+        $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
+        if ($jamSekarang > $batasBatasCo) {
+            if (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))) {
+                if (!$hariLiburIni && !$isWeekend) {
+                    $lewatJamCo = true;
+                }
+            }
+        }
+
+        $presensiSelesai = $presensiHariIni && !is_null($presensiHariIni->jam_pulang);
         $belumWaktunyaPulang = false;
         $jadwalPulang = '16:00';
 
-        if ($presensiHariIni && !$presensiSelesai) {
+        if ($presensiHariIni && !is_null($presensiHariIni->jam_masuk) && !$presensiSelesai) {
             if ($hariIniIso == 5) {
                 $batasPulang = Carbon::createFromTime(16, 30, 0, 'Asia/Makassar');
                 $jadwalPulang = '16:30';
@@ -107,7 +124,7 @@ class PresensiController extends Controller
             abort(403, 'Akses tidak diizinkan.');
         }
 
-        return view('presensi.index', compact('layout', 'backUrl', 'role', 'url_dashboard', 'presensiHariIni', 'presensiSelesai', 'belumWaktunyaPulang', 'jadwalPulang', 'hariLiburIni', 'isWeekend', 'belumBuka', 'lewatJamCo', 'presensiGantung', 'isNonaktif'));
+        return view('presensi.index', compact('layout', 'backUrl', 'role', 'url_dashboard', 'presensiHariIni', 'presensiSelesai', 'belumWaktunyaPulang', 'jadwalPulang', 'hariLiburIni', 'isWeekend', 'belumBuka', 'lewatJamCo', 'lewatBatasMasuk', 'presensiGantung', 'isNonaktif'));
     }
 
     public function store(Request $request)
@@ -117,10 +134,10 @@ class PresensiController extends Controller
 
         $statusAkun = 'aktif';
         if ($role == 'tendik') {
-            $dataTendik = \App\Models\Tendik::where('id_user', $user->id_user)->first();
+            $dataTendik = Tendik::where('id_user', $user->id_user)->first();
             $statusAkun = $dataTendik->status ?? 'aktif';
         } elseif ($role == 'siswa' || $role == 'siswa magang') {
-            $dataSiswa = \App\Models\SiswaMagang::where('id_user', $user->id_user)->first();
+            $dataSiswa = SiswaMagang::where('id_user', $user->id_user)->first();
             $statusAkun = $dataSiswa->status ?? 'aktif';
         }
 
@@ -155,6 +172,23 @@ class PresensiController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Sistem presensi baru dibuka pukul 06:00 WITA.']);
         }
 
+        $statusLupaCO = StatusPresensi::where('name', 'Lupa Check-Out')->first();
+        if ($statusLupaCO) {
+            $adaHutangAlasan = Presensi::where('id_user', $user->id_user)
+                                       ->where('id_status_co', $statusLupaCO->id_status_presensi)
+                                       ->where(function($query) {
+                                           $query->whereNull('alasan')->orWhere('alasan', '');
+                                       })
+                                       ->exists();
+
+            if ($adaHutangAlasan) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Anda belum mengisi alasan Lupa Check-Out pada hari sebelumnya! Silakan isi terlebih dahulu.'
+                ]);
+            }
+        }
+
         $img = $request->image_base64;
         $image_parts = explode(";base64,", $img);
         $image_base64 = base64_decode($image_parts[1]);
@@ -167,14 +201,15 @@ class PresensiController extends Controller
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
 
-        // ================= LOGIKA AMBIL ABSEN MASUK (CHECK-IN) =================
-        if (!$presensiHariIni) {
+        // ================= LOGIKA AMBIL presensi MASUK (CHECK-IN) =================
+        if (!$presensiHariIni || (is_null($presensiHariIni->jam_masuk) && empty($presensiHariIni->alasan))) {
 
-            $batasBatasCo = ($hariIniIso == 5) ? '17:30:00' : '17:00:00';
-            if ($jamSekarang > $batasBatasCo) {
+            // 🚨 PERBAIKAN: API DIBLOKIR HANYA JIKA MELEWATI JAM 4 / SETENGAH 5 SORE
+            $batasBlokirMasuk = ($hariIniIso == 5) ? '16:30:00' : '16:00:00';
+            if ($jamSekarang >= $batasBlokirMasuk) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Waktu presensi hari ini telah berakhir. Anda tidak dapat melakukan absen masuk lagi dan tercatat Alpa.'
+                    'message' => 'Batas waktu Check-In telah habis. Anda tidak dapat melakukan presensi masuk lagi dan tercatat Alpa.'
                 ]);
             }
 
@@ -192,19 +227,29 @@ class PresensiController extends Controller
             $statusDbCi = StatusPresensi::where('name', $statusNameCi)->first();
             if (!$statusDbCi) return response()->json(['status' => 'error', 'message' => 'Status presensi CI tidak ditemukan!']);
 
-            Presensi::create([
-                'id_user'            => $user->id_user,
-                'id_status_ci'       => $statusDbCi->id_status_presensi,
-                'tanggal'            => $tanggalHariIni,
-                'jam_masuk'          => $jamSekarang,
-                'foto_masuk'         => $fileName,
-                'latitude_masuk'     => $request->latitude,
-                'longitude_masuk'    => $request->longitude,
-            ]);
+            if (!$presensiHariIni) {
+                Presensi::create([
+                    'id_user'            => $user->id_user,
+                    'id_status_ci'       => $statusDbCi->id_status_presensi,
+                    'tanggal'            => $tanggalHariIni,
+                    'jam_masuk'          => $jamSekarang,
+                    'foto_masuk'         => $fileName,
+                    'latitude_masuk'     => $request->latitude,
+                    'longitude_masuk'    => $request->longitude,
+                ]);
+            } else {
+                $presensiHariIni->update([
+                    'id_status_ci'       => $statusDbCi->id_status_presensi,
+                    'jam_masuk'          => $jamSekarang,
+                    'foto_masuk'         => $fileName,
+                    'latitude_masuk'     => $request->latitude,
+                    'longitude_masuk'    => $request->longitude,
+                ]);
+            }
 
-            $pesan = ($statusNameCi == 'Alpa') ? 'Anda absen terlalu siang, status dicatat sebagai Alpa.' : 'Presensi Masuk Berhasil dicatat!';
+            $pesan = ($statusNameCi == 'Alpa') ? 'Anda presensi terlalu siang, status dicatat sebagai Alpa.' : 'Presensi Masuk Berhasil dicatat!';
 
-        // ================= LOGIKA AMBIL ABSEN PULANG (CHECK-OUT) =================
+        // ================= LOGIKA AMBIL presensi PULANG (CHECK-OUT) =================
         } else {
             if ($presensiHariIni->jam_pulang != null) {
                 return response()->json(['status' => 'error', 'message' => 'Anda sudah melakukan presensi pulang hari ini!']);
@@ -224,7 +269,7 @@ class PresensiController extends Controller
 
             if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alpa') {
                 $statusNameCo = 'Alpa';
-                $pesan = 'Presensi Pulang dicatat. Status tetap Alpa karena absen masuk Anda terlambat parah.';
+                $pesan = 'Presensi Pulang dicatat. Status tetap Alpa karena presensi masuk Anda terlambat parah.';
             } else {
                 if ($waktuSekarang->greaterThan($batasTerlambatCo)) {
                     $statusNameCo = 'Terlambat CO';
@@ -302,8 +347,6 @@ class PresensiController extends Controller
             'alasan' => $request->alasan
         ]);
 
-        // PERBAIKAN: Setelah simpan, lempar ke dashboard masing-masing!
-        // Biar bisa melek dan lihat status kameranya apakah sudah bisa dibuka.
         $role = strtolower(Auth::user()->roles->first()->name);
 
         if ($role == 'tendik') {

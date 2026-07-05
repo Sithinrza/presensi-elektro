@@ -77,13 +77,14 @@
 
     <section class="bg-white rounded-[2rem] lg:rounded-[2.5rem] border border-maroon-100 shadow-xl overflow-hidden">
         <div class="overflow-x-auto custom-scroll pb-2">
-            <table class="w-full text-left border-collapse min-w-[600px] lg:min-w-[700px]">
+            <table class="w-full text-left border-collapse min-w-[700px]">
                 <thead>
                     <tr class="bg-maroon-900 text-white">
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest whitespace-nowrap">Tanggal</th>
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest text-center">Masuk</th>
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest text-center">Pulang</th>
                         <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest">Status Kehadiran</th>
+                        <th class="px-4 lg:px-8 py-4 lg:py-5 text-[10px] lg:text-xs font-bold uppercase tracking-widest text-center">Opsi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-maroon-50">
@@ -92,7 +93,7 @@
                     @if($r->id_presensi)
                         <tr onclick="window.location.href='{{ route('presensi.detail', $r->id_presensi) }}'" class="hover:bg-maroon-50/40 transition-colors cursor-pointer group">
                     @else
-                        <tr class="hover:bg-maroon-50/40 transition-colors">
+                        <tr class="bg-slate-50/30 transition-colors">
                     @endif
 
                         <td class="px-4 lg:px-8 py-4 lg:py-5 whitespace-nowrap">
@@ -108,15 +109,15 @@
                         </td>
 
                         <td class="px-4 lg:px-8 py-4 lg:py-5 text-center">
-                            <span class="text-xs lg:text-sm font-bold text-slate-600 font-mono">{{ $r->jam_masuk ?? '--:--' }}</span>
+                            <span class="text-xs lg:text-sm font-bold {{ isset($r->id_presensi) ? 'text-slate-600' : 'text-slate-300' }} font-mono">{{ $r->jam_masuk ?? '--:--' }}</span>
                         </td>
 
                         <td class="px-4 lg:px-8 py-4 lg:py-5 text-center">
-                            <span class="text-xs lg:text-sm font-bold text-slate-600 font-mono">{{ $r->jam_pulang ?? '--:--' }}</span>
+                            <span class="text-xs lg:text-sm font-bold {{ isset($r->id_presensi) ? 'text-slate-600' : 'text-slate-300' }} font-mono">{{ $r->jam_pulang ?? '--:--' }}</span>
                         </td>
 
                         <td class="px-4 lg:px-8 py-4 lg:py-5">
-                            <div class="flex flex-col gap-1.5 items-start">
+                            <div class="flex flex-col gap-1.5 items-start {{ isset($r->id_presensi) ? '' : 'opacity-60' }}">
 
                                 @php
                                     $ciName = isset($r->statusCi) ? $r->statusCi->name : 'Alpa';
@@ -124,6 +125,7 @@
                                         'Tepat Waktu' => 'bg-emerald-50 text-emerald-600 border-emerald-200',
                                         'Terlambat' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         default => 'bg-rose-50 text-rose-600 border-rose-200'
                                     };
 
@@ -133,6 +135,7 @@
                                         'Terlambat CO' => 'bg-amber-50 text-amber-600 border-amber-200',
                                         'Belum CO' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         'Libur' => 'bg-blue-50 text-blue-600 border-blue-200',
+                                        'Belum Presensi' => 'bg-slate-50 text-slate-500 border-slate-200',
                                         default => 'bg-rose-50 text-rose-600 border-rose-200'
                                     };
                                 @endphp
@@ -141,22 +144,42 @@
                                     IN: {{ $ciName }}
                                 </span>
 
-                                <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full sm:w-auto">
+                                <span class="inline-flex items-center px-2 lg:px-3 py-1 lg:py-1.5 {{ $colorCo }} border rounded-md text-[8px] lg:text-[9px] font-black uppercase tracking-widest justify-center whitespace-nowrap w-full sm:w-auto mt-0.5 lg:mt-0">
                                     OUT: {{ $coName }}
                                 </span>
+                                @if(isset($r->alasan) && $r->alasan)
+                                    <div class="mt-1 text-[10px] text-amber-600 font-bold italic max-w-[150px] sm:max-w-full text-left bg-amber-50 border border-amber-200 px-2 py-0.5 rounded" title="{{ $r->alasan }}">
+                                        💬 Alasan: {{ $r->alasan }}
+                                    </div>
+                                @endif
 
                             </div>
                         </td>
+
+                        <td class="px-4 lg:px-8 py-4 lg:py-5 text-center">
+                            @if(isset($r->id_presensi))
+                                <span class="inline-flex items-center justify-center gap-1 text-[10px] font-black text-maroon-700 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0 cursor-pointer">
+                                    Detail
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </span>
+                            @else
+                                <span class="inline-flex items-center justify-center gap-1 text-[10px] font-black text-slate-300 uppercase tracking-widest cursor-not-allowed">
+                                    Detail
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </span>
+                            @endif
+                        </td>
+
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="4" class="px-4 lg:px-8 py-8 lg:py-10 text-center text-slate-400 font-bold uppercase text-[10px] lg:text-xs tracking-widest">Belum ada data presensi bulan ini.</td>
+                        <td colspan="5" class="px-4 lg:px-8 py-8 lg:py-10 text-center text-slate-400 font-bold uppercase text-[10px] lg:text-xs tracking-widest">Belum ada data presensi bulan ini.</td>
                     </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </section>
-</main>
 
+</main>
 @endsection

@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('kajur', function (Blueprint $table) {
             $table->id('id_kajur');
             $table->string('nama_lengkap', 100);
-            $table->string('nip')->nullable()->unique();
-            $table->string('periode');
+            $table->string('nip', 25)->nullable()->unique();
+            $table->string('periode', 15);
             $table->boolean('status_aktif')->default(false); // siapa kajur yang menjabat sekarang
             $table->timestamps();
         });
@@ -20,6 +20,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('kajurs');
+        Schema::dropIfExists('kajur');
     }
 };

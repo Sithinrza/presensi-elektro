@@ -22,7 +22,7 @@ class LogController extends Controller
                                ->where('tanggal', $tanggalHariIni)
                                ->first();
 
-        $sudahAbsen = $cekPresensi ? true : false;
+        $sudahPresensi = $cekPresensi ? true : false;
 
         // 2. Ambil riwayat log milik siswa yang sedang login
         $riwayatLog = Log::where('id_user', $user->id_user)
@@ -34,7 +34,7 @@ class LogController extends Controller
                                  ->whereDate('report_date', $tanggalHariIni)
                                  ->exists();
 
-        return view('siswa.log.index', compact('sudahAbsen', 'riwayatLog', 'sudahIsiLogHariIni', 'tanggalHariIni'));
+        return view('siswa.log.index', compact('sudahPresensi', 'riwayatLog', 'sudahIsiLogHariIni', 'tanggalHariIni'));
     }
 
     public function store(Request $request)

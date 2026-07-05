@@ -13,7 +13,6 @@
                 <h1 class="text-xl sm:text-2xl font-black text-maroon-950 tracking-tight italic leading-none">Tambah Pembimbing</h1>
             </div>
         </div>
-
     </div>
 
     @if(session('error') || $errors->any())
@@ -23,8 +22,7 @@
         </div>
     @endif
 
-    <!-- FORM TAMBAH DENGAN ID DAN ONSUBMIT JS -->
-    <form id="formTambahPembimbing" action="{{ route('admin.data.pembimbing.store') }}" method="POST" onsubmit="confirmSave(event)" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
+    <form id="formTambahPembimbing" action="{{ route('admin.data.pembimbing.store') }}" method="POST" enctype="multipart/form-data" onsubmit="confirmSave(event)" class="bg-white rounded-3xl sm:rounded-[3rem] shadow-premium overflow-hidden border border-maroon-50">
         @csrf
 
         <div class="p-4 sm:p-6 md:p-10 space-y-8 sm:space-y-10">
@@ -41,6 +39,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 bg-slate-50/50 p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-100">
+
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
                             Nama Lengkap & Gelar <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
@@ -115,15 +114,15 @@
                             </button>
                         </div>
                     </div>
-                </div>
 
-                <div class="p-3 sm:p-4 mt-4 sm:mt-6 bg-gold/5 rounded-xl sm:rounded-2xl border border-gold/20 flex items-start gap-2.5 sm:gap-3">
-                    <div class="w-6 h-6 sm:w-8 sm:h-8 bg-gold text-maroon-950 rounded-md sm:rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sm:w-4 sm:h-4"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                    <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
+                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
+                            Foto Profil (Opsional)
+                        </label>
+                        <input type="file" name="foto_profil" accept="image/jpeg,image/png,image/jpg" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm file:mr-3 file:py-1.5 file:px-3 file:rounded-md sm:file:rounded-lg file:border-0 file:text-[10px] sm:file:text-xs file:font-black file:bg-maroon-50 file:text-maroon-700 hover:file:bg-maroon-100 cursor-pointer">
+                        <p class="text-[9px] font-bold text-slate-400 ml-1">Format: JPG, JPEG, PNG. Maksimal: 3 MB.</p>
                     </div>
-                    <p class="text-[9px] sm:text-[10px] font-bold text-gold-dark leading-relaxed italic uppercase mt-0.5">
-                        Akun pembimbing memiliki wewenang untuk memvalidasi logbook harian siswa magang yang berada di bawah bimbingannya.
-                    </p>
+
                 </div>
             </div>
 
@@ -155,12 +154,10 @@
         }
     }
 
-    // FUNGSI KONFIRMASI SIMPAN DENGAN SWEETALERT2
     function confirmSave(event) {
-        event.preventDefault(); // Cegah submit otomatis
+        event.preventDefault();
         const form = document.getElementById('formTambahPembimbing');
 
-        // Pastikan HTML5 validation bawaan browser berjalan (kolom required dsb)
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
@@ -172,13 +169,12 @@
                 text: "Pastikan semua data yang dimasukkan sudah benar.",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
-                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonColor: '#4d182b',
+                cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Simpan!',
                 cancelButtonText: 'Batal',
-                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                reverseButtons: true,
                 customClass: {
-                    // Kelas khusus agar responsive di HP
                     popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
                     title: 'text-lg sm:text-xl font-black text-maroon-950',
                     confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg',
@@ -186,11 +182,10 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit(); // Lanjutkan submit form jika user klik 'Ya'
+                    form.submit();
                 }
             });
         } else {
-            // Fallback jika CDN SweetAlert gagal dimuat
             if (confirm('Apakah Anda yakin ingin menyimpan data pembimbing ini?')) {
                 form.submit();
             }

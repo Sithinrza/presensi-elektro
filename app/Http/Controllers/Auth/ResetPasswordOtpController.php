@@ -28,25 +28,50 @@ class ResetPasswordOtpController extends Controller
             'email.exists' => 'Email tidak terdaftar di sistem kami!'
         ]);
 
-        // Generate 6 digit angka acak
+        $this->generateAndSendOtp($request->email);
+
+        return redirect()->route('password.otp.verify')->with('success', 'Kode OTP telah dikirim ke email Anda.');
+    }
+
+    // 2.b Fungsi Kirim Ulang OTP (Resend)
+    public function resendOtp()
+    {
+        if (!session('reset_email')) {
+            return redirect()->route('password.request');
+        }
+
+        $email = session('reset_email');
+
+        // Cek kapan OTP terakhir dibuat untuk mencegah spam klik
+        $lastRecord = DB::table('password_reset_tokens')->where('email', $email)->first();
+        if ($lastRecord) {
+            $waktuDibuat = Carbon::parse($lastRecord->created_at, 'Asia/Makassar');
+            if (Carbon::now('Asia/Makassar')->diffInMinutes($waktuDibuat) < 1) {
+                return redirect()->back()->withErrors(['otp' => 'Harap tunggu 1 menit sebelum mengirim ulang OTP.']);
+            }
+        }
+
+        $this->generateAndSendOtp($email);
+
+        return redirect()->route('password.otp.verify')->with('success', 'Kode OTP baru telah berhasil dikirim ulang ke email Anda.');
+    }
+
+    // Fungsi Pembantu Generate & Kirim
+    private function generateAndSendOtp($email)
+    {
         $otp = rand(100000, 999990);
 
-        // Simpan atau update token di tabel password_reset_tokens
         DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $request->email],
+            ['email' => $email],
             [
                 'token' => $otp,
                 'created_at' => Carbon::now('Asia/Makassar')
             ]
         );
 
-        // Kirim email lewat Mailtrap
-        Mail::to($request->email)->send(new SendOtpMail($otp));
+        Mail::to($email)->send(new SendOtpMail($otp));
 
-        // Simpan email di session agar form berikutnya tahu email mana yang diverifikasi
-        session(['reset_email' => $request->email]);
-
-        return redirect()->route('password.otp.verify')->with('success', 'Kode OTP telah dikirim ke email Anda.');
+        session(['reset_email' => $email]);
     }
 
     // 3. Tampilkan Halaman Input OTP
@@ -55,7 +80,16 @@ class ResetPasswordOtpController extends Controller
         if (!session('reset_email')) {
             return redirect()->route('password.request');
         }
-        return view('auth.forgot-password.verify-otp');
+
+        $record = DB::table('password_reset_tokens')->where('email', session('reset_email'))->first();
+        if (!$record) {
+            return redirect()->route('password.request');
+        }
+
+        // Ambil waktu OTP dibuat untuk dikirim ke Blade
+        $createdAt = Carbon::parse($record->created_at, 'Asia/Makassar');
+
+        return view('auth.forgot-password.verify-otp', compact('createdAt'));
     }
 
     // 4. Proses Validasi Kode OTP
@@ -76,13 +110,11 @@ class ResetPasswordOtpController extends Controller
             return redirect()->back()->withErrors(['otp' => 'Kode OTP salah atau tidak sesuai!']);
         }
 
-        // Cek kedaluwarsa (15 menit)
         $waktuDibuat = Carbon::parse($record->created_at, 'Asia/Makassar');
         if (Carbon::now('Asia/Makassar')->diffInMinutes($waktuDibuat) > 15) {
             return redirect()->route('password.request')->withErrors(['email' => 'Kode OTP sudah kedaluwarsa, silakan minta kode baru.']);
         }
 
-        // Jika lolos, beri tanda di session bahwa OTP sukses divalidasi
         session(['otp_verified' => true]);
 
         return redirect()->route('password.otp.reset');
@@ -108,16 +140,13 @@ class ResetPasswordOtpController extends Controller
 
         $email = session('reset_email');
 
-        // Update password di tabel users
         $user = User::where('email', $email)->firstOrFail();
         $user->update([
             'password' => Hash::make($request->password)
         ]);
 
-        // Hapus token dari tabel password_reset_tokens agar tidak bisa dipakai lagi
         DB::table('password_reset_tokens')->where('email', $email)->delete();
 
-        // Bersihkan session
         session()->forget(['reset_email', 'otp_verified']);
 
         return redirect()->route('login')->with('success', 'Password Anda berhasil diperbarui! Silakan login.');

@@ -15,20 +15,48 @@ class SertifikatController extends Controller
     public function index()
     {
         $penilaian = PenilaianMagang::with('siswa')->latest()->get();
-        return view('admin.sertifikat.index', compact('penilaian'));
+
+        // ===============================================================
+        // LOGIKA AUTO-INCREMENT NOMOR SERTIFIKAT
+        // ===============================================================
+        $semuaSertifikat = PenilaianMagang::whereNotNull('nomor_sertifikat')->get();
+        $maxUrut = 0;
+
+        foreach ($semuaSertifikat as $p) {
+            // Pecah string "001/DST/PL18..." berdasarkan garis miring '/'
+            $parts = explode('/', $p->nomor_sertifikat);
+
+            // Ambil bagian pertama (index 0) dan pastikan itu angka
+            if (isset($parts[0]) && is_numeric($parts[0])) {
+                $urut = (int)$parts[0];
+                if ($urut > $maxUrut) {
+                    $maxUrut = $urut;
+                }
+            }
+        }
+
+        // Tambah 1 dari nilai terbesar, lalu format jadi 3 digit (contoh: 002)
+        $nextUrut = str_pad($maxUrut + 1, 3, '0', STR_PAD_LEFT);
+        // ===============================================================
+
+        return view('admin.sertifikat.index', compact('penilaian', 'nextUrut'));
     }
 
     // Menyimpan nomor sertifikat dari form Admin (SEKALIGUS MENGUNCI KAJUR)
     public function updateNomor(Request $request, $id_penilaian)
     {
-        // 1. Menggunakan Validator manual agar tidak nyasar ke route GET jika terjadi error (misal kepanjangan)
+
         $validator = Validator::make($request->all(), [
-            'nomor_sertifikat' => 'required|string|max:100' // Pastikan max diset ke 50 atau 100 sesuai database barumu
+            'prefix' => 'required|string',
+            'middle' => 'required|string',
+            'tahun'  => 'required|numeric'
+        ], [
+            'middle.required' => 'Bagian format surat (tengah) tidak boleh kosong!',
+            'tahun.numeric'   => 'Kolom Tahun hanya boleh berisi angka!'
         ]);
 
         if ($validator->fails()) {
-            // PERBAIKAN: Gunakan redirect()->route(...) secara eksplisit, BUKAN back()
-            return redirect()->route('admin.sertifikat.index')->with('error', 'Gagal menyimpan! Format nomor sertifikat tidak valid atau terlalu panjang.');
+            return redirect()->route('admin.sertifikat.index')->with('error', $validator->errors()->first());
         }
 
         // 2. Cek dulu apakah ada Kajur yang aktif
@@ -39,9 +67,11 @@ class SertifikatController extends Controller
 
         $nilai = PenilaianMagang::findOrFail($id_penilaian);
 
-        // 3. Simpan Nomor Sertifikat DAN Kunci ID Kajur saat ini
+        $nomorSertifikatLengkap = $request->prefix . $request->middle . $request->tahun;
+
+        // 4. Simpan Nomor Sertifikat DAN Kunci ID Kajur saat ini
         $nilai->update([
-            'nomor_sertifikat' => $request->nomor_sertifikat,
+            'nomor_sertifikat' => $nomorSertifikatLengkap,
             'id_kajur'         => $kajurAktif->id_kajur // Mengunci sejarah Kajur
         ]);
 

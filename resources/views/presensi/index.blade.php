@@ -41,7 +41,7 @@
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
 
-    {{-- KONDISI BLOKIR PRIORITAS 2: PUNYA DOSA LUPA CO --}}
+    {{-- KONDISI BLOKIR PRIORITAS UPA CO --}}
     @elseif($presensiGantung)
         <div class="card-presensi animate-in">
             <div class="flex items-center gap-4 mb-5">
@@ -74,6 +74,25 @@
                         Simpan Alasan & Lanjutkan
                     </button>
                 </form>
+            </div>
+            <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
+        </div>
+
+    {{-- 🚨 KONDISI BLOKIR PRIORITAS 3: LEWAT JAM PULANG TAPI BELUM CHECK IN --}}
+    @elseif($lewatBatasMasuk)
+        <div class="card-presensi animate-in">
+            <div class="flex items-center gap-4 mb-5">
+                <a href="{{ $url_dashboard }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-700 hover:bg-maroon-100 active:scale-90 transition shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </a>
+                <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">Sistem Ditutup</h2>
+            </div>
+            <div class="p-8 bg-rose-50 border border-rose-200 rounded-xl mb-6">
+                <div class="w-20 h-20 bg-white text-rose-500 rounded-full flex items-center justify-center mx-auto mb-5 shadow-sm border border-rose-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <h3 class="text-xl font-black text-rose-800 tracking-tight leading-none mb-3">Waktu Presensi Habis</h3>
+                <p class="text-rose-700 text-sm">Anda melewatkan jam kerja. Batas waktu untuk melakukan presensi masuk telah habis karena saat ini sudah memasuki jadwal Check-Out. Anda tercatat <span class="font-bold text-rose-900">Alpa</span>.</p>
             </div>
             <a href="{{ $url_dashboard }}" class="block w-full py-3.5 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition shadow-lg">Kembali ke Dashboard</a>
         </div>
@@ -233,7 +252,73 @@
                 <h2 style="margin: 0; color: #1e293b; font-size: 1.5rem; font-weight: bold;">
                     {{ $presensiHariIni ? 'Presensi Pulang' : 'Presensi Masuk' }}
                 </h2>
+
             </div>
+            <div class="bg-maroon-950 p-5 rounded-3xl flex items-start gap-4 shadow-xl border border-white/5">
+
+                <!-- Icon -->
+                <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0 border border-white/10">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="text-white">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </div>
+
+                <!-- Content -->
+                <div>
+                    <h3 class="text-[#e8b57d] font-semibold text-sm mb-2">
+                        Petunjuk Presensi
+                    </h3>
+
+                    <ul class="text-slate-300 text-xs space-y-2">
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                            <span>Izinkan akses kamera dan lokasi (GPS).</span>
+                        </li>
+
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                            <span class="text-left leading-relaxed">
+                                Pastikan jarak anda pada Gedung Jurusan Teknik Elektro masih dalam radius 50 meter.
+                            </span>
+                        </li>
+
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                            <span>Pastikan wajah terlihat jelas tanpa masker.</span>
+                        </li>
+
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-slate-400 rounded-full shrink-0"></span>
+                            <span>Ikuti instruksi gerakan yang muncul di layar.</span>
+                        </li>
+
+                        <li class="flex items-start gap-2">
+                            <span class="mt-1.5 w-1.5 h-1.5 bg-rose-400 rounded-full shrink-0"></span>
+                            <span class="text-rose-200">Jangan menutup halaman sebelum proses selesai.</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div> <br>
+            <div class="flex justify-center mt-3">
+                <div class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-maroon-100 rounded-full shadow-sm">
+                    <!-- Ikon Lokasi dengan sedikit animasi pulsing -->
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-maroon-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-maroon-600"></span>
+                    </span>
+
+                    <!-- Teks Jarak -->
+                    <span id="info-jarak" class="text-[10px] sm:text-xs font-black text-maroon-900 uppercase tracking-widest">
+                        Mencari Lokasi...
+                    </span>
+                </div>
+            </div> <br>
             <div id="status-global" class="status-badge bg-warning">Menginisialisasi GPS...</div>
             <div id="map"></div>
             <div id="kamera-container">
@@ -246,18 +331,21 @@
             <div id="notif-berhasil" class="status-badge bg-success" style="display: none; margin-top: 20px;">
                 🎉 Presensi Berhasil Disimpan!
             </div>
+
+
         </div>
     @endif
 </div>
 
+
 {{-- PASTIKAN SCRIPT AI DIBLOKIR JIKA ADA SALAH SATU KONDISI DI BAWAH INI --}}
-@if(!$isNonaktif && !$presensiGantung && !$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni && !$isWeekend && !$belumBuka && !$lewatJamCo)
+@if(!$isNonaktif && !$presensiGantung && !$presensiSelesai && !$belumWaktunyaPulang && !$hariLiburIni && !$isWeekend && !$belumBuka && !$lewatJamCo && !($lewatBatasMasuk ?? false))
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
     import { FaceLandmarker, ObjectDetector, FilesetResolver, DrawingUtils } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
 
-    const KORDINAT_TARGET = [-3.2762178, 114.5968513];
-    const RADIUS_AMAN = 4000;
+    const KORDINAT_TARGET = [-3.296887, 114.581389];
+    const RADIUS_AMAN = 50;
 
     let userLat = 0; let userLng = 0;
     let faceLandmarker, objectDetector, drawingUtils;
@@ -272,17 +360,25 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
     const areaKantor = L.circle(KORDINAT_TARGET, { radius: RADIUS_AMAN, color: '#10b981', fillColor: '#10b981', fillOpacity: 0.2 }).addTo(map);
 
+    // ini kalau mau ad titiknya
+    const markerKantor = L.marker(KORDINAT_TARGET).addTo(map);
+    markerKantor.bindPopup("🏢 <b>Titik Pusat Kantor</b>");
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((pos) => {
-            userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+            userLat = pos.coords.latitude;
+            userLng = pos.coords.longitude;
             const userPos = L.latLng(userLat, userLng);
+            const jarak = L.latLng(KORDINAT_TARGET).distanceTo(userPos);
+            document.getElementById('info-jarak').innerHTML =
+    `📍 Jarak ke titik presensi: <b>${jarak.toFixed(2)} meter</b>`;
 
             const markerUser = L.marker(userPos).addTo(map);
             markerUser.bindPopup("📍 <b>Posisi Kamu</b>").openPopup();
             const group = new L.featureGroup([areaKantor, markerUser]);
             map.fitBounds(group.getBounds(), { padding: [20, 20] });
 
-            if (L.latLng(KORDINAT_TARGET).distanceTo(userPos) <= RADIUS_AMAN) {
+            if (jarak <= RADIUS_AMAN) {
                 document.getElementById('status-global').innerText = "Lokasi Sesuai. Memuat AI...";
                 document.getElementById('status-global').className = "status-badge bg-success";
                 mulaiSistemAI();
@@ -303,8 +399,10 @@
         document.getElementById('kamera-container').style.display = "block";
         try {
             panduan.innerText = "Meminta izin kamera...";
-            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: 640, height: 480 } });
-            video.srcObject = stream; video.play();
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "user", width: 640, height: 480 } });
+            video.srcObject = stream;
+            video.play();
 
             panduan.innerText = "Kamera aktif. Memuat file AI...";
             const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
@@ -343,7 +441,7 @@
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
             const objRes = objectDetector.detectForVideo(video, now);
-            let adaHP = false; const bendaTerlarang = ["cell phone", "laptop", "tv", "monitor"];
+            let adaHP = false; const bendaTerlarang = ["cell phone"];
 
             for (const deteksi of objRes.detections) {
                 if (bendaTerlarang.includes(deteksi.categories[0].categoryName)) {
@@ -384,9 +482,9 @@
                             sampelMata.push(curEAR);
                             if (sampelMata.length >= 8) {
                                 batasKedipPersonal = (sampelMata.reduce((a, b) => a + b, 0) / sampelMata.length) * 0.55;
-                                modeSistem = "ABSEN";
+                                modeSistem = "PRESENSI";
                             }
-                        } else if (modeSistem === "ABSEN") {
+                        } else if (modeSistem === "PRESENSI") {
                             panduan.innerText = "✅ Siap! Silakan Berkedip"; panduan.style.background = "#22c55e";
                             if (curEAR < batasKedipPersonal) {
                                 isDone = true; verifikasiSukses();

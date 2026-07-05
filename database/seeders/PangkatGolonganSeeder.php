@@ -6,12 +6,32 @@ use Illuminate\Support\Facades\DB;
 
 class PangkatGolonganSeeder extends Seeder {
     public function run(): void {
-        DB::table('pangkat_golongan')->insert([
-            ['id_pangkat' => 1, 'id_golongan' => 1, 'created_at' => now(), 'updated_at' => now()], // Pengatur Muda Tk.I - II/b
-            ['id_pangkat' => 2, 'id_golongan' => 2, 'created_at' => now(), 'updated_at' => now()], // Penata Muda - III/a
-            ['id_pangkat' => 3, 'id_golongan' => 3, 'created_at' => now(), 'updated_at' => now()], // Penata Muda Tk.I - III/b
-            ['id_pangkat' => 4, 'id_golongan' => 4, 'created_at' => now(), 'updated_at' => now()], // Penata - III/c
-            ['id_pangkat' => 5, 'id_golongan' => 5, 'created_at' => now(), 'updated_at' => now()], // Penata Tk.I - III/d
-        ]);
+        $now = now();
+        $data = [
+            // Mapping untuk Honorer/Kontrak
+            ['id_pangkat' => 1, 'id_golongan' => 1, 'created_at' => $now, 'updated_at' => $now],
+        ];
+
+        // Mapping PNS (ID Pangkat 2-18 berpasangan dengan ID Golongan 2-18)
+        for ($i = 2; $i <= 18; $i++) {
+            $data[] = [
+                'id_pangkat' => $i,
+                'id_golongan' => $i,
+                'created_at' => $now,
+                'updated_at' => $now
+            ];
+        }
+
+        // Mapping PPPK (Semua Golongan PPPK ID 19-35 dipetakan ke ID Pangkat 19)
+        for ($i = 19; $i <= 35; $i++) {
+            $data[] = [
+                'id_pangkat' => 19,
+                'id_golongan' => $i,
+                'created_at' => $now,
+                'updated_at' => $now
+            ];
+        }
+
+        DB::table('pangkat_golongan')->insert($data);
     }
 }

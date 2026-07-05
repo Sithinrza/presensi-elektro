@@ -15,8 +15,6 @@ class ProsesPresensiOtomatis extends Command
     protected $signature = 'presensi:otomatis';
     protected $description = 'Sapu bersih Alpa, Lupa CO, dan set otomatis Libur tepat sebelum ganti hari';
 
-
-
     public function handle()
     {
         //Carbon::setTestNow(Carbon::create(2026, 6, 8, 23, 59, 0, 'Asia/Makassar'));
@@ -34,10 +32,33 @@ class ProsesPresensiOtomatis extends Command
             $this->error("Pastikan status 'Alpa', 'Lupa Check-Out', dan 'Libur' sudah ada di tabel status_presensi!");
             return;
         }
+        
+        // UPDATE OTOMATIS STATUS SISWA MAGANG JADI NONAKTIF
+        // =========================================================
+        $siswaExpired = SiswaMagang::where('status', 'Aktif')
+                                   ->whereDate('tanggal_selesai', '<', $tanggalHariIni)
+                                   ->get();
 
-        // Ambil semua id_user dari anak magang dan tendik
-        $idSiswa = SiswaMagang::pluck('id_user')->toArray();
-        $idTendik = Tendik::pluck('id_user')->toArray();
+        if ($siswaExpired->isNotEmpty()) {
+            // Ambil semua id_user yang masa magangnya sudah habis
+            $expiredIds = $siswaExpired->pluck('id_user')->toArray();
+
+            // Ubah status profil di tabel siswa_magang jadi Nonaktif
+            SiswaMagang::whereIn('id_user', $expiredIds)->update(['status' => 'Nonaktif']);
+
+            $this->info("Ada " . count($expiredIds) . " profil siswa magang yang dinonaktifkan karena masa magang habis.");
+        }
+
+
+        // Ambil id_user Siswa Magang (Akun Aktif & Tanggal Selesai >= Hari Ini)
+        $idSiswa = SiswaMagang::where('status', 'Aktif')
+                    ->whereDate('tanggal_selesai', '>=', $tanggalHariIni)
+                    ->pluck('id_user')->toArray();
+
+        // Ambil id_user Tendik (Akun Aktif)
+        $idTendik = Tendik::where('status', 'Aktif')
+                    ->pluck('id_user')->toArray();
+
         $semuaIdTarget = array_merge($idSiswa, $idTendik);
 
         // =========================================================
@@ -111,19 +132,26 @@ class ProsesPresensiOtomatis extends Command
                     $jumlahAlpa++;
                 }
             }
-            // KONDISI B: SUDAH MASUK TAPI BELUM PULANG SAMPAI 23:59
+            // KONDISI B: SUDAH MASUK TAPI BELUM PULANG SAMPAI 23:50
             else if ($presensiHariIni->jam_pulang == null) {
 
-                if ($presensiHariIni->statusCi && in_array($presensiHariIni->statusCi->name, ['Tepat Waktu', 'Terlambat'])) {
-                    $presensiHariIni->update([
-                        'id_status_co' => $statusLupaCO->id_status_presensi,
-                    ]);
-                    $jumlahLupaCo++;
-                }
-                else if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alpa') {
-                    $presensiHariIni->update([
-                        'id_status_co' => $statusAlpa->id_status_presensi,
-                    ]);
+                $batasLupaCo = Carbon::createFromTime(23, 50, 0, 'Asia/Makassar');
+
+                // HANYA EKSEKUSI LUPA CO JIKA SUDAH LEWAT JAM 23:50 MALAM
+                if ($waktuSekarang->greaterThan($batasLupaCo)) {
+
+                    if ($presensiHariIni->statusCi && in_array($presensiHariIni->statusCi->name, ['Tepat Waktu', 'Terlambat'])) {
+                        $presensiHariIni->update([
+                            'id_status_co' => $statusLupaCO->id_status_presensi,
+                        ]);
+                        $jumlahLupaCo++;
+                    }
+                    else if ($presensiHariIni->statusCi && $presensiHariIni->statusCi->name == 'Alpa') {
+                        $presensiHariIni->update([
+                            'id_status_co' => $statusAlpa->id_status_presensi,
+                        ]);
+                    }
+
                 }
             }
         }

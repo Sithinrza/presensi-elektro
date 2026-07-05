@@ -20,6 +20,7 @@ class PendidikanTerakhirSeeder extends Seeder
             ['name' => 'D4', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'S1', 'created_at' => $now, 'updated_at' => $now],
             ['name' => 'S2', 'created_at' => $now, 'updated_at' => $now],
+            ['name' => 'S3', 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 }

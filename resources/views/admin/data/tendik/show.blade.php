@@ -15,7 +15,7 @@
             </div>
         </div>
 
-        
+
     </div>
 
     <div class="bg-maroon-900 rounded-[2.5rem] p-8 lg:p-10 text-white shadow-xl shadow-maroon-900/20 border border-maroon-800 relative overflow-hidden flex flex-col md:flex-row items-center gap-8">
@@ -67,8 +67,15 @@
                     <p class="text-base font-black text-maroon-900 uppercase tracking-tight">{{ $tendik->unitKerja->nama_unit ?? '-' }}</p>
                 </div>
                 <div>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pangkat Golongan</p>
-                    <p class="text-sm font-bold text-slate-800">{{ $tendik->pangkatGolongan->pangkat->nama_pangkat ?? '-' }} ({{ $tendik->pangkatGolongan->golongan->nama_golongan ?? '-' }})</p>
+                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pangkat & Golongan</p>
+                    <p class="text-sm font-bold text-slate-800">
+                        @if(($tendik->pangkatGolongan->golongan->jenis ?? '') == '-')
+                            Honorer / Tanpa Golongan
+                        @else
+                            <span class="text-maroon-700">[{{ $tendik->pangkatGolongan->golongan->jenis ?? '' }}]</span>
+                            {{ $tendik->pangkatGolongan->pangkat->nama_pangkat ?? 'Unknown' }} - Gol. {{ $tendik->pangkatGolongan->golongan->ruang ?? 'Unknown' }}
+                        @endif
+                    </p>
                 </div>
                 <div>
                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Jabatan</p>

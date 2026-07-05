@@ -16,28 +16,38 @@ class LogController extends Controller
     {
         $query = Log::query();
 
-        if ($request->has('status') && $request->status != 'all') {
+        // 1. Filter Berdasarkan Status Validasi Logbook
+        if ($request->filled('status') && $request->status != 'all') {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('bulan') && $request->bulan != 'all') {
+        // 2. Filter Berdasarkan Periode Bulan
+        if ($request->filled('bulan') && $request->bulan != 'all') {
             $query->whereMonth('report_date', $request->bulan);
         }
 
-        if ($request->has('search') && $request->search != '') {
+        // 3. Filter Berdasarkan Pencarian Teks (Nama Siswa atau NIS)
+        if ($request->filled('search')) {
             $searchIds = SiswaMagang::where('nama_lengkap', 'like', '%' . $request->search . '%')
                                     ->orWhere('nis', 'like', '%' . $request->search . '%')
                                     ->pluck('id_user');
-
             $query->whereIn('id_user', $searchIds);
         }
 
-        $logs = $query->orderBy('report_date', 'desc')->paginate(20);
+        // 4. Filter Berdasarkan Status Akun (Aktif/Nonaktif)
+        // Defaultnya kita tampilkan semua ('all') jika tidak ada request.
+        if ($request->filled('status_akun') && $request->status_akun != 'all') {
+            $akunIds = SiswaMagang::where('status', $request->status_akun)->pluck('id_user');
+            $query->whereIn('id_user', $akunIds);
+        }
+
+        $logs = $query->orderBy('report_date', 'desc')->paginate(20)->withQueryString();
 
         foreach ($logs as $log) {
             $siswa = SiswaMagang::where('id_user', $log->id_user)->first();
             $log->nama_siswa = $siswa ? $siswa->nama_lengkap : 'Unknown';
             $log->foto_profil = $siswa ? $siswa->foto_profil : null;
+            $log->status_akun = $siswa ? $siswa->status : 'Nonaktif'; // Bawa status akun untuk badge di blade
 
             $namaPem = 'Admin'; // Default jika tidak ditemukan
             if ($siswa && $siswa->id_pembimbing) {

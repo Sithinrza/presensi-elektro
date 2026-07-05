@@ -34,7 +34,63 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
 
-                        @if(!$presensiHariIni)
+                        {{-- ================= LOGIKA TOMBOL PRESENSI TENDIK ================= --}}
+                        @if($isWeekend)
+                            <div class="sm:col-span-2 bg-white/10 border border-white/20 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 shadow-inner backdrop-blur-sm opacity-80">
+                                <div class="w-12 h-12 bg-white/20 text-white rounded-2xl flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                </div>
+                                <div>
+                                    <span class="block text-white font-black text-base uppercase tracking-wide leading-none">Akhir Pekan</span>
+                                    <span class="text-[9px] text-white/70 font-bold uppercase tracking-widest mt-1">Sistem Presensi Libur</span>
+                                </div>
+                            </div>
+
+                        @elseif($hariLiburIni)
+                            <div class="sm:col-span-2 bg-rose-500/20 border border-rose-500/30 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 shadow-inner backdrop-blur-sm opacity-80">
+                                <div class="w-12 h-12 bg-rose-500/30 text-rose-200 rounded-2xl flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                                </div>
+                                <div>
+                                    <span class="block text-white font-black text-base uppercase tracking-wide leading-none">Sistem Ditutup</span>
+                                    <span class="text-[9px] text-rose-200/80 font-bold uppercase tracking-widest mt-1">Hari Libur Nasional</span>
+                                </div>
+                            </div>
+
+                        @elseif($belumBuka)
+                            <div class="sm:col-span-2 bg-blue-500/20 border border-blue-500/30 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 shadow-inner backdrop-blur-sm opacity-80">
+                                <div class="w-12 h-12 bg-blue-500/30 text-blue-200 rounded-2xl flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                </div>
+                                <div>
+                                    <span class="block text-white font-black text-base uppercase tracking-wide leading-none">Belum Buka</span>
+                                    <span class="text-[9px] text-blue-200/80 font-bold uppercase tracking-widest mt-1">Dibuka pukul 06:00 WITA</span>
+                                </div>
+                            </div>
+
+                        @elseif($presensiGantung)
+                            <a href="{{ route('presensi.index') }}" class="sm:col-span-2 group bg-amber-500 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 shadow-xl active:scale-95 transition-all">
+                                <div class="w-12 h-12 bg-amber-600 text-white rounded-2xl flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                </div>
+                                <div>
+                                    <span class="block text-white font-black text-base uppercase tracking-wide leading-none">Isi Alasan Dulu!</span>
+                                    <span class="text-[9px] text-white/80 font-bold uppercase tracking-widest mt-1">Selesaikan presensi kemarin</span>
+                                </div>
+                            </a>
+
+                        @elseif($lewatJamCo || $lewatBatasMasuk)
+                            <div class="sm:col-span-2 bg-rose-900/40 border border-rose-500/30 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 shadow-inner backdrop-blur-sm opacity-80">
+                                <div class="w-12 h-12 bg-rose-500/30 text-rose-200 rounded-2xl flex items-center justify-center shrink-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                                </div>
+                                <div>
+                                    <span class="block text-white font-black text-base uppercase tracking-wide leading-none">Waktu Habis</span>
+                                    <span class="text-[9px] text-rose-200/80 font-bold uppercase tracking-widest mt-1">Sistem ditutup untuk hari ini</span>
+                                </div>
+                            </div>
+
+                        @elseif(!$presensiHariIni)
                             <a href="{{ route('presensi.index') }}" class="sm:col-span-2 group bg-white rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 sm:gap-5 shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300">
                                 <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-emerald-50 text-emerald-600 rounded-[1rem] sm:rounded-2xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" class="sm:w-[28px] sm:h-[28px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
@@ -99,7 +155,7 @@
                     <div class="flex flex-col items-center justify-center mb-5 sm:mb-6">
                         <div class="flex items-baseline gap-1">
                             <span class="text-5xl sm:text-6xl font-black text-emerald-700 leading-none">{{ $hadir ?? 0 }}</span>
-                            <span class="text-base sm:text-lg font-bold text-emerald-600/50 uppercase tracking-tighter">/ {{ $total_hari_kerja ?? 20 }}</span>
+                            <span class="text-base sm:text-lg font-bold text-emerald-600/50 uppercase tracking-tighter">/ 20</span>
                         </div>
                         <p class="text-[9px] sm:text-[10px] font-bold text-emerald-600/70 mt-1.5 sm:mt-2 uppercase tracking-[0.2em]">Total Kehadiran</p>
                     </div>

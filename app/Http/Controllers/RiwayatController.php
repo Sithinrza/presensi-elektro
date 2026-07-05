@@ -14,7 +14,21 @@ class RiwayatController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $role = strtolower($user->roles->first()->name);
+        $role = strtolower($user->roles->first()->name ?? '');
+
+        // =========================================================
+        // 🚨 PENANGANAN SESI BENTROK (MULTI-TAB)
+        // =========================================================
+        if (!in_array($role, ['tendik', 'siswa', 'siswa magang'])) {
+            if ($role == 'admin') {
+                return redirect()->route('admin.dashboard')->with('error', 'Sesi berubah: Anda terdeteksi login sebagai Admin di tab lain.');
+            } elseif ($role == 'pembimbing') {
+                return redirect()->route('pembimbing.dashboard')->with('error', 'Sesi berubah: Anda terdeteksi login sebagai Pembimbing di tab lain.');
+            } else {
+                return redirect('/login');
+            }
+        }
+        // =========================================================
 
         $bulan = $request->bulan ?? date('m');
         $tahun = $request->tahun ?? date('Y');
@@ -46,18 +60,32 @@ class RiwayatController extends Controller
         $hadir = 0; $telat = 0; $alpa = 0; $libur = 0;
         $tepat_co = 0; $telat_co = 0; $lupa_co = 0;
 
+        // PENGAMAN: Batas Selesai Magang
+        $batasLoopUser = $batasLoop->copy();
+        if (($role == 'siswa' || $role == 'siswa magang') && $user->siswaMagang && $user->siswaMagang->tanggal_selesai) {
+            $ts = Carbon::parse($user->siswaMagang->tanggal_selesai)->timezone('Asia/Makassar')->startOfDay();
+            $batasLoopUser = $batasLoopUser->min($ts);
+        }
+
         for ($date = $mulaiLoop->copy(); $date->lte($endOfMonth); $date->addDay()) {
             $dateString = $date->format('Y-m-d');
 
             if ($dbRiwayat->has($dateString)) {
                 $presensi = $dbRiwayat->get($dateString);
 
-                if ($dateString != $todayString && !is_null($presensi->jam_masuk) && is_null($presensi->jam_pulang)) {
+                // 🚨 KOREKSI STATUS UNTUK HARI INI (Mengubah Alpa jadi Belum Presensi jika kosong)
+                if ($dateString === $todayString && is_null($presensi->jam_masuk) && empty($presensi->alasan)) {
+                    $presensi->setRelation('statusCi', new StatusPresensi(['name' => 'Belum Presensi']));
+                    $presensi->setRelation('statusCo', new StatusPresensi(['name' => 'Belum Presensi']));
+                }
+                elseif ($presensi->statusCi && $presensi->statusCi->name == 'Alpa') {
+                    $statusAlpaCo = new StatusPresensi(['name' => 'Alpa']);
+                    $presensi->setRelation('statusCo', $statusAlpaCo);
+                }
+                elseif ($dateString != $todayString && !is_null($presensi->jam_masuk) && is_null($presensi->jam_pulang)) {
                     $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
                     $presensi->setRelation('statusCo', $statusLupa);
                 }
-
-                $riwayatFinal->push($presensi);
 
                 if ($presensi->statusCi && $presensi->statusCi->name == 'Tepat Waktu') $hadir++;
                 elseif ($presensi->statusCi && $presensi->statusCi->name == 'Terlambat') $telat++;
@@ -67,9 +95,16 @@ class RiwayatController extends Controller
                 if ($presensi->statusCo && in_array($presensi->statusCo->name, ['Tepat Waktu', 'Check Out'])) $tepat_co++;
                 elseif ($presensi->statusCo && $presensi->statusCo->name == 'Terlambat CO') $telat_co++;
                 elseif ($presensi->statusCo && $presensi->statusCo->name == 'Lupa Check-Out') $lupa_co++;
+
+                // 🚨 MATIKAN KLIK TOMBOL DETAIL (Hilangkan ID agar Blade membaca ini sebagai baris kosong)
+                if (is_null($presensi->jam_masuk) && is_null($presensi->jam_pulang) && empty($presensi->alasan)) {
+                    $presensi->id_presensi = null;
+                }
+
+                $riwayatFinal->push($presensi);
             } else {
-                if ($date->lte($batasLoop)) {
-                    // SABTU DAN MINGGU LIBUR
+                // HANYA EKSEKUSI JIKA BELUM MELEWATI MASA LULUS
+                if ($date->lte($batasLoopUser)) {
                     $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
 
                     foreach ($hariLibur as $hl) {
@@ -82,8 +117,13 @@ class RiwayatController extends Controller
                         $libur++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $alpa++;
-                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        // 🚨 JIKA HARI INI = BELUM PRESENSI
+                        if ($dateString === $todayString) {
+                            $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
+                        } else {
+                            $alpa++;
+                            $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        }
                     }
 
                     $mockPresensi = new Presensi([

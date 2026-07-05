@@ -22,7 +22,7 @@ return new class extends Migration
 
         $table->text('keterangan')->nullable();
 
-        $table->timestamps(); 
+        $table->timestamps();
     });
 }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hari_liburs');
+        Schema::dropIfExists('hari_libur');
     }
 };

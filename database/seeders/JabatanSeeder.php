@@ -6,12 +6,13 @@ use Illuminate\Support\Facades\DB;
 
 class JabatanSeeder extends Seeder {
     public function run(): void {
+        $now = now();
         DB::table('jabatan')->insert([
-            ['nama_jabatan' => 'Terampil Penyelia', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_jabatan' => 'Ahli Muda', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_jabatan' => 'Pengolah Data Akademik', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_jabatan' => 'Ahli Pratama', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_jabatan' => 'Terampil Pelaksana Lanjutan', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_jabatan' => '-', 'created_at' => $now, 'updated_at' => $now],
+            ['nama_jabatan' => 'Tenaga Kependidikan', 'created_at' => $now, 'updated_at' => $now],
+            ['nama_jabatan' => 'Staf Tata Usaha', 'created_at' => $now, 'updated_at' => $now],
+            ['nama_jabatan' => 'Teknisi Laboratorium', 'created_at' => $now, 'updated_at' => $now],
+            ['nama_jabatan' => 'Pranata Laboratorium Pendidikan', 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 }

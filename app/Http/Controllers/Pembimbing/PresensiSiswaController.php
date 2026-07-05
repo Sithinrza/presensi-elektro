@@ -19,10 +19,19 @@ class PresensiSiswaController extends Controller
         $pembimbing = Pembimbing::where('id_user', Auth::id())->first();
 
         // 1. Ambil data siswa
-        $query = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing)->with('user');
+        $query = SiswaMagang::where('id_pembimbing', $pembimbing->id_pembimbing)
+                            ->with('user')
+                            ->orderBy('status', 'asc')
+                            ->orderBy('nama_lengkap', 'asc');
+
         if ($request->has('search')) {
             $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
         }
+
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
         $anakBimbingan = $query->get();
         $idUsers = $anakBimbingan->pluck('id_user')->toArray();
 
@@ -54,7 +63,6 @@ class PresensiSiswaController extends Controller
             $s->stat_tepat_ci = 0; $s->stat_telat_ci = 0; $s->stat_alpa = 0;
             $s->stat_tepat_co = 0; $s->stat_telat_co = 0; $s->stat_lupa_co = 0;
 
-            // PERBAIKAN 1: Pengambilan Collection anti-mismatch
             $presensiSiswa = isset($presensiBulanIni[$s->id_user])
                 ? collect($presensiBulanIni[$s->id_user])->keyBy(function($item) {
                     return Carbon::parse($item->tanggal)->format('Y-m-d');
@@ -67,7 +75,6 @@ class PresensiSiswaController extends Controller
             for ($date = $mulaiLoop->copy(); $date->lte($batasLoop); $date->addDay()) {
                 $dateString = $date->format('Y-m-d');
 
-                // Jika ADA data presensi
                 if ($presensiSiswa->has($dateString)) {
                     $p = $presensiSiswa->get($dateString);
 
@@ -75,7 +82,10 @@ class PresensiSiswaController extends Controller
                     elseif ($p->statusCi && $p->statusCi->name == 'Terlambat') $s->stat_telat_ci++;
                     elseif ($p->statusCi && $p->statusCi->name == 'Alpa') $s->stat_alpa++;
 
-                    if ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
+                    if ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                        // Jangan hitung apa-apa untuk CO, biarkan saja
+                    }
+                    elseif ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
                         $s->stat_lupa_co++;
                     } elseif ($p->statusCo) {
                         if (in_array($p->statusCo->name, ['Tepat Waktu', 'Check Out'])) $s->stat_tepat_co++;
@@ -83,9 +93,7 @@ class PresensiSiswaController extends Controller
                         elseif ($p->statusCo->name == 'Lupa Check-Out') $s->stat_lupa_co++;
                     }
                 }
-                // Jika KOSONG (Cek Akhir Pekan & Hari Libur)
                 else {
-                    // PERBAIKAN 2: 6 = Sabtu, 7 = Minggu
                     $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
 
                     foreach ($hariLibur as $hl) {
@@ -95,7 +103,10 @@ class PresensiSiswaController extends Controller
                     }
 
                     if (!$isLibur) {
-                        $s->stat_alpa++;
+                        // 🚨 HARI INI JANGAN DI-ALPA KAN DI DAFTAR SISWA (CUKUP KOSONGKAN/BELUM PRESENSI)
+                        if ($dateString !== $todayString) {
+                            $s->stat_alpa++;
+                        }
                     }
                 }
             }
@@ -146,9 +157,21 @@ class PresensiSiswaController extends Controller
             if ($dbRiwayat->has($dateString)) {
                 $p = $dbRiwayat->get($dateString);
 
-                if ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
-                    $statusLupa = new StatusPresensi(['name' => 'Lupa Check-Out']);
-                    $p->setRelation('statusCo', $statusLupa);
+                // 🚨 KOREKSI STATUS UNTUK HARI INI (Mengubah Alpa jadi Belum Presensi jika kosong)
+                if ($dateString === $todayString && is_null($p->jam_masuk) && empty($p->alasan)) {
+                    $p->setRelation('statusCi', new StatusPresensi(['name' => 'Belum Presensi']));
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Belum Presensi']));
+                }
+                elseif ($p->statusCi && $p->statusCi->name == 'Alpa') {
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Alpa']));
+                }
+                elseif ($dateString != $todayString && !is_null($p->jam_masuk) && is_null($p->jam_pulang)) {
+                    $p->setRelation('statusCo', new StatusPresensi(['name' => 'Lupa Check-Out']));
+                }
+
+                // 🚨 MATIKAN KLIK TOMBOL DETAIL (Hilangkan ID agar Blade membaca ini sebagai baris kosong)
+                if (is_null($p->jam_masuk) && is_null($p->jam_pulang) && empty($p->alasan)) {
+                    $p->id_presensi = null;
                 }
 
                 $riwayatPresensi->push($p);
@@ -163,7 +186,6 @@ class PresensiSiswaController extends Controller
                 if ($p->statusCo && $p->statusCo->name == 'Lupa Check-Out') $statistik['Lupa CO']++;
             } else {
                 if ($date->lte($batasLoop)) {
-                    // PERBAIKAN 2: 6 = Sabtu, 7 = Minggu
                     $isLibur = in_array($date->dayOfWeekIso, [6, 7]);
 
                     foreach ($hariLibur as $hl) {
@@ -176,8 +198,13 @@ class PresensiSiswaController extends Controller
                         $statistik['Libur']++;
                         $statusMock = new StatusPresensi(['name' => 'Libur']);
                     } else {
-                        $statistik['Alpa']++;
-                        $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        // 🚨 JIKA HARI INI = BELUM PRESENSI
+                        if ($dateString === $todayString) {
+                            $statusMock = new StatusPresensi(['name' => 'Belum Presensi']);
+                        } else {
+                            $statistik['Alpa']++;
+                            $statusMock = new StatusPresensi(['name' => 'Alpa']);
+                        }
                     }
 
                     $mock = new Presensi([
@@ -195,6 +222,13 @@ class PresensiSiswaController extends Controller
 
         $riwayatPresensi = $riwayatPresensi->sortByDesc('tanggal')->values();
 
-        return view('pembimbing.presensi-siswa.show', compact('siswa', 'riwayatPresensi', 'statistik', 'bulan', 'tahun'));
+        $urlAsal = url()->previous();
+        if (str_contains($urlAsal, 'dashboard')) {
+            $backUrl = route('pembimbing.dashboard');
+        } else {
+            $backUrl = route('pembimbing.presensi-siswa.index');
+        }
+
+        return view('pembimbing.presensi-siswa.show', compact('siswa', 'riwayatPresensi', 'statistik', 'bulan', 'tahun', 'backUrl'));
     }
 }

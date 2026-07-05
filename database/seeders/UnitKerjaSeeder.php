@@ -11,14 +11,11 @@ class UnitKerjaSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
+    public function run(): void {
         $now = now();
         DB::table('unit_kerja')->insert([
+            ['nama_unit' => '-', 'created_at' => $now, 'updated_at' => $now],
             ['nama_unit' => 'Jurusan Teknik Elektro', 'created_at' => $now, 'updated_at' => $now],
-            ['nama_unit' => 'Laboratorium Sistem Kendali', 'created_at' => $now, 'updated_at' => $now],
-            ['nama_unit' => 'Laboratorium Komputer', 'created_at' => $now, 'updated_at' => $now],
-            ['nama_unit' => 'Tata Usaha', 'created_at' => $now, 'updated_at' => $now],
         ]);
     }
 }

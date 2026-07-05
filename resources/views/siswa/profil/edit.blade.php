@@ -29,9 +29,9 @@
             <span>{{ session('success') }}</span>
         </div>
     @endif
-    @if(session('error'))
+    @if($errors->any() || session('error'))
         <div class="bg-rose-50 border border-rose-200 text-rose-600 px-4 py-3 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold shadow-sm flex items-center justify-between">
-            <span>{{ session('error') }}</span>
+            <span>{{ session('error') ?? $errors->first() }}</span>
         </div>
     @endif
 
@@ -51,7 +51,7 @@
             <div>
                 <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-tight leading-none">{{ $siswa->nama_lengkap }}</h3>
                 <p class="text-xs sm:text-sm font-bold text-gold mt-1.5">NIS: {{ $siswa->nis ?? '-' }}</p>
-                <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2.5 uppercase tracking-widest">Format: JPG, PNG. Ukuran maksimal 2MB.</p>
+                <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2.5 uppercase tracking-widest">Format: JPG, JPEG, PNG. Ukuran maksimal 3 MB.</p>
             </div>
 
             <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2.5 sm:gap-3">
@@ -75,12 +75,11 @@
             <form id="form-foto" action="{{ route('siswa.profil.update-foto') }}" method="POST" enctype="multipart/form-data" class="hidden">
                 @csrf
                 @method('PUT')
-                <input type="file" id="input-foto" name="foto" accept="image/png, image/jpeg, image/jpg" onchange="document.getElementById('form-foto').submit()">
+                <input type="file" id="input-foto" name="foto" accept=".png, .jpeg, .jpg" onchange="validateAndSubmitPhoto(this)">
             </form>
         </div>
     </section>
 
-    <!-- FORM EDIT PROFIL -->
     <form id="formEditProfil" onsubmit="confirmUpdate(event)" action="{{ route('siswa.profil.update') }}" method="POST" class="space-y-6 sm:space-y-8">
         @csrf
         @method('PUT')
@@ -98,29 +97,29 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Email Akun</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Email Akun <span class="text-rose-500">*</span></label>
                     <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">No. Handphone / WhatsApp</label>
-                    <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $siswa->no_hp) }}" placeholder="08..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">No. Handphone / WhatsApp <span class="text-rose-500">*</span></label>
+                    <input type="tel" inputmode="numeric" name="no_hp" value="{{ old('no_hp', $siswa->no_hp) }}" required placeholder="08..." oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tempat Lahir</label>
-                    <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $siswa->tempat_lahir) }}" placeholder="Kota Kelahiran..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tempat Lahir <span class="text-rose-500">*</span></label>
+                    <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir', $siswa->tempat_lahir) }}" required placeholder="Kota Kelahiran..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tanggal Lahir</label>
-                    <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $siswa->tanggal_lahir) }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Tanggal Lahir <span class="text-rose-500">*</span></label>
+                    <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir', $siswa->tanggal_lahir) }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-[11px] sm:text-xs font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama</label>
-                    <select name="id_agama" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                        <option value="" disabled>Pilih Agama...</option>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Agama <span class="text-rose-500">*</span></label>
+                    <select name="id_agama" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                        <option value="" disabled {{ empty(old('id_agama', $siswa->id_agama)) ? 'selected' : '' }}>Pilih Agama...</option>
                         @foreach($agama ?? [] as $a)
                             <option value="{{ $a->id_agama }}" {{ old('id_agama', $siswa->id_agama) == $a->id_agama ? 'selected' : '' }}>{{ $a->name }}</option>
                         @endforeach
@@ -128,24 +127,23 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jenis Kelamin</label>
-                    <select name="jk" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                        <option value="" disabled>Pilih...</option>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jenis Kelamin <span class="text-rose-500">*</span></label>
+                    <select name="jk" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
+                        <option value="" disabled {{ empty(old('jk', $siswa->jk)) ? 'selected' : '' }}>Pilih...</option>
                         <option value="L" {{ old('jk', $siswa->jk) == 'L' ? 'selected' : '' }}>Laki-laki</option>
                         <option value="P" {{ old('jk', $siswa->jk) == 'P' ? 'selected' : '' }}>Perempuan</option>
                     </select>
                 </div>
 
-                <!-- KOLOM JURUSAN BARU DITAMBAHKAN -->
                 <div class="space-y-1.5 sm:col-span-2">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jurusan / Kelas</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Jurusan / Kelas <span class="text-rose-500">*</span></label>
                     <input type="text" name="jurusan" value="{{ old('jurusan', $siswa->jurusan) }}" placeholder="Contoh: Teknik Komputer dan Jaringan / XII" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     <p class="text-[8px] sm:text-[9px] text-maroon-500 font-bold uppercase tracking-wider ml-1 mt-1 italic">* Jika Nama Jurusan Salah/Belum Lengkap Harap dirubah</p>
                 </div>
 
                 <div class="space-y-1.5 sm:col-span-2">
-                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Alamat Domisili Lengkap</label>
-                    <textarea name="alamat" rows="2" placeholder="Tulis alamat lengkap rumah saat ini..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none resize-none transition-all shadow-sm">{{ old('alamat', $siswa->alamat) }}</textarea>
+                    <label class="text-[9px] sm:text-[10px] font-black text-maroon-900 uppercase tracking-widest ml-1">Alamat Domisili Lengkap <span class="text-rose-500">*</span></label>
+                    <textarea name="alamat" rows="2" required placeholder="Tulis alamat lengkap rumah saat ini..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none resize-none transition-all shadow-sm">{{ old('alamat', $siswa->alamat) }}</textarea>
                 </div>
 
                 <div class="space-y-1.5 sm:col-span-2 mt-2">
@@ -166,10 +164,55 @@
     </form>
 </main>
 
-<!-- TAMBAHKAN LIBRARY SWEETALERT 2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+    // 🚨 TAMBAHAN JS: Validasi Foto Sebelum Submit
+    function validateAndSubmitPhoto(input) {
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            const maxSize = 3 * 1024 * 1024; // 3 MB
+
+            if (!validTypes.includes(file.type)) {
+                Swal.fire({
+                    title: 'Format Tidak Sesuai!',
+                    text: 'Silakan unggah file gambar (JPG, JPEG, atau PNG). Dokumen seperti PDF tidak diperbolehkan.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                        title: 'text-lg sm:text-xl font-black text-maroon-950',
+                        confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg'
+                    }
+                });
+                input.value = ''; // Kosongkan file yang dipilih
+                return false;
+            }
+
+            if (file.size > maxSize) {
+                Swal.fire({
+                    title: 'Ukuran Terlalu Besar!',
+                    text: 'Ukuran foto maksimal adalah 3 MB. Silakan kompres foto Anda terlebih dahulu.',
+                    icon: 'error',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
+                        title: 'text-lg sm:text-xl font-black text-maroon-950',
+                        confirmButton: 'rounded-xl font-bold px-6 py-2.5 sm:px-8 sm:py-3 text-xs sm:text-sm shadow-lg'
+                    }
+                });
+                input.value = ''; // Kosongkan file yang dipilih
+                return false;
+            }
+
+            // Jika valid, submit form
+            document.getElementById('form-foto').submit();
+        }
+    }
+
     function confirmDeleteFoto(event) {
         event.preventDefault();
         if (typeof Swal !== 'undefined') {
@@ -200,12 +243,10 @@
         }
     }
 
-    // FUNGSI KONFIRMASI SIMPAN DENGAN SWEETALERT2
     function confirmUpdate(event) {
-        event.preventDefault(); // Cegah submit otomatis
+        event.preventDefault();
         const form = document.getElementById('formEditProfil');
 
-        // Pastikan HTML5 validation bawaan browser berjalan
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
@@ -217,11 +258,11 @@
                 text: "Pastikan biodata Anda yang diperbarui sudah benar.",
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#4d182b', // Warna maroon-900 Tailwind
-                cancelButtonColor: '#94a3b8',  // Warna slate-400 Tailwind
+                confirmButtonColor: '#4d182b',
+                cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Simpan!',
                 cancelButtonText: 'Batal',
-                reverseButtons: true, // Tombol batal di kiri, simpan di kanan
+                reverseButtons: true,
                 customClass: {
                     popup: 'rounded-[2rem] p-4 sm:p-6 w-11/12 sm:w-auto',
                     title: 'text-lg sm:text-xl font-black text-maroon-950',
@@ -230,11 +271,10 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit(); // Lanjutkan submit jika user klik 'Ya'
+                    form.submit();
                 }
             });
         } else {
-            // Fallback jika CDN SweetAlert gagal dimuat
             if (confirm('Apakah Anda yakin ingin menyimpan perubahan profil ini?')) {
                 form.submit();
             }

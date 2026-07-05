@@ -10,6 +10,17 @@
         </div>
     @endif
 
+    {{-- TAMBAHKAN BLOK ERROR INI --}}
+    @if($errors->any())
+        <div class="p-3 sm:p-4 bg-rose-50 border border-rose-100 text-rose-700 font-bold rounded-xl sm:rounded-2xl mb-4 text-xs sm:text-sm shadow-sm">
+            <ul class="list-disc list-inside">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <section class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
         <div class="flex items-center gap-2 sm:gap-4 p-1.5 sm:p-2 bg-maroon-50 w-full lg:w-fit rounded-2xl sm:rounded-3xl border border-maroon-100">
             <div class="px-4 sm:px-6 py-2 flex-1 text-center lg:text-left">
@@ -273,5 +284,19 @@
             }
         }
     }
+
+    // KUNCI KALENDER TANGGAL SELESAI AGAR TIDAK BISA MUNDUR
+    document.getElementById('tanggal_mulai').addEventListener('change', function() {
+        const tanggalMulai = this.value;
+        const inputSelesai = document.getElementById('tanggal_selesai');
+
+        // Set batas minimal tanggal selesai sama dengan tanggal mulai
+        inputSelesai.min = tanggalMulai;
+
+        // Jika tanggal selesai yang sudah terisi ternyata lebih mundur, kosongkan!
+        if(inputSelesai.value && inputSelesai.value < tanggalMulai) {
+            inputSelesai.value = '';
+        }
+    });
 </script>
 @endsection

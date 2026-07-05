@@ -9,7 +9,7 @@
                 <span class="text-[8px] font-black uppercase tracking-widest mt-1">Beranda</span>
             </a>
 
-            <!-- Absen -->
+            <!-- presensi -->
             <a href="{{ route('presensi.index') }}"
                class="flex-1 flex flex-col items-center justify-center py-3 rounded-[2rem] transition-all duration-300 {{ request()->is('tendik/presensi') || request()->routeIs('presensi.index') ? 'bg-white text-maroon-950 shadow-lg scale-105' : 'text-white/40 hover:text-white' }}">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>

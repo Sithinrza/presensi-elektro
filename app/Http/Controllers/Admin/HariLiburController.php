@@ -27,10 +27,21 @@ class HariLiburController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Tambahkan Validasi
+        $request->validate([
+            'nama_libur' => 'required|string|max:255',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'kategori' => 'required',
+        ], [
+            // Pesan error custom biar bahasanya enak dibaca
+            'tanggal_selesai.after_or_equal' => 'Selesai tanggal tidak boleh lebih mundur dari mulai tanggal!'
+        ]);
+
         HariLibur::create([
             'nama_libur' => $request->nama_libur,
             'tanggal_mulai' => $request->tanggal_mulai,
-            'tanggal_selesai' => $request->tanggal_selesai ?? $request->tanggal_mulai, // Jika kosong, samakan dengan mulai
+            'tanggal_selesai' => $request->tanggal_selesai ?? $request->tanggal_mulai,
             'kategori' => $request->kategori,
             'keterangan' => $request->keterangan,
         ]);
@@ -40,6 +51,16 @@ class HariLiburController extends Controller
 
     public function update(Request $request, $id)
     {
+        // 1. Tambahkan Validasi
+        $request->validate([
+            'nama_libur' => 'required|string|max:255',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'nullable|date|after_or_equal:tanggal_mulai',
+            'kategori' => 'required',
+        ], [
+            'tanggal_selesai.after_or_equal' => 'Selesai tanggal tidak boleh lebih mundur dari mulai tanggal!'
+        ]);
+
         $libur = HariLibur::findOrFail($id);
         $libur->update([
             'nama_libur' => $request->nama_libur,
