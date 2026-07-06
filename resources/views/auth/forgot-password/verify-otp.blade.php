@@ -60,15 +60,25 @@
         <!-- Form Kirim Ulang -->
         <div class="mt-6 text-center text-xs font-medium text-slate-500 relative z-10 border-t border-slate-100 pt-5">
             Tidak menerima email atau kode kedaluwarsa?
-            <form action="{{ route('password.otp.resend') }}" method="POST" class="inline m-0">
+            <form action="{{ route('profile.password.resend') }}" method="POST" class="inline m-0">
                 @csrf
-                <button type="submit" id="btn_resend" class="text-[#5B1D2A] font-bold hover:underline ml-1 transition-colors">Kirim Ulang</button>
+                <!-- Tombol akan dikontrol oleh Javascript -->
+                <button type="submit" id="btn_resend" class="text-slate-400 font-bold ml-1 cursor-not-allowed transition-colors" disabled>
+                    Tunggu...
+                </button>
             </form>
         </div>
     </div>
-
 <script>
-    const expireTime = ({{ $createdAt->timestamp }} * 1000) + (15 * 60 * 1000);
+    // Waktu pembuatan OTP dari server
+    const createdAtTime = {{ $createdAt->timestamp }} * 1000;
+
+    // Batas kedaluwarsa (15 menit)
+    const expireTime = createdAtTime + (15 * 60 * 1000);
+
+    // Batas tunggu kirim ulang (1 menit / 60 detik)
+    const resendEnableTime = createdAtTime + (60 * 1000);
+
     const timerElement = document.getElementById("timer");
     const otpInput = document.getElementById("otp_input");
     const btnVerify = document.getElementById("btn_verify");
@@ -77,6 +87,7 @@
 
     let isExpired = false;
 
+    // Cegah submit jika sudah 15 menit
     otpForm.addEventListener("submit", function(e) {
         if (isExpired) {
             e.preventDefault();
@@ -86,12 +97,33 @@
 
     const countdown = setInterval(function() {
         const now = new Date().getTime();
+
+        // ==========================================
+        // LOGIKA 1 MENIT (TOMBOL KIRIM ULANG)
+        // ==========================================
+        if (now < resendEnableTime) {
+            // Jika belum 1 menit, hitung sisa detiknya
+            const sisaResend = Math.ceil((resendEnableTime - now) / 1000);
+            btnResend.disabled = true;
+            btnResend.innerHTML = `Tunggu (${sisaResend}s)`;
+            btnResend.className = "text-slate-400 font-bold ml-1 cursor-not-allowed transition-colors";
+        } else {
+            // Jika sudah 1 menit, aktifkan tombolnya
+            btnResend.disabled = false;
+            btnResend.innerHTML = "Kirim Ulang";
+            btnResend.className = "text-[#5B1D2A] font-bold hover:underline ml-1 transition-colors";
+        }
+
+        // ==========================================
+        // LOGIKA 15 MENIT (KEDALUWARSA OTP)
+        // ==========================================
         const distance = expireTime - now;
 
         if (distance < 0) {
-            clearInterval(countdown);
+            clearInterval(countdown); // Hentikan timer
             isExpired = true;
 
+            // Matikan Form & Teks
             timerElement.innerHTML = "KEDALUWARSA";
             timerElement.classList.replace("text-rose-600", "text-slate-400");
 
@@ -104,12 +136,13 @@
             btnVerify.classList.add("cursor-not-allowed", "shadow-none");
             btnVerify.innerHTML = "KODE KEDALUWARSA";
 
-            // Highlight tombol kirim ulang
-            btnResend.classList.add("text-rose-600", "underline");
+            // Beri sorotan warna merah pada tombol kirim ulang karena ini satu-satunya jalan
+            btnResend.className = "text-rose-600 font-bold hover:underline ml-1 transition-colors";
 
-            return;
+            return; // Berhenti mengeksekusi sisa kode di bawah
         }
 
+        // Tampilkan sisa waktu 15 Menit
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
