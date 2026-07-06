@@ -34,11 +34,12 @@
             </div>
         @endif
 
-        <form action="{{ route('profile.password.verify.submit') }}" method="POST" class="relative z-10">
+        <form action="{{ route('profile.password.verify.submit') }}" method="POST" class="relative z-10" id="otp_form">
             @csrf
+
             <div class="mb-6">
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 text-center">Masukkan 6 Digit OTP</label>
-                <input type="text" name="otp" required maxlength="6" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-4 text-center text-3xl font-black tracking-[0.5em] rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#5B1D2A] focus:border-[#5B1D2A] outline-none transition bg-slate-50 shadow-inner" placeholder="••••••">
+                <input type="text" name="otp" id="otp_input" required maxlength="6" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-4 text-center text-3xl font-black tracking-[0.5em] rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#5B1D2A] focus:border-[#5B1D2A] outline-none transition bg-slate-50 shadow-inner" placeholder="••••••">
             </div>
 
             <div class="flex flex-col items-center justify-center gap-2 mb-6">
@@ -48,8 +49,8 @@
             </div>
 
             <div class="space-y-3">
-                <button type="submit" class="w-full bg-[#5B1D2A] text-white font-black tracking-widest uppercase text-xs py-4 rounded-xl hover:bg-[#4d182b] transition shadow-lg shadow-[#5B1D2A]/20 active:scale-95">
-                    Verifikasi Identitas
+                <button type="submit" id="btn_verify" class="w-full bg-[#5B1D2A] text-white font-black uppercase tracking-widest py-3.5 rounded-xl hover:bg-[#6D2433] active:scale-95 transition-all shadow-lg shadow-[#5B1D2A]/30">
+                    Verifikasi OTP
                 </button>
             </div>
         </form>
@@ -63,30 +64,56 @@
         </div>
     </div>
 
-    <script>
-        const createdAt = new Date("{{ $createdAt->format('Y-m-d H:i:s') }}").getTime();
-        const expireTime = createdAt + (15 * 60 * 1000);
-        const timerElement = document.getElementById("timer");
+<script>
+    // Timestamp aman dari timezone
+    const expireTime = ({{ $createdAt->timestamp }} * 1000) + (15 * 60 * 1000);
+    const timerElement = document.getElementById("timer");
+    const otpInput = document.getElementById("otp_input");
+    const btnVerify = document.getElementById("btn_verify");
+    const otpForm = document.getElementById("otp_form");
 
-        const countdown = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = expireTime - now;
+    let isExpired = false;
 
-            if (distance < 0) {
-                clearInterval(countdown);
-                timerElement.innerHTML = "KEDALUWARSA";
-                timerElement.classList.replace("text-rose-600", "text-slate-400");
-                return;
-            }
+    // Kunci tombol Enter jika kadaluwarsa
+    otpForm.addEventListener("submit", function(e) {
+        if (isExpired) {
+            e.preventDefault();
+            alert("Waktu habis! Silakan kirim ulang kode OTP.");
+        }
+    });
 
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    const countdown = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = expireTime - now;
 
-            const mText = minutes < 10 ? "0" + minutes : minutes;
-            const sText = seconds < 10 ? "0" + seconds : seconds;
+        if (distance < 0) {
+            clearInterval(countdown);
+            isExpired = true;
 
-            timerElement.innerHTML = mText + ":" + sText;
-        }, 1000);
-    </script>
+            timerElement.innerHTML = "KEDALUWARSA";
+            timerElement.classList.replace("text-rose-600", "text-slate-400");
+
+            // Matikan Form & Tombol
+            otpInput.disabled = true;
+            otpInput.classList.add("opacity-50", "cursor-not-allowed");
+
+            btnVerify.disabled = true;
+            btnVerify.classList.replace("bg-[#5B1D2A]", "bg-slate-400");
+            btnVerify.classList.replace("hover:bg-[#6D2433]", "hover:bg-slate-400");
+            btnVerify.classList.add("cursor-not-allowed");
+            btnVerify.innerHTML = "KODE KEDALUWARSA";
+
+            return;
+        }
+
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const mText = minutes < 10 ? "0" + minutes : minutes;
+        const sText = seconds < 10 ? "0" + seconds : seconds;
+
+        timerElement.innerHTML = mText + ":" + sText;
+    }, 1000);
+</script>
 </body>
 </html>

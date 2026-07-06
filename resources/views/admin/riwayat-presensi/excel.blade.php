@@ -72,7 +72,7 @@
                 <th rowspan="2" style="text-align: center; vertical-align: middle; width: 40px;">No</th>
                 <th rowspan="2" style="text-align: center; vertical-align: middle; width: 220px;">Nama Lengkap</th>
                 <th rowspan="2" style="text-align: center; vertical-align: middle; width: 120px;">{{ $kategori == 'siswa' ? 'NIS' : 'NIP' }}</th>
-                <th rowspan="2" style="text-align: center; vertical-align: middle; width: 180px;">{{ $kategori == 'siswa' ? 'Asal Sekolah' : 'Unit Kerja' }}</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle; width: 180px;">{{ $kategori == 'siswa' ? 'Asal Sekolah' : 'Jabatan' }}</th>
                 <th colspan="{{ count($hariInMonth) }}" style="text-align: center;">Tanggal Sesi Masuk (Check-In)</th>
                 <th colspan="4" style="text-align: center;">Total Per Status</th>
             </tr>
@@ -140,7 +140,7 @@
                 <th rowspan="2" style="text-align: center; vertical-align: middle; width: 40px;">No</th>
                 <th rowspan="2" style="text-align: center; vertical-align: middle; width: 220px;">Nama Lengkap</th>
                 <th rowspan="2" style="text-align: center; vertical-align: middle; width: 120px;">{{ $kategori == 'siswa' ? 'NIS' : 'NIP' }}</th>
-                <th rowspan="2" style="text-align: center; vertical-align: middle; width: 180px;">{{ $kategori == 'siswa' ? 'Asal Sekolah' : 'Unit Kerja' }}</th>
+                <th rowspan="2" style="text-align: center; vertical-align: middle; width: 180px;">{{ $kategori == 'siswa' ? 'Asal Sekolah' : 'Jabatan' }}</th>
                 <th colspan="{{ count($hariInMonth) }}" style="text-align: center;">Tanggal Sesi Pulang (Check-Out)</th>
                 <th colspan="4" style="text-align: center;">Total Per Status</th>
             </tr>

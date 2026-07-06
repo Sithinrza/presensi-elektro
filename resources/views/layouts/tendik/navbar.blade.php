@@ -1,5 +1,5 @@
 @php
-    $profil = \App\Models\Tendik::with('unitKerja')->where('id_user', Auth::id())->first();
+    $profil = \App\Models\Tendik::with('jabatan')->where('id_user', Auth::id())->first();
 @endphp
 <header class="sticky top-0 z-40 glass-effect border-b border-maroon-100/30 px-4 sm:px-5 lg:px-10 py-3 sm:py-4 bg-white/80 backdrop-blur-md">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
@@ -24,7 +24,7 @@
                     {{ $profil->nama_lengkap ?? Auth::user()->email }}
                 </p>
                 <p class="block text-[8px] sm:text-[9px] font-bold text-gold-dark uppercase tracking-widest mt-1 truncate max-w-[110px] sm:max-w-[150px] md:max-w-[200px]">
-                    {{-- {{ $profil->unitKerja->nama_unit ?? 'Tenaga Kependidikan' }} --}}
+                    {{-- {{ $profil->jabatan->jabatan Tenaga Kependidikan' }} --}}
                     Tenaga Kependidikan
                 </p>
             </div>

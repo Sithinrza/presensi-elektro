@@ -110,10 +110,15 @@ class ResetPasswordOtpController extends Controller
             return redirect()->back()->withErrors(['otp' => 'Kode OTP salah atau tidak sesuai!']);
         }
 
+        // --- INI LOGIKA YANG LEBIH KETAT ---
         $waktuDibuat = Carbon::parse($record->created_at, 'Asia/Makassar');
-        if (Carbon::now('Asia/Makassar')->diffInMinutes($waktuDibuat) > 15) {
-            return redirect()->route('password.request')->withErrors(['email' => 'Kode OTP sudah kedaluwarsa, silakan minta kode baru.']);
+        $batasWaktu = $waktuDibuat->copy()->addMinutes(15); // Tambah 15 menit dari waktu buat
+
+        // Cek apakah waktu SEKARANG sudah melewati BATAS WAKTU
+        if (Carbon::now('Asia/Makassar')->greaterThan($batasWaktu)) {
+            return redirect()->back()->withErrors(['otp' => 'Kode OTP sudah kedaluwarsa, silakan klik tombol Kirim Ulang.']);
         }
+        // -----------------------------------
 
         session(['otp_verified' => true]);
 

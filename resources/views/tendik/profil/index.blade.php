@@ -105,7 +105,6 @@
             <div class="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-2 sm:gap-3 mt-1">
                 <span class="text-gold font-bold text-[10px] sm:text-sm tracking-widest uppercase">Tenaga Kependidikan</span>
                 <span class="hidden sm:block text-maroon-300">•</span>
-                <span class="text-maroon-100 text-[10px] sm:text-sm font-medium">{{ $tendik->unitKerja->nama_unit ?? 'Unit Kerja Belum Diisi' }}</span>
             </div>
             <p class="text-[9px] sm:text-[10px] text-maroon-200/50 font-bold uppercase tracking-widest pt-1 sm:pt-2">
                 Bergabung Sejak {{ \Carbon\Carbon::parse($tendik->user->created_at)->translatedFormat('F Y') }}

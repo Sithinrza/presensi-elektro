@@ -116,7 +116,7 @@
                             <td class="px-4 lg:px-8 py-3 lg:py-4">
                                 <span class="search-id inline-flex items-center px-2 py-1 lg:px-2.5 rounded-md bg-slate-100 text-slate-600 text-[10px] lg:text-xs font-bold font-mono border border-slate-200">{{ $t->nip ?? '-' }}</span>
                             </td>
-                            <td class="px-4 lg:px-8 py-3 lg:py-4"><p class="text-[10px] lg:text-xs font-bold text-slate-600 uppercase">{{ $t->unitKerja->nama_unit ?? '-' }}</p></td>
+                            <td class="px-4 lg:px-8 py-3 lg:py-4"><p class="text-[10px] lg:text-xs font-bold text-slate-600 uppercase">{{ $t->jabatan->nama_jabatan ?? '-' }}</p></td>
                             <td class="px-4 lg:px-8 py-3 lg:py-4 text-center">
                                 @php
                                     $status = $t->status_hari_ini;
@@ -220,7 +220,7 @@
             btnTendik.className = activeClass;
             btnSiswa.className = inactiveClass;
             title.textContent = "Daftar Tenaga Kependidikan";
-            colExtra.textContent = "Unit Kerja / Prodi";
+            colExtra.textContent = "Jabatan";
 
             rowsSiswa.forEach(row => row.style.display = 'none');
         }

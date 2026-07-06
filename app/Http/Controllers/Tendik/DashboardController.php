@@ -70,7 +70,8 @@ class DashboardController extends Controller
         $jamSekarang = $waktuSekarang->format('H:i:s');
         $hariIniIso = $waktuSekarang->dayOfWeekIso;
 
-        $presensiHariIni = Presensi::where('id_user', $user->id_user)
+        $presensiHariIni = Presensi::with('statusCi', 'statusCo')
+                                    ->where('id_user', $user->id_user)
                                    ->where('tanggal', $tanggalHariIni)
                                    ->first();
 

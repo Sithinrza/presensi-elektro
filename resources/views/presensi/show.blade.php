@@ -95,14 +95,14 @@
                         @endif
                     </div>
 
-                    <div class="flex flex-col gap-0.5 sm:gap-1 text-[8px] sm:text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 w-full mt-2">
+                    {{-- <div class="flex flex-col gap-0.5 sm:gap-1 text-[8px] sm:text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 w-full mt-2">
                         <span>LAT: {{ $presensi->latitude_masuk ?? '-' }}</span>
                         <span>LNG: {{ $presensi->longitude_masuk ?? '-' }}</span>
                         <span>📍 JARAK LOKASI MASUK:</span>
                         <span class="{{ $presensi->latitude_masuk ? 'text-emerald-500 text-[10px] sm:text-xs' : 'text-slate-400' }}">
                             {{ $presensi->latitude_masuk ? $jarak_masuk . ' METER' : '-' }}
                         </span>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </section>
@@ -175,14 +175,14 @@
                             @endif
                         </div>
 
-                        <div class="flex flex-col gap-0.5 sm:gap-1 text-[8px] sm:text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 w-full mt-2">
+                        {{-- <div class="flex flex-col gap-0.5 sm:gap-1 text-[8px] sm:text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest bg-slate-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 w-full mt-2">
                             <span>LAT: {{ $presensi->latitude_pulang ?? '-' }}</span>
                             <span>LNG: {{ $presensi->longitude_pulang ?? '-' }}</span>
                             <span>📍 JARAK LOKASI PULANG:</span>
                             <span class="{{ $presensi->latitude_pulang ? 'text-emerald-500 text-[10px] sm:text-xs' : 'text-slate-400' }}">
                                 {{ $presensi->latitude_pulang ? $jarak_pulang . ' METER' : '-' }}
                             </span>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             @else

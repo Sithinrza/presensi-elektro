@@ -17,7 +17,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\TendikController;
 use App\Http\Controllers\Admin\SiswaMagangController;
 use App\Http\Controllers\Admin\PembimbingController;
-use App\Http\Controllers\Admin\UnitKerjaController;
+
 use App\Http\Controllers\Admin\HariLiburController;
 use App\Http\Controllers\Admin\KajurController;
 use App\Http\Controllers\Admin\LogController as AdminLog;
@@ -104,7 +104,7 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
             Route::resource('pembimbing', PembimbingController::class);
         });
 
-        Route::resource('unit-kerja', UnitKerjaController::class);
+   
         Route::resource('hari-libur', HariLiburController::class);
 
         Route::get('/riwayat-presensi', [AdminRiwayat::class, 'index'])->name('riwayat.index');

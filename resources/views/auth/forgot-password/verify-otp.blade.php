@@ -30,11 +30,12 @@
             </div>
         @endif
 
-        <form action="{{ route('password.otp.submit') }}" method="POST" class="relative z-10">
+        <form action="{{ route('password.otp.submit') }}" method="POST" class="relative z-10" id="otp_form">
             @csrf
+
             <div class="mb-6">
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 text-center">Masukkan 6 Digit OTP</label>
-                <input type="text" name="otp" required maxlength="6" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-4 text-center text-3xl font-black tracking-[0.5em] rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#5B1D2A] focus:border-[#5B1D2A] transition bg-slate-50 shadow-inner" placeholder="••••••">
+                <input type="text" name="otp" id="otp_input" required maxlength="6" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-4 text-center text-3xl font-black tracking-[0.5em] rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#5B1D2A] focus:border-[#5B1D2A] transition bg-slate-50 shadow-inner" placeholder="••••••">
             </div>
 
             <div class="flex flex-col items-center justify-center gap-2 mb-6">
@@ -43,49 +44,61 @@
                 </p>
             </div>
 
-            <button type="submit" class="w-full bg-[#5B1D2A] text-white font-black uppercase tracking-widest py-3.5 rounded-xl hover:bg-[#6D2433] active:scale-95 transition-all shadow-lg shadow-[#5B1D2A]/30">
+            <button type="submit" id="btn_verify" class="w-full bg-[#5B1D2A] text-white font-black uppercase tracking-widest py-3.5 rounded-xl hover:bg-[#6D2433] active:scale-95 transition-all shadow-lg shadow-[#5B1D2A]/30">
                 Verifikasi OTP
             </button>
         </form>
 
-        <div class="mt-6 text-center text-xs font-medium text-slate-500 relative z-10 border-t border-slate-100 pt-5">
-            Tidak menerima email?
-            <form action="{{ route('password.otp.resend') }}" method="POST" class="inline m-0">
-                @csrf
-                <button type="submit" class="text-[#5B1D2A] font-bold hover:underline ml-1">Kirim Ulang</button>
-            </form>
-        </div>
-    </div>
+<script>
+    // Gunakan Timestamp dari server agar kebal dari perbedaan zona waktu browser user
+    const expireTime = ({{ $createdAt->timestamp }} * 1000) + (15 * 60 * 1000);
+    const timerElement = document.getElementById("timer");
+    const otpInput = document.getElementById("otp_input");
+    const btnVerify = document.getElementById("btn_verify");
+    const otpForm = document.getElementById("otp_form");
 
-    <script>
-        // Tanggal OTP dibuat dari Controller (di-parsing via Carbon)
-        const createdAt = new Date("{{ $createdAt->format('Y-m-d H:i:s') }}").getTime();
-        // Waktu expired = Waktu Dibuat + 15 Menit (900.000 ms)
-        const expireTime = createdAt + (15 * 60 * 1000);
+    let isExpired = false;
 
-        const timerElement = document.getElementById("timer");
+    // Cegah submit form pakai tombol Enter kalau sudah kedaluwarsa
+    otpForm.addEventListener("submit", function(e) {
+        if (isExpired) {
+            e.preventDefault(); // Blokir pengiriman
+            alert("Waktu habis! Silakan kirim ulang kode OTP.");
+        }
+    });
 
-        const countdown = setInterval(function() {
-            // Kita pakai Date.now() browser, asumsi jam server dan client kurang lebih sama
-            const now = new Date().getTime();
-            const distance = expireTime - now;
+    const countdown = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = expireTime - now;
 
-            if (distance < 0) {
-                clearInterval(countdown);
-                timerElement.innerHTML = "KEDALUWARSA";
-                timerElement.classList.replace("text-rose-600", "text-slate-400");
-                return;
-            }
+        if (distance < 0) {
+            clearInterval(countdown);
+            isExpired = true; // Tandai sudah kedaluwarsa
 
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            timerElement.innerHTML = "KEDALUWARSA";
+            timerElement.classList.replace("text-rose-600", "text-slate-400");
 
-            // Format ke 00:00
-            const mText = minutes < 10 ? "0" + minutes : minutes;
-            const sText = seconds < 10 ? "0" + seconds : seconds;
+            // Matikan Input & Tombol
+            otpInput.disabled = true;
+            otpInput.classList.add("opacity-50", "cursor-not-allowed");
 
-            timerElement.innerHTML = mText + ":" + sText;
-        }, 1000);
-    </script>
+            btnVerify.disabled = true;
+            btnVerify.classList.replace("bg-[#5B1D2A]", "bg-slate-400");
+            btnVerify.classList.replace("hover:bg-[#6D2433]", "hover:bg-slate-400");
+            btnVerify.classList.add("cursor-not-allowed");
+            btnVerify.innerHTML = "KODE KEDALUWARSA";
+
+            return;
+        }
+
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const mText = minutes < 10 ? "0" + minutes : minutes;
+        const sText = seconds < 10 ? "0" + seconds : seconds;
+
+        timerElement.innerHTML = mText + ":" + sText;
+    }, 1000);
+</script>
 </body>
 </html>

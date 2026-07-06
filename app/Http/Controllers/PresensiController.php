@@ -330,23 +330,22 @@ class PresensiController extends Controller
         $presensi = $query->firstOrFail();
 
 
+        // $targetLat =  -3.296887;
+        // $targetLng =  114.581389;
 
-        $targetLat = -3.2959495;
-        $targetLng = 114.587583;
+        // $hitungJarak = function($lat1, $lon1, $lat2, $lon2) {
+        //     if (!$lat1 || !$lon1) return null;
+        //     $earthRadius = 6371000; // Radius bumi dalam meter
+        //     $latDelta = deg2rad($lat2 - $lat1);
+        //     $lonDelta = deg2rad($lon2 - $lon1);
+        //     $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * pow(sin($lonDelta / 2), 2)));
+        //     return round($angle * $earthRadius, 2); // Hasil dalam satuan meter
+        // };
 
-        $hitungJarak = function($lat1, $lon1, $lat2, $lon2) {
-            if (!$lat1 || !$lon1) return null;
-            $earthRadius = 6371000; // Radius bumi dalam meter
-            $latDelta = deg2rad($lat2 - $lat1);
-            $lonDelta = deg2rad($lon2 - $lon1);
-            $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * pow(sin($lonDelta / 2), 2)));
-            return round($angle * $earthRadius, 2); // Hasil dalam satuan meter
-        };
-
-        // Hitung jarak presensi masuk dan pulang
-        $jarak_masuk = $hitungJarak($presensi->latitude_masuk, $presensi->longitude_masuk, $targetLat, $targetLng);
-        $jarak_pulang = $hitungJarak($presensi->latitude_pulang, $presensi->longitude_pulang, $targetLat, $targetLng);
-        // ========================================================
+        // // Hitung jarak presensi masuk dan pulang
+        // $jarak_masuk = $hitungJarak($presensi->latitude_masuk, $presensi->longitude_masuk, $targetLat, $targetLng);
+        // $jarak_pulang = $hitungJarak($presensi->latitude_pulang, $presensi->longitude_pulang, $targetLat, $targetLng);
+        // // ========================================================
 
 
         if ($role == 'admin') {
@@ -363,7 +362,7 @@ class PresensiController extends Controller
             $backUrl = route('presensi.riwayat-presensi');
         }
 
-        return view('presensi.show', compact('layout', 'backUrl', 'presensi', 'jarak_masuk', 'jarak_pulang'));
+        return view('presensi.show', compact('layout', 'backUrl', 'presensi'));
     }
 
     public function simpanAlasan(Request $request)

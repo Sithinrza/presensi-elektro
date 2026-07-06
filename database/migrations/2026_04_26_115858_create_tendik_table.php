@@ -22,8 +22,7 @@ return new class extends Migration
             $table->enum('jk', ['L', 'P'])->nullable();
 
             $table->foreignId('id_pend_terakhir')->nullable()->constrained('pendidikan_terakhir', 'id_pend_terakhir');
-            $table->foreignId('id_unit_kerja')->nullable()->constrained('unit_kerja', 'id_unit_kerja');
-            $table->foreignId('id_pangkat_golongan')->nullable()->constrained('pangkat_golongan', 'id_pangkat_golongan');
+            
             $table->foreignId('id_jabatan')->nullable()->constrained('jabatan', 'id_jabatan');
 
 

@@ -34,7 +34,36 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
 
-                        {{-- ================= LOGIKA TOMBOL PRESENSI TENDIK ================= --}}
+                        @php
+                            // Ambil status dari relasi yang sudah Anda buat
+                            $namaStatusMasuk = $presensiHariIni->statusCi->name ?? 'Belum Ada Status';
+                            $namaStatusPulang = $presensiHariIni->statusCo->name ?? '-';
+
+                            // Set warna transparan (cocok untuk tampilan saat masih bekerja)
+                            $statusTransparan = match($namaStatusMasuk) {
+                                'Tepat Waktu'    => 'bg-emerald-500/20 border border-emerald-500/50 text-emerald-300',
+                                'Terlambat'      => 'bg-amber-500/20 border border-amber-500/50 text-amber-300',
+                                'Check Out'      => 'bg-blue-500/20 border border-blue-500/50 text-blue-300',
+                                'Terlambat CO'   => 'bg-orange-500/20 border border-orange-500/50 text-orange-300',
+                                'Lupa Check-Out' => 'bg-rose-500/20 border border-rose-500/50 text-rose-300',
+                                'Alpa'           => 'bg-red-500/20 border border-red-500/50 text-red-300',
+                                'Libur'          => 'bg-slate-500/20 border border-slate-500/50 text-slate-300',
+                                default          => 'bg-gray-500/20 border border-gray-500/50 text-gray-300',
+                            };
+
+                            // Set warna solid (cocok untuk tampilan setelah selesai presensi)
+                            // Di sini kita bisa pakai status masuk sebagai acuan, atau Anda bisa ubah logic-nya jika butuh
+                            $statusSolid = match($namaStatusMasuk) {
+                                'Tepat Waktu'    => 'bg-emerald-600 text-white',
+                                'Terlambat'      => 'bg-amber-500 text-white',
+                                'Check Out'      => 'bg-blue-600 text-white',
+                                'Terlambat CO'   => 'bg-orange-500 text-white',
+                                'Lupa Check-Out' => 'bg-rose-600 text-white',
+                                'Alpa'           => 'bg-red-600 text-white',
+                                'Libur'          => 'bg-slate-600 text-white',
+                                default          => 'bg-gray-600 text-white',
+                            };
+                        @endphp
                         @if($isWeekend)
                             <div class="sm:col-span-2 bg-white/10 border border-white/20 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 shadow-inner backdrop-blur-sm opacity-80">
                                 <div class="w-12 h-12 bg-white/20 text-white rounded-2xl flex items-center justify-center shrink-0">
@@ -79,6 +108,41 @@
                                 </div>
                             </a>
 
+                        {{-- CEK APAKAH PRESENSI HARI INI SUDAH SELESAI (MASUK & PULANG ADA) --}}
+                        @elseif($presensiHariIni && !is_null($presensiHariIni->jam_pulang))
+                            <div class="bg-white/10 border border-white/20 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-5 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
+                                <span class="text-[9px] sm:text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1 sm:mb-1.5">Jam Masuk</span>
+                                <span class="text-xl sm:text-2xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_masuk }}</span>
+                            </div>
+                            <div class="bg-white/10 border border-white/20 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-5 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
+                                <span class="text-[9px] sm:text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1 sm:mb-1.5">Jam Pulang</span>
+                                <span class="text-xl sm:text-2xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_pulang }}</span>
+                                {{-- <div class="mt-3">
+                                    <span class="{{ $statusTransparan }} px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest">
+                                        {{ $presensiHariIni->status ?? 'Tidak Diketahui' }}
+                                    </span>
+                                </div> --}}
+                               {{-- <div class="flex flex-col gap-1 items-end">
+                                    <span class="{{ $statusSolid }} px-3 py-1.5 rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-md">
+                                        Masuk: {{ $namaStatusMasuk }}
+                                    </span>
+                                    @if($namaStatusPulang !== '-')
+                                        <span class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-widest shadow-md">
+                                            Pulang: {{ $namaStatusPulang }}
+                                        </span>
+                                    @endif
+                                </div> --}}
+                            </div>
+                            <div class="sm:col-span-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
+                                <span class="text-[10px] sm:text-xs font-black text-emerald-300 uppercase tracking-widest flex items-center justify-center gap-1.5 sm:gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="sm:w-[16px] sm:h-[16px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                    Presensi Hari Ini Selesai
+                                </span>
+                            </div>
+
+
+
+                        {{-- CEK WAKTU HABIS (SETELAH CEK PRESENSI SELESAI) --}}
                         @elseif($lewatJamCo || $lewatBatasMasuk)
                             <div class="sm:col-span-2 bg-rose-900/40 border border-rose-500/30 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 shadow-inner backdrop-blur-sm opacity-80">
                                 <div class="w-12 h-12 bg-rose-500/30 text-rose-200 rounded-2xl flex items-center justify-center shrink-0">
@@ -90,6 +154,9 @@
                                 </div>
                             </div>
 
+
+
+                        {{-- TOMBOL PRESENSI MASUK --}}
                         @elseif(!$presensiHariIni)
                             <a href="{{ route('presensi.index') }}" class="sm:col-span-2 group bg-white rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex items-center gap-4 sm:gap-5 shadow-xl hover:shadow-2xl active:scale-95 transition-all duration-300">
                                 <div class="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-emerald-50 text-emerald-600 rounded-[1rem] sm:rounded-2xl flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
@@ -104,10 +171,12 @@
                                 </div>
                             </a>
 
+                        {{-- TOMBOL PRESENSI PULANG --}}
                         @elseif($presensiHariIni && is_null($presensiHariIni->jam_pulang))
                             <div class="bg-white/10 border border-white/20 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
                                 <span class="text-[9px] sm:text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1.5 sm:mb-2">Jam Masuk Anda</span>
                                 <span class="text-2xl sm:text-3xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_masuk }}</span>
+
                             </div>
 
                             <a href="{{ route('presensi.index') }}" class="group bg-maroon-800 border border-white/10 rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3 sm:gap-4 active:scale-95 transition-all duration-300 hover:bg-rose-900/40 hover:border-rose-500/30">
@@ -119,22 +188,6 @@
                                     <span class="text-[9px] sm:text-[10px] text-maroon-200/50 font-bold uppercase tracking-widest mt-1 block">End Session</span>
                                 </div>
                             </a>
-
-                        @else
-                            <div class="bg-white/10 border border-white/20 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-5 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
-                                <span class="text-[9px] sm:text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1 sm:mb-1.5">Jam Masuk</span>
-                                <span class="text-xl sm:text-2xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_masuk }}</span>
-                            </div>
-                            <div class="bg-white/10 border border-white/20 rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-5 flex flex-col justify-center items-center text-center shadow-inner backdrop-blur-sm">
-                                <span class="text-[9px] sm:text-[10px] text-maroon-200/70 font-bold uppercase tracking-widest mb-1 sm:mb-1.5">Jam Pulang</span>
-                                <span class="text-xl sm:text-2xl font-black text-white font-mono leading-none tracking-tight">{{ $presensiHariIni->jam_pulang }}</span>
-                            </div>
-                            <div class="sm:col-span-2 bg-emerald-500/20 border border-emerald-500/30 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-center">
-                                <span class="text-[10px] sm:text-xs font-black text-emerald-300 uppercase tracking-widest flex items-center justify-center gap-1.5 sm:gap-2">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" class="sm:w-[16px] sm:h-[16px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                                    Presensi Hari Ini Selesai
-                                </span>
-                            </div>
                         @endif
 
                     </div>

@@ -92,7 +92,6 @@
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Identitas Tendik</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">NIP / NIDN</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</th>
-                        <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Pangkat - Golongan</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Aksi</th>
                     </tr>
@@ -125,15 +124,7 @@
                                 {{ $t->user->email ?? 'Tidak ada email' }}
                             </span>
                         </td>
-                        <td class="px-6 sm:px-8 py-4">
-                            <span class="inline-flex items-center px-2 sm:px-3 py-1 sm:py-1.5 bg-slate-50 text-slate-600 border border-slate-200 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-tight">
-                                @if($t->pangkatGolongan)
-                                    {{ $t->pangkatGolongan->pangkat->nama_pangkat ?? 'Unknown' }} - {{ $t->pangkatGolongan->golongan->ruang ?? 'Unknown' }}
-                                @else
-                                    Belum Diatur
-                                @endif
-                            </span>
-                        </td>
+                        
                         <td class="px-6 sm:px-8 py-4 text-center">
                             @if($t->status == 'Aktif')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-black uppercase tracking-widest shadow-sm">

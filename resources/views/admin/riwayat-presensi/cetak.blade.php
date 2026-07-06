@@ -54,7 +54,7 @@
             <td>: {{ $siswa->role }}</td>
         </tr>
         <tr>
-            <td class="label">Instansi / Unit Kerja</td>
+            <td class="label">Instansi</td>
             <td>: {{ $siswa->sekolah_asal ?? '-' }}</td>
         </tr>
     </table>

@@ -28,7 +28,6 @@
                     <p class="text-xs font-black text-amber-400 uppercase tracking-[0.2em] mb-1.5 leading-none">{{ $role ?? 'Siswa Magang' }}</p>
                     <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight mb-2">{{ $nama_lengkap ?? 'Nama User' }}</h2>
                     <div class="inline-block px-3 py-1 bg-white/10 rounded-full border border-white/20">
-                        <p class="text-maroon-100 text-[10px] sm:text-xs font-bold uppercase tracking-widest leading-none">{{ $instansi ?? 'Instansi / Unit' }}</p>
                     </div>
                 </div>
             </div>
