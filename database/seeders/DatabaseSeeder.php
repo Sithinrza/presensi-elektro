@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             PendidikanTerakhirSeeder::class,
             StatusPresensiSeeder::class,
 
-            // Urutan tabel Normalisasi Pangkat & Jabatan
+          
             JabatanSeeder::class,
 
             // User dibuat paling akhir karena dia butuh Role
