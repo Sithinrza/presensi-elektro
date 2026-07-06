@@ -295,7 +295,7 @@
             </div>
             <div class="bg-maroon-950 p-5 rounded-3xl flex items-start gap-4 shadow-xl border border-white/5">
 
-                
+
 
                 <!-- Content -->
                 <details class="group">

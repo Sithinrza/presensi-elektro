@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Tendik;
 use App\Models\User;
+use App\Models\Agama;
 use Illuminate\Support\Facades\Storage;
 
 class ProfilController extends Controller
@@ -14,7 +15,7 @@ class ProfilController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $tendik = Tendik::with(['user', 'unitKerja', 'pangkatGolongan.pangkat', 'pangkatGolongan.golongan', 'jabatan', 'agama', 'pendidikanTerakhir'])
+        $tendik = Tendik::with(['user', 'jabatan', 'agama', 'pendidikanTerakhir'])
             ->where('id_user', $user->id_user)
             ->firstOrFail();
 
@@ -24,11 +25,11 @@ class ProfilController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        $tendik = Tendik::with(['user', 'unitKerja', 'pangkatGolongan.pangkat', 'pangkatGolongan.golongan'])
+        $tendik = Tendik::with(['user'])
             ->where('id_user', $user->id_user)
             ->firstOrFail();
 
-        $agama = \App\Models\Agama::all();
+        $agama = Agama::all();
 
         return view('tendik.profil.edit', compact('tendik', 'agama'));
     }

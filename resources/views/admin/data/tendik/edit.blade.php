@@ -62,35 +62,8 @@
                         </label>
                         <input type="email" name="email" value="{{ old('email', $tendik->user->email ?? '') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
-                    <div class="space-y-1.5 sm:space-y-2">
-                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                            Unit Kerja / Prodi <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
-                        </label>
-                        <select name="id_unit_kerja" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all cursor-pointer shadow-sm">
-                            @foreach($unit_kerja as $uk)
-                                <option value="{{ $uk->id_unit_kerja }}" {{ old('id_unit_kerja', $tendik->id_unit_kerja) == $uk->id_unit_kerja ? 'selected' : '' }}>{{ $uk->nama_unit }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="space-y-1.5 sm:space-y-2">
-                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                            Pangkat / Golongan <span class="text-rose-500 text-xs sm:text-sm leading-none align-top">*</span>
-                        </label>
-                        <select name="id_pangkat_golongan" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 focus:border-maroon-500 outline-none transition-all cursor-pointer shadow-sm appearance-none">
-                            <option value="" disabled {{ empty(old('id_pangkat_golongan', $tendik->id_pangkat_golongan ?? '')) ? 'selected' : '' }}>
-                                Pilih Pangkat & Golongan...
-                            </option>
-                            @foreach($pangkat_golongan ?? [] as $pg)
-                                <option value="{{ $pg->id_pangkat_golongan }}" {{ (old('id_pangkat_golongan', $tendik->id_pangkat_golongan ?? '') == $pg->id_pangkat_golongan) ? 'selected' : '' }}>
-                                    @if(($pg->golongan->jenis ?? '') == '-')
-                                        Honorer / Tanpa Golongan
-                                    @else
-                                        [{{ $pg->golongan->jenis ?? '' }}] {{ $pg->pangkat->nama_pangkat ?? 'Unknown' }} - Gol. {{ $pg->golongan->ruang ?? 'Unknown' }}
-                                    @endif
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+
+                    
                     <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update Password</label>
                         <div class="relative group">

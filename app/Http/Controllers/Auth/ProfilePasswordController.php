@@ -36,11 +36,14 @@ class ProfilePasswordController extends Controller
         $email = Auth::user()->email;
 
         // Cek jeda pengiriman (1 menit)
+        // Cek kapan OTP terakhir dibuat untuk mencegah spam klik
         $lastRecord = DB::table('password_reset_tokens')->where('email', $email)->first();
         if ($lastRecord) {
             $waktuDibuat = Carbon::parse($lastRecord->created_at, 'Asia/Makassar');
-            if (Carbon::now('Asia/Makassar')->diffInMinutes($waktuDibuat) < 1) {
-                return redirect()->back()->withErrors(['otp' => 'Harap tunggu 1 menit sebelum mengirim ulang OTP.']);
+
+            // Gunakan diffInSeconds (60 detik) agar lebih akurat
+            if (Carbon::now('Asia/Makassar')->diffInSeconds($waktuDibuat) < 60) {
+                return redirect()->back()->withErrors(['otp' => 'Harap tunggu 60 detik sebelum mengirim ulang OTP.']);
             }
         }
 
@@ -84,6 +87,7 @@ class ProfilePasswordController extends Controller
     }
 
     // 3. Validasi Kode OTP
+    // 3. Validasi Kode OTP
     public function verifyOtp(Request $request)
     {
         $request->validate(['otp' => 'required|numeric']);
@@ -98,10 +102,15 @@ class ProfilePasswordController extends Controller
             return redirect()->back()->withErrors(['otp' => 'Kode OTP salah atau tidak sesuai!']);
         }
 
+        // --- PERBAIKAN LOGIKA BATAS WAKTU ---
         $waktuDibuat = Carbon::parse($record->created_at, 'Asia/Makassar');
-        if (Carbon::now('Asia/Makassar')->diffInMinutes($waktuDibuat) > 15) {
-            return redirect()->back()->withErrors(['otp' => 'Kode OTP kedaluwarsa, silakan minta ulang.']);
+        $batasWaktu = $waktuDibuat->copy()->addMinutes(15); // Expired dalam 15 menit
+
+        // Cek apakah waktu SEKARANG sudah melewati BATAS WAKTU
+        if (Carbon::now('Asia/Makassar')->greaterThan($batasWaktu)) {
+            return redirect()->back()->withErrors(['otp' => 'Kode OTP kedaluwarsa, silakan klik Kirim Ulang.']);
         }
+        // -------------------------------------
 
         session(['profile_otp_verified' => true]);
         return redirect()->route('profile.password.reset');

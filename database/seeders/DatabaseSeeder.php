@@ -19,13 +19,9 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             AgamaSeeder::class,
             PendidikanTerakhirSeeder::class,
-            UnitKerjaSeeder::class,
             StatusPresensiSeeder::class,
 
             // Urutan tabel Normalisasi Pangkat & Jabatan
-            PangkatSeeder::class,
-            GolonganSeeder::class,
-            PangkatGolonganSeeder::class,
             JabatanSeeder::class,
 
             // User dibuat paling akhir karena dia butuh Role

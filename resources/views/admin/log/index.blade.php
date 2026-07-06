@@ -70,7 +70,7 @@
                                         <img src="{{ asset('storage/' . $log->foto_profil) }}" alt="Foto {{ $log->nama_lengkap }}" class="w-full h-full object-cover">
                                     @else
                                         <!-- Mengambil 1 huruf pertama dari nama. Jika nama kosong, default memunculkan 'U' (User) -->
-                                        {{ strtoupper(substr($log->nama_lengkap ?? 'U', 0, 1)) }}
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($log->nama_lengkap ?? 'User') }}&background=f1f5f9&color=7b1fa2&bold=true" alt="Inisial {{ $log->nama_lengkap }}" class="w-full h-full object-cover">
                                     @endif
                                 </div>
                                 <div>

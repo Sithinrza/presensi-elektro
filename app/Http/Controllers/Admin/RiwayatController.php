@@ -54,7 +54,7 @@ class RiwayatController extends Controller
                 return $s;
             });
 
-        $tendik = Tendik::with(['user', 'unitKerja'])
+        $tendik = Tendik::with(['user'])
             ->orderBy('status', 'asc')
             ->orderBy('nama_lengkap', 'asc')
             ->get()->map(function ($t) use ($presensiHariIni, $isLiburHariIni) {
@@ -100,7 +100,6 @@ class RiwayatController extends Controller
         } elseif ($user->tendik) {
             $nama_lengkap = $user->tendik->nama_lengkap;
             $role = 'Tenaga Kependidikan';
-            $instansi = $user->tendik->unitKerja ? $user->tendik->unitKerja->nama_unit : '-';
             $foto_profil = $user->tendik->foto_profil;
         }
 
@@ -240,7 +239,7 @@ class RiwayatController extends Controller
         } elseif ($user->tendik) {
             $nama_lengkap = $user->tendik->nama_lengkap;
             $role = 'Tenaga Kependidikan';
-            $instansi = $user->tendik->unitKerja ? $user->tendik->unitKerja->nama_unit : '-';
+
         }
 
         $bulan = $request->bulan ?? date('m');
@@ -363,7 +362,7 @@ class RiwayatController extends Controller
 
         $batasLoop = $endOfMonth->isFuture() ? $waktuSekarang->copy()->startOfDay() : $endOfMonth->copy();
 
-        $users = ($kategori == 'siswa') ? \App\Models\SiswaMagang::with('user')->get() : \App\Models\Tendik::with(['user', 'unitKerja'])->get();
+        $users = ($kategori == 'siswa') ? \App\Models\SiswaMagang::with('user')->get() : \App\Models\Tendik::with(['user'])->get();
         $idUsers = $users->pluck('id_user')->toArray();
 
         $presensiAll = Presensi::with(['statusCi', 'statusCo'])
@@ -407,7 +406,7 @@ class RiwayatController extends Controller
             $row = [
                 'nama'      => $u->nama_lengkap,
                 'identitas' => $kategori == 'siswa' ? ($u->nis ?? '-') : ($u->nip ?? '-'),
-                'instansi'  => $kategori == 'siswa' ? ($u->sekolah_asal ?? '-') : ($u->unitKerja->nama_unit ?? '-'),
+                'instansi'  => $kategori == 'siswa' ? ($u->sekolah_asal ?? '-') : ($u->jabatan->nama_jabatan ?? '-'),
                 'rekap_ci'  => [],
                 'rekap_co'  => [],
                 'ci_tepat'  => 0, 'ci_telat' => 0, 'ci_alpa' => 0, 'ci_libur' => 0,
