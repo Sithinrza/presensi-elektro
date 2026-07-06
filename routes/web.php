@@ -62,7 +62,7 @@ Route::middleware(['guest'])->group(function () {
     Route::post('/forgot-password/resend-otp', [ResetPasswordOtpController::class, 'resendOtp'])->name('password.otp.resend');
     Route::get('/reset-password', [ResetPasswordOtpController::class, 'showResetForm'])->name('password.otp.reset');
     Route::post('/reset-password', [ResetPasswordOtpController::class, 'resetPassword'])->name('password.update');
-    Route::post('/profile/password/resend-otp', [ProfilePasswordController::class, 'resendOtp'])->name('profile.password.resend');
+
 });
 
 // ==========================================
@@ -83,7 +83,7 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
     Route::post('/profil/password/verify-submit', [ProfilePasswordController::class, 'verifyOtp'])->name('profile.password.verify.submit');
     Route::get('/profil/password/reset', [ProfilePasswordController::class, 'showResetForm'])->name('profile.password.reset');
     Route::post('/profil/password/update', [ProfilePasswordController::class, 'updatePassword'])->name('profile.password.update');
-
+    Route::post('/profile/password/resend-otp', [ProfilePasswordController::class, 'resendOtp'])->name('profile.password.resend');
     Route::get('/presensi', [PresensiController::class, 'index'])->name('presensi.index');
     Route::post('/presensi-submit', [PresensiController::class, 'store'])->name('presensi.store');
     Route::post('/presensi/simpan-alasan', [PresensiController::class, 'simpanAlasan'])->name('presensi.simpan_alasan');
@@ -104,7 +104,7 @@ Route::middleware(['auth', PreventBackHistory::class])->group(function () {
             Route::resource('pembimbing', PembimbingController::class);
         });
 
-   
+
         Route::resource('hari-libur', HariLiburController::class);
 
         Route::get('/riwayat-presensi', [AdminRiwayat::class, 'index'])->name('riwayat.index');

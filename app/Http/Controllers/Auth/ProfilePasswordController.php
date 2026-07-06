@@ -29,19 +29,17 @@ class ProfilePasswordController extends Controller
     // 1.b Fungsi Kirim Ulang OTP
     public function resendOtp()
     {
+        // Pastikan session ada agar tidak error
         if (!session('profile_otp_sent')) {
-            return redirect()->back();
+            return redirect()->route('profile.password.verify'); // Arahkan balik jika sesi hilang
         }
 
         $email = Auth::user()->email;
 
-        // Cek jeda pengiriman (1 menit)
-        // Cek kapan OTP terakhir dibuat untuk mencegah spam klik
+        // Cek jeda pengiriman (60 detik)
         $lastRecord = DB::table('password_reset_tokens')->where('email', $email)->first();
         if ($lastRecord) {
             $waktuDibuat = Carbon::parse($lastRecord->created_at, 'Asia/Makassar');
-
-            // Gunakan diffInSeconds (60 detik) agar lebih akurat
             if (Carbon::now('Asia/Makassar')->diffInSeconds($waktuDibuat) < 60) {
                 return redirect()->back()->withErrors(['otp' => 'Harap tunggu 60 detik sebelum mengirim ulang OTP.']);
             }
@@ -49,7 +47,9 @@ class ProfilePasswordController extends Controller
 
         $this->generateAndSendOtp($email);
 
-        return redirect()->route('profile.password.verify')->with('success', 'Kode OTP baru telah berhasil dikirim ulang ke email Anda.');
+        // FIX: Pastikan redirect ke route verifikasi OTP, bukan dashboard
+        return redirect()->route('profile.password.verify')
+                        ->with('success', 'Kode OTP baru telah dikirim ulang ke email Anda.');
     }
 
     // Fungsi Pembantu Generate & Kirim

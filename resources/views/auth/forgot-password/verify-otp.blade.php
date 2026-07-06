@@ -3,39 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi OTP - SIPETANG</title>
+    <title>Lupa Password - Verifikasi OTP</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 flex items-center justify-center min-h-screen p-6">
-
     <div class="max-w-md w-full bg-white rounded-3xl p-8 shadow-xl border border-slate-100 relative overflow-hidden">
-        <div class="absolute -top-12 -right-12 w-40 h-40 bg-green-400/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div class="text-center mb-8 relative z-10">
-            <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-200 shadow-sm">
+        <!-- Background glow -->
+        <div class="absolute -top-12 -right-12 w-40 h-40 bg-[#5B1D2A]/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Back Button -->
+        <a href="{{ route('password.request') }}" class="absolute top-6 left-6 w-10 h-10 flex items-center justify-center bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-full transition-colors active:scale-95 z-20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </a>
+
+        <!-- Header -->
+        <div class="text-center mb-8 mt-6 relative z-10">
+            <div class="w-16 h-16 bg-[#5B1D2A]/10 text-[#5B1D2A] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#5B1D2A]/20 shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             </div>
-            <h2 class="text-2xl font-black text-slate-800 tracking-tight">Cek Email Anda</h2>
-            <p class="text-slate-500 text-sm mt-2 font-medium">Kami telah mengirimkan 6 digit kode OTP ke email <br><b class="text-slate-800">{{ session('reset_email') }}</b></p>
+            <h2 class="text-xl font-black text-slate-800 tracking-tight">Cek Email Anda</h2>
+            <p class="text-slate-500 text-sm mt-2 font-medium">Kami telah mengirimkan 6 digit kode OTP ke email <br><b class="text-slate-700">{{ session('reset_email') }}</b></p>
         </div>
 
+        <!-- Alerts -->
         @if (session('success'))
-            <div class="bg-green-50 text-green-700 p-4 rounded-xl text-sm font-bold mb-6 border border-green-100 text-center shadow-sm">
+            <div class="bg-emerald-50 text-emerald-700 p-4 rounded-xl text-sm font-bold mb-6 border border-emerald-100 text-center shadow-sm relative z-10">
                 {{ session('success') }}
             </div>
         @endif
         @if ($errors->has('otp'))
-            <div class="bg-rose-50 text-rose-600 p-4 rounded-xl text-sm font-bold mb-6 border border-rose-100 text-center shadow-sm">
+            <div class="bg-rose-50 text-rose-600 p-4 rounded-xl text-sm font-bold mb-6 border border-rose-100 text-center shadow-sm relative z-10">
                 {{ $errors->first('otp') }}
             </div>
         @endif
 
+        <!-- Form Verifikasi -->
         <form action="{{ route('password.otp.submit') }}" method="POST" class="relative z-10" id="otp_form">
             @csrf
-
             <div class="mb-6">
                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 text-center">Masukkan 6 Digit OTP</label>
-                <input type="text" name="otp" id="otp_input" required maxlength="6" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-4 text-center text-3xl font-black tracking-[0.5em] rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#5B1D2A] focus:border-[#5B1D2A] transition bg-slate-50 shadow-inner" placeholder="••••••">
+                <input type="text" name="otp" id="otp_input" required maxlength="6" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="w-full px-4 py-4 text-center text-3xl font-black tracking-[0.5em] rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#5B1D2A] focus:border-[#5B1D2A] outline-none transition bg-slate-50 shadow-inner" placeholder="••••••">
             </div>
 
             <div class="flex flex-col items-center justify-center gap-2 mb-6">
@@ -49,21 +57,30 @@
             </button>
         </form>
 
+        <!-- Form Kirim Ulang -->
+        <div class="mt-6 text-center text-xs font-medium text-slate-500 relative z-10 border-t border-slate-100 pt-5">
+            Tidak menerima email atau kode kedaluwarsa?
+            <form action="{{ route('password.otp.resend') }}" method="POST" class="inline m-0">
+                @csrf
+                <button type="submit" id="btn_resend" class="text-[#5B1D2A] font-bold hover:underline ml-1 transition-colors">Kirim Ulang</button>
+            </form>
+        </div>
+    </div>
+
 <script>
-    // Gunakan Timestamp dari server agar kebal dari perbedaan zona waktu browser user
     const expireTime = ({{ $createdAt->timestamp }} * 1000) + (15 * 60 * 1000);
     const timerElement = document.getElementById("timer");
     const otpInput = document.getElementById("otp_input");
     const btnVerify = document.getElementById("btn_verify");
+    const btnResend = document.getElementById("btn_resend");
     const otpForm = document.getElementById("otp_form");
 
     let isExpired = false;
 
-    // Cegah submit form pakai tombol Enter kalau sudah kedaluwarsa
     otpForm.addEventListener("submit", function(e) {
         if (isExpired) {
-            e.preventDefault(); // Blokir pengiriman
-            alert("Waktu habis! Silakan kirim ulang kode OTP.");
+            e.preventDefault();
+            alert("Waktu habis! Silakan klik tombol Kirim Ulang.");
         }
     });
 
@@ -73,20 +90,22 @@
 
         if (distance < 0) {
             clearInterval(countdown);
-            isExpired = true; // Tandai sudah kedaluwarsa
+            isExpired = true;
 
             timerElement.innerHTML = "KEDALUWARSA";
             timerElement.classList.replace("text-rose-600", "text-slate-400");
 
-            // Matikan Input & Tombol
             otpInput.disabled = true;
             otpInput.classList.add("opacity-50", "cursor-not-allowed");
 
             btnVerify.disabled = true;
             btnVerify.classList.replace("bg-[#5B1D2A]", "bg-slate-400");
             btnVerify.classList.replace("hover:bg-[#6D2433]", "hover:bg-slate-400");
-            btnVerify.classList.add("cursor-not-allowed");
+            btnVerify.classList.add("cursor-not-allowed", "shadow-none");
             btnVerify.innerHTML = "KODE KEDALUWARSA";
+
+            // Highlight tombol kirim ulang
+            btnResend.classList.add("text-rose-600", "underline");
 
             return;
         }
