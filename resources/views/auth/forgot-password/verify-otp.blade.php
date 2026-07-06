@@ -60,9 +60,9 @@
         <!-- Form Kirim Ulang -->
         <div class="mt-6 text-center text-xs font-medium text-slate-500 relative z-10 border-t border-slate-100 pt-5">
             Tidak menerima email atau kode kedaluwarsa?
-            <form action="{{ route('profile.password.resend') }}" method="POST" class="inline m-0">
+            <!-- Perhatikan bagian action -->
+            <form action="{{ route('password.otp.resend') }}" method="POST" class="inline m-0">
                 @csrf
-                <!-- Tombol akan dikontrol oleh Javascript -->
                 <button type="submit" id="btn_resend" class="text-slate-400 font-bold ml-1 cursor-not-allowed transition-colors" disabled>
                     Tunggu...
                 </button>
