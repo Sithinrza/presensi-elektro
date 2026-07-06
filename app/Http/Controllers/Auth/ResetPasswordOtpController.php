@@ -42,12 +42,27 @@ class ResetPasswordOtpController extends Controller
 
         $email = session('reset_email');
 
-        // Cek kapan OTP terakhir dibuat untuk mencegah spam klik
+       
+        // Cek kapan OTP terakhir dibuat
         $lastRecord = DB::table('password_reset_tokens')->where('email', $email)->first();
+
         if ($lastRecord) {
+            // 1. Ambil waktu dari database
             $waktuDibuat = Carbon::parse($lastRecord->created_at, 'Asia/Makassar');
-            if (Carbon::now('Asia/Makassar')->diffInMinutes($waktuDibuat) < 1) {
-                return redirect()->back()->withErrors(['otp' => 'Harap tunggu 1 menit sebelum mengirim ulang OTP.']);
+
+            // 2. Tentukan batas waktu (Waktu Dibuat + 60 Detik)
+            $batasKirimUlang = $waktuDibuat->copy()->addSeconds(60);
+
+            // 3. Cek apakah waktu SEKARANG masih kurang dari (sebelum) BATAS WAKTU
+            $sekarang = Carbon::now('Asia/Makassar');
+
+            if ($sekarang->lessThan($batasKirimUlang)) {
+                // Hitung sisa detiknya untuk ditampilkan di pesan error
+                $sisaDetik = $sekarang->diffInSeconds($batasKirimUlang);
+
+                return redirect()->back()->withErrors([
+                    'otp' => 'Harap tunggu ' . $sisaDetik . ' detik sebelum mengirim ulang OTP.'
+                ]);
             }
         }
 
