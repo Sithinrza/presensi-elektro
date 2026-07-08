@@ -63,7 +63,7 @@
                         <input type="email" name="email" value="{{ old('email', $tendik->user->email ?? '') }}" required class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
 
-                    
+
                     <div class="space-y-1.5 sm:space-y-2 md:col-span-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Update Password</label>
                         <div class="relative group">
@@ -89,8 +89,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 bg-transparent p-4 sm:p-6 rounded-2xl sm:rounded-3xl border-2 border-dashed border-slate-300">
                     <div class="space-y-1.5 sm:space-y-2">
-                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">NIP</label>
-                        <input type="text" name="nip" value="{{ old('nip', $tendik->nip) }}" placeholder="Masukkan NIP..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
+                        <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">No Induk</label>
+                        <input type="text" name="nip" value="{{ old('nip', $tendik->nip) }}" placeholder="Masukkan No Induk..." class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 sm:px-4 sm:py-3.5 text-xs sm:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-maroon-500 outline-none transition-all shadow-sm">
                     </div>
                     <div class="space-y-1.5 sm:space-y-2">
                         <label class="text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Jabatan Fungsional</label>

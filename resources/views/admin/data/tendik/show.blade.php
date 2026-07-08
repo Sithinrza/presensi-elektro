@@ -45,7 +45,7 @@
                 @endif
 
                 <span class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 text-white border border-white/20 rounded-xl text-[10px] font-black uppercase tracking-widest backdrop-blur-sm font-mono">
-                    NIP: {{ $tendik->nip ?? '-' }}
+                    No Induk: {{ $tendik->nip ?? '-' }}
                 </span>
             </div>
         </div>

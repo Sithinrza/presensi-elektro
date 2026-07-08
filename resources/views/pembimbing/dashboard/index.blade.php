@@ -1,5 +1,5 @@
 @extends('layouts.pembimbing')
-@section('page_title', 'Dashboard')
+@section('page_title', 'Beranda')
 
 @section('content')
 <main class="max-w-7xl mx-auto p-4 sm:p-5 lg:p-10 space-y-6 lg:space-y-10">
@@ -13,7 +13,7 @@
                     Monitoring Siswa Magang
                 </h2>
                 <p class="text-maroon-200 text-xs lg:text-sm font-bold uppercase tracking-widest opacity-80">
-                    Dashboard Pembimbing Teknik Elektro
+                    Beranda Pembimbing Teknik Elektro
                 </p>
             </div>
 

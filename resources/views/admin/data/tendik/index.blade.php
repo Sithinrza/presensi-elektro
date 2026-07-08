@@ -90,7 +90,7 @@
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100">
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Identitas Tendik</th>
-                        <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">NIP / NIDN</th>
+                        <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">No Induk</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
                         <th class="px-6 sm:px-8 py-4 sm:py-5 text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Aksi</th>
@@ -124,7 +124,7 @@
                                 {{ $t->user->email ?? 'Tidak ada email' }}
                             </span>
                         </td>
-                        
+
                         <td class="px-6 sm:px-8 py-4 text-center">
                             @if($t->status == 'Aktif')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-emerald-50 text-emerald-600 border border-emerald-200 rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-black uppercase tracking-widest shadow-sm">
@@ -186,7 +186,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[32px] sm:h-[32px]"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                                 </div>
                                 <p class="text-slate-500 font-bold text-xs sm:text-sm">Tendik tidak ditemukan.</p>
-                                <p class="text-slate-400 text-[10px] sm:text-xs">Pencarian tidak cocok dengan nama atau NIP manapun.</p>
+                                <p class="text-slate-400 text-[10px] sm:text-xs">Pencarian tidak cocok dengan nama atau No Induk manapun.</p>
                             </div>
                         </td>
                     </tr>

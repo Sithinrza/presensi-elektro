@@ -134,7 +134,7 @@
         </h3>
 
         <p class="text-maroon-100/80 text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 font-medium px-2 sm:px-0">
-          Menghadirkan kemudahan dalam pencatatan kehadiran harian bagi Tenaga Kependidikan dan Siswa Magang di lingkungan Jurusan Teknik Elektro. Dirancang untuk memastikan keakuratan data secara profesional dan transparan.
+          Menghadirkan kemudahan dalam pencatatan kehadiran harian bagi Tenaga Kependidikan (Non-ASN) dan Siswa Magang di lingkungan Jurusan Teknik Elektro. Dirancang untuk memastikan keakuratan data secara profesional dan transparan.
         </p>
 
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 justify-center lg:justify-start pt-2 sm:pt-4 w-full px-4 sm:px-0">
@@ -201,7 +201,7 @@
           <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-maroon-50 text-maroon-700 flex items-center justify-center mb-5 sm:mb-6 group-hover:bg-maroon-950 group-hover:text-gold transition-colors duration-300">
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sm:w-[32px] sm:h-[32px]"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
-          <h4 class="text-lg sm:text-xl font-extrabold text-maroon-950 mb-2.5 sm:mb-3 tracking-tight">Validasi Lokasi (Geotagging)</h4>
+          <h4 class="text-lg sm:text-xl font-extrabold text-maroon-950 mb-2.5 sm:mb-3 tracking-tight">Validasi Lokasi</h4>
           <p class="text-xs sm:text-sm text-slate-500 leading-relaxed font-medium">
             Mencatat titik koordinat pengguna secara otomatis untuk memastikan proses presensi dilakukan tepat di dalam wilayah yang telah ditentukan.
           </p>
@@ -334,11 +334,11 @@
       <div class="flex flex-col sm:flex-row items-center gap-3">
           <img src="https://poliban.ac.id/wp-content/uploads/elementor/thumbs/logo-poliban-jurusan-elektro-qk7viq77pvg3pdria0wjpmdjnb0p1myetqdr356ck4.png" alt="Logo" class="w-8 h-8 opacity-80 grayscale">
           <div>
-            <h4 class="font-bold text-maroon-950 text-xs sm:text-sm leading-none">Sistem Presensi Elektro</h4>
+            <h4 class="font-bold text-maroon-950 text-xs sm:text-sm leading-none">SIPETANG</h4>
             <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Politeknik Negeri Banjarmasin</p>
           </div>
       </div>
-      <p class="text-[10px] sm:text-[11px] font-bold text-slate-400">© 2026. Dikembangkan untuk Tugas Akhir.</p>
+      <p class="text-[10px] sm:text-[11px] font-bold text-slate-400">© 2026. Dibuat untuk Tugas Akhir.</p>
     </div>
   </footer>
 

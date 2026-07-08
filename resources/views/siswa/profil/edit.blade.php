@@ -147,7 +147,7 @@
                 </div>
 
                 <div class="space-y-1.5 sm:col-span-2 mt-2">
-                    <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nomor Induk Siswa (NIM/NIS)</label>
+                    <label class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nomor Induk Siswa (NIS)</label>
                     <input type="text" value="{{ $siswa->nis ?? '-' }}" disabled class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-bold text-slate-400 outline-none cursor-not-allowed shadow-inner">
                     <p class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-1 ml-1">* NIS hanya dapat diubah oleh Admin.</p>
                 </div>
