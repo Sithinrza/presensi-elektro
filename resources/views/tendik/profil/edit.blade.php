@@ -53,7 +53,7 @@
         <div class="relative z-10 flex-1 space-y-3 sm:space-y-4">
             <div>
                 <h3 class="text-lg sm:text-xl font-black text-white uppercase tracking-tight leading-none">{{ $tendik->nama_lengkap }}</h3>
-                <p class="text-xs sm:text-sm font-bold text-gold mt-1 sm:mt-1.5">NIP. {{ $tendik->nip ?? '-' }}</p>
+                <p class="text-xs sm:text-sm font-bold text-gold mt-1 sm:mt-1.5">Nomor Induk{{ $tendik->nip ?? '-' }}</p>
                 <p class="text-[9px] sm:text-[10px] font-bold text-maroon-200/70 mt-2 sm:mt-2.5 uppercase tracking-widest">Format: JPG, JPEG, PNG. Ukuran maksimal 3 MB.</p>
             </div>
 
@@ -93,7 +93,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="sm:w-5 sm:h-5"><rect width="18" height="18" x="3" y="3" rx="2" font-weight="bold"/><path d="M7 7h10M7 12h10M7 17h13"/></svg>
                 </div>
                 <div>
-                    <h3 class="text-sm sm:text-base font-black text-slate-800 uppercase tracking-tight leading-none">Data Instansi & Kedinasan</h3>
+                    <h3 class="text-sm sm:text-base font-black text-slate-800 uppercase tracking-tight leading-none">Biodata </h3>
                     <p class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5 uppercase tracking-widest">Hanya dapat diubah oleh Admin</p>
                 </div>
             </div>

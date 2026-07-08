@@ -17,7 +17,7 @@ class ProsesPresensiOtomatis extends Command
 
     public function handle()
     {
-        //Carbon::setTestNow(Carbon::create(2026, 6, 8, 23, 59, 0, 'Asia/Makassar'));
+        //Carbon::setTestNow(Carbon::create(2026, 6, 8, 23, 59, 01, 'Asia/Makassar'));
 
         $waktuSekarang = Carbon::now('Asia/Makassar');
         $tanggalHariIni = $waktuSekarang->format('Y-m-d');
@@ -32,7 +32,7 @@ class ProsesPresensiOtomatis extends Command
             $this->error("Pastikan status 'Alpa', 'Lupa Check-Out', dan 'Libur' sudah ada di tabel status_presensi!");
             return;
         }
-        
+
         // UPDATE OTOMATIS STATUS SISWA MAGANG JADI NONAKTIF
         // =========================================================
         $siswaExpired = SiswaMagang::where('status', 'Aktif')
@@ -132,12 +132,12 @@ class ProsesPresensiOtomatis extends Command
                     $jumlahAlpa++;
                 }
             }
-            // KONDISI B: SUDAH MASUK TAPI BELUM PULANG SAMPAI 23:50
+            // KONDISI B: SUDAH MASUK TAPI BELUM PULANG SAMPAI 23:59
             else if ($presensiHariIni->jam_pulang == null) {
 
-                $batasLupaCo = Carbon::createFromTime(23, 50, 0, 'Asia/Makassar');
+                $batasLupaCo = Carbon::createFromTime(23, 59, 0, 'Asia/Makassar');
 
-                // HANYA EKSEKUSI LUPA CO JIKA SUDAH LEWAT JAM 23:50 MALAM
+                // HANYA EKSEKUSI LUPA CO JIKA SUDAH LEWAT JAM 23:59 MALAM
                 if ($waktuSekarang->greaterThan($batasLupaCo)) {
 
                     if ($presensiHariIni->statusCi && in_array($presensiHariIni->statusCi->name, ['Tepat Waktu', 'Terlambat'])) {

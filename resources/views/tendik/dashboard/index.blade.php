@@ -1,5 +1,5 @@
 @extends('layouts.tendik')
-@section('page_title', 'Dashboard')
+@section('page_title', 'Beranda')
 
 @section('content')
 <main class="max-w-7xl mx-auto p-4 sm:p-5 lg:p-10">
