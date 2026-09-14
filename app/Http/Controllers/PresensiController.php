@@ -20,7 +20,7 @@ class PresensiController extends Controller
         $user = Auth::user();
         $role = strtolower($user->roles->first()->name);
         // Carbon::setTestNow(
-        //      Carbon::create(2026, 7, 7, 8, 0, 0, 'Asia/Makassar')
+        //      Carbon::create(2026, 9, 9, 8, 0, 0, 'Asia/Makassar')
         // );
         // Carbon::setTestNow(
         //     Carbon::create(2026, 7, 7, 17, 15, 0, 'Asia/Makassar') // Selasa, Jam 17:15 Sore (Lewat batas 17:00)

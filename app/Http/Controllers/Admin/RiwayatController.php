@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\HariLibur;
 use Illuminate\Http\Request;
 use App\Models\Presensi;
 use App\Models\SiswaMagang;
 use App\Models\Tendik;
 use App\Models\StatusPresensi;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
@@ -85,7 +87,7 @@ class RiwayatController extends Controller
 
     public function showDetail(Request $request, $id_user)
     {
-        $user = \App\Models\User::with(['siswaMagang', 'tendik'])->findOrFail($id_user);
+        $user = User::with(['siswaMagang', 'tendik'])->findOrFail($id_user);
 
         $nama_lengkap = 'User Tidak Diketahui';
         $role = 'Tidak Diketahui';
@@ -139,7 +141,7 @@ class RiwayatController extends Controller
                     ->get()
                     ->keyBy('tanggal');
 
-        $hariLibur = \App\Models\HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
+        $hariLibur = HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
         })->get();
@@ -226,7 +228,7 @@ class RiwayatController extends Controller
 
     public function cetakPdf(Request $request, $id_user)
     {
-        $user = \App\Models\User::with(['siswaMagang', 'tendik'])->findOrFail($id_user);
+        $user = User::with(['siswaMagang', 'tendik'])->findOrFail($id_user);
 
         $role = 'Tidak Diketahui';
         $nama_lengkap = 'User Tidak Diketahui';
@@ -278,7 +280,7 @@ class RiwayatController extends Controller
                     ->get()
                     ->keyBy('tanggal');
 
-        $hariLibur = \App\Models\HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
+        $hariLibur = HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
         })->get();
@@ -372,7 +374,7 @@ class RiwayatController extends Controller
                         ->get()
                         ->groupBy('id_user');
 
-        $hariLibur = \App\Models\HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
+        $hariLibur = HariLibur::where(function ($query) use ($startOfMonth, $endOfMonth) {
             $query->whereBetween('tanggal_mulai', [$startOfMonth, $endOfMonth])
                   ->orWhereBetween('tanggal_selesai', [$startOfMonth, $endOfMonth]);
         })->get();

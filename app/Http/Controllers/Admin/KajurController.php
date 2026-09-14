@@ -29,12 +29,30 @@ class KajurController extends Controller
             'nama_lengkap' => 'required|string',
             'nip'          => 'required|numeric|unique:kajur,nip',
             'tahun_mulai'  => 'required|numeric|digits:4',
-            'tahun_selesai'=> 'required|numeric|digits:4|gte:tahun_mulai', // Selesai >= Mulai
+            'tahun_selesai'=> 'required|numeric|digits:4|gte:tahun_mulai',
         ], [
             'nip.numeric'       => 'NIP hanya boleh berisi karakter angka numerik.',
-            'nip.unique'        => 'NIP tersebut sudah terdaftar di dalam sistem!', // 👈 Pesan error kustom
+            'nip.unique'        => 'NIP tersebut sudah terdaftar di dalam sistem!',
             'tahun_selesai.gte' => 'Tahun Selesai tidak boleh lebih kecil dari Tahun Mulai.'
         ]);
+
+        // CEK OVERLAP PERIODE (Boleh irisan di tahun yang sama untuk transisi jabatan)
+        $semuaKajur = Kajur::all();
+        foreach ($semuaKajur as $k) {
+            $parts = explode(' - ', $k->periode);
+            if (count($parts) == 2) {
+                $existStart = (int) $parts[0];
+                $existEnd = (int) $parts[1];
+
+                // PERUBAHAN DI SINI: Hapus tanda sama dengan (=)
+                // Jadi misal lama: 2022-2026, baru: 2026-2030 -> diizinkan!
+                if ($request->tahun_mulai < $existEnd && $request->tahun_selesai > $existStart) {
+                    return back()
+                        ->withErrors(['Tahun periode bentrok! Sudah ada Kajur yang menjabat penuh pada periode '.$k->periode.'.'])
+                        ->withInput();
+                }
+            }
+        }
 
         $periodeGabungan = $request->tahun_mulai . ' - ' . $request->tahun_selesai;
 
@@ -58,15 +76,33 @@ class KajurController extends Controller
         // VALIDASI KETAT NIP (ANTI DOBEL) DAN TAHUN
         $request->validate([
             'nama_lengkap' => 'required|string',
-            // 👈 Ditambah unique tapi kecualikan ID dia sendiri
             'nip'          => 'required|numeric|unique:kajur,nip,' . $id_kajur . ',id_kajur',
             'tahun_mulai'  => 'required|numeric|digits:4',
-            'tahun_selesai'=> 'required|numeric|digits:4|gte:tahun_mulai', // Selesai >= Mulai
+            'tahun_selesai'=> 'required|numeric|digits:4|gte:tahun_mulai',
         ], [
             'nip.numeric'       => 'NIP hanya boleh berisi karakter angka numerik.',
-            'nip.unique'        => 'NIP tersebut sudah digunakan oleh Kajur lain!', // 👈 Pesan error kustom
+            'nip.unique'        => 'NIP tersebut sudah digunakan oleh Kajur lain!',
             'tahun_selesai.gte' => 'Tahun Selesai tidak boleh lebih kecil dari Tahun Mulai.'
         ]);
+
+        // CEK OVERLAP PERIODE (Boleh irisan di tahun yang sama)
+        $semuaKajur = Kajur::all();
+        foreach ($semuaKajur as $k) {
+            if ($k->id_kajur == $id_kajur) continue;
+
+            $parts = explode(' - ', $k->periode);
+            if (count($parts) == 2) {
+                $existStart = (int) $parts[0];
+                $existEnd = (int) $parts[1];
+
+                // PERUBAHAN DI SINI: Hapus tanda sama dengan (=)
+                if ($request->tahun_mulai < $existEnd && $request->tahun_selesai > $existStart) {
+                    return back()
+                        ->withErrors(['Tahun periode bentrok! Sudah ada Kajur lain yang menjabat penuh pada periode '.$k->periode.'.'])
+                        ->withInput();
+                }
+            }
+        }
 
         $periodeGabungan = $request->tahun_mulai . ' - ' . $request->tahun_selesai;
 
